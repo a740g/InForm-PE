@@ -1,6 +1,6 @@
 # Animated GIF Player Library
 
-***By [a740g](https://github.com/a740g)***
+[QB64-PE](https://github.com/QB64-Phoenix-Edition/QB64pe) Animated GIF Player Library by ***[a740g](https://github.com/a740g)*** for playing [animated GIF](https://en.wikipedia.org/wiki/GIF#Animated_GIF) files.
 
 ## Usage instructions
 

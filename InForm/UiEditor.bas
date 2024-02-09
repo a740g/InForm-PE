@@ -223,7 +223,7 @@ $END IF
 
 UiEditorTitle$ = "InForm Designer"
 
-QB64_EXE_PATH = ReadSetting("InForm/InForm.ini", "InForm Settings", "QB64PE path") ' read the compiler path name from the INI
+QB64_EXE_PATH = Ini_ReadSetting("InForm/InForm.ini", "InForm Settings", "QB64PE path") ' read the compiler path name from the INI
 
 IF NOT _FILEEXISTS(QB64_EXE_PATH) THEN ' if the compiler is missing then look for it in obvious places
     IF _FILEEXISTS("." + PathSep$ + QB64_EXE_NAME) THEN
@@ -245,7 +245,7 @@ IF NOT _FILEEXISTS(QB64_EXE_PATH) THEN ' if the compiler is missing then look fo
             SYSTEM 1
         END IF
 
-        WriteSetting "InForm/InForm.ini", "InForm Settings", "QB64PE path", QB64_EXE_PATH ' save the complete path name to the INI
+        Ini_WriteSetting "InForm/InForm.ini", "InForm Settings", "QB64PE path", QB64_EXE_PATH ' save the complete path name to the INI
     END IF
 END IF
 
@@ -1106,11 +1106,11 @@ SUB AddToRecentList (FileName$)
 
     'Check if this FileName$ is already in the list; if so, delete it.
     FOR i = 1 TO 9
-        b$ = ReadSetting("InForm/InForm.ini", "Recent Projects", STR$(i))
+        b$ = Ini_ReadSetting("InForm/InForm.ini", "Recent Projects", STR$(i))
         IF b$ = FileName$ THEN
             FOR j = i + 1 TO 9
-                b$ = ReadSetting("InForm/InForm.ini", "Recent Projects", STR$(j))
-                WriteSetting "InForm/InForm.ini", "Recent Projects", STR$(j - 1), b$
+                b$ = Ini_ReadSetting("InForm/InForm.ini", "Recent Projects", STR$(j))
+                Ini_WriteSetting "InForm/InForm.ini", "Recent Projects", STR$(j - 1), b$
             NEXT
             EXIT FOR
         END IF
@@ -1119,11 +1119,11 @@ SUB AddToRecentList (FileName$)
     'Make room for FileName$ by shifting existing list by one;
     '1 is the most recent, 9 is the oldest;
     FOR i = 8 TO 1 STEP -1
-        b$ = ReadSetting("InForm/InForm.ini", "Recent Projects", STR$(i))
-        WriteSetting "InForm/InForm.ini", "Recent Projects", STR$(i + 1), b$
+        b$ = Ini_ReadSetting("InForm/InForm.ini", "Recent Projects", STR$(i))
+        Ini_WriteSetting "InForm/InForm.ini", "Recent Projects", STR$(i + 1), b$
     NEXT
 
-    WriteSetting "InForm/InForm.ini", "Recent Projects", "1", FileName$
+    Ini_WriteSetting "InForm/InForm.ini", "Recent Projects", "1", FileName$
     RecentListBuilt = FALSE
 END SUB
 
@@ -1132,13 +1132,13 @@ SUB RemoveFromRecentList (FileName$)
 
     'Check if this FileName$ is already in the list; if so, delete it.
     FOR i = 1 TO 9
-        b$ = ReadSetting("InForm/InForm.ini", "Recent Projects", STR$(i))
+        b$ = Ini_ReadSetting("InForm/InForm.ini", "Recent Projects", STR$(i))
         IF b$ = FileName$ THEN
             FOR j = i + 1 TO 9
-                b$ = ReadSetting("InForm/InForm.ini", "Recent Projects", STR$(j))
-                WriteSetting "InForm/InForm.ini", "Recent Projects", STR$(j - 1), b$
+                b$ = Ini_ReadSetting("InForm/InForm.ini", "Recent Projects", STR$(j))
+                Ini_WriteSetting "InForm/InForm.ini", "Recent Projects", STR$(j - 1), b$
             NEXT
-            WriteSetting "InForm/InForm.ini", "Recent Projects", "9", ""
+            Ini_WriteSetting "InForm/InForm.ini", "Recent Projects", "9", ""
             EXIT FOR
         END IF
     NEXT
@@ -1280,7 +1280,7 @@ SUB __UI_BeforeUpdateDisplay
         'Build list of recent projects
         RecentListBuilt = TRUE
         FOR i = 1 TO 9
-            b$ = ReadSetting("InForm/InForm.ini", "Recent Projects", STR$(i))
+            b$ = Ini_ReadSetting("InForm/InForm.ini", "Recent Projects", STR$(i))
             IF LEN(b$) THEN
                 ToolTip(RecentMenuItem(i)) = b$
                 IF INSTR(b$, PathSep$) > 0 THEN
@@ -2580,22 +2580,22 @@ SUB SaveSettings
     IF _DIREXISTS("InForm") = 0 THEN EXIT SUB
 
     IF PreviewAttached THEN value$ = "True" ELSE value$ = "False"
-    WriteSetting "InForm/InForm.ini", "InForm Settings", "Keep preview window attached", value$
+    Ini_WriteSetting "InForm/InForm.ini", "InForm Settings", "Keep preview window attached", value$
 
     IF AutoNameControls THEN value$ = "True" ELSE value$ = "False"
-    WriteSetting "InForm/InForm.ini", "InForm Settings", "Auto-name controls", value$
+    Ini_WriteSetting "InForm/InForm.ini", "InForm Settings", "Auto-name controls", value$
 
     IF __UI_SnapLines THEN value$ = "True" ELSE value$ = "False"
-    WriteSetting "InForm/InForm.ini", "InForm Settings", "Snap to edges", value$
+    Ini_WriteSetting "InForm/InForm.ini", "InForm Settings", "Snap to edges", value$
 
     IF __UI_ShowPositionAndSize THEN value$ = "True" ELSE value$ = "False"
-    WriteSetting "InForm/InForm.ini", "InForm Settings", "Show position and size", value$
+    Ini_WriteSetting "InForm/InForm.ini", "InForm Settings", "Show position and size", value$
 
     IF __UI_ShowInvisibleControls THEN value$ = "True" ELSE value$ = "False"
-    WriteSetting "InForm/InForm.ini", "InForm Settings", "Show invisible controls", value$
+    Ini_WriteSetting "InForm/InForm.ini", "InForm Settings", "Show invisible controls", value$
 
     IF ShowFontList THEN value$ = "True" ELSE value$ = "False"
-    WriteSetting "InForm/InForm.ini", "InForm Settings", "Show font list", value$
+    Ini_WriteSetting "InForm/InForm.ini", "InForm Settings", "Show font list", value$
 
     $IF WIN THEN
     $ELSE
@@ -2728,51 +2728,51 @@ SUB __UI_OnLoad
     IF _DIREXISTS("InForm") = 0 THEN MKDIR "InForm"
 
     DIM value$
-    value$ = ReadSetting("InForm/InForm.ini", "InForm Settings", "Keep preview window attached")
+    value$ = Ini_ReadSetting("InForm/InForm.ini", "InForm Settings", "Keep preview window attached")
     IF LEN(value$) THEN
         PreviewAttached = (value$ = "True")
     ELSE
-        WriteSetting "InForm/InForm.ini", "InForm Settings", "Keep preview window attached", "True"
+        Ini_WriteSetting "InForm/InForm.ini", "InForm Settings", "Keep preview window attached", "True"
         PreviewAttached = TRUE
     END IF
 
-    value$ = ReadSetting("InForm/InForm.ini", "InForm Settings", "Auto-name controls")
+    value$ = Ini_ReadSetting("InForm/InForm.ini", "InForm Settings", "Auto-name controls")
     IF LEN(value$) THEN
         AutoNameControls = (value$ = "True")
     ELSE
-        WriteSetting "InForm/InForm.ini", "InForm Settings", "Auto-name controls", "True"
+        Ini_WriteSetting "InForm/InForm.ini", "InForm Settings", "Auto-name controls", "True"
         AutoNameControls = TRUE
     END IF
 
-    value$ = ReadSetting("InForm/InForm.ini", "InForm Settings", "Snap to edges")
+    value$ = Ini_ReadSetting("InForm/InForm.ini", "InForm Settings", "Snap to edges")
     IF LEN(value$) THEN
         __UI_SnapLines = (value$ = "True")
     ELSE
-        WriteSetting "InForm/InForm.ini", "InForm Settings", "Snap to edges", "True"
+        Ini_WriteSetting "InForm/InForm.ini", "InForm Settings", "Snap to edges", "True"
         __UI_SnapLines = TRUE
     END IF
 
-    value$ = ReadSetting("InForm/InForm.ini", "InForm Settings", "Show position and size")
+    value$ = Ini_ReadSetting("InForm/InForm.ini", "InForm Settings", "Show position and size")
     IF LEN(value$) THEN
         __UI_ShowPositionAndSize = (value$ = "True")
     ELSE
-        WriteSetting "InForm/InForm.ini", "InForm Settings", "Show position and size", "True"
+        Ini_WriteSetting "InForm/InForm.ini", "InForm Settings", "Show position and size", "True"
         __UI_ShowPositionAndSize = TRUE
     END IF
 
-    value$ = ReadSetting("InForm/InForm.ini", "InForm Settings", "Show invisible controls")
+    value$ = Ini_ReadSetting("InForm/InForm.ini", "InForm Settings", "Show invisible controls")
     IF LEN(value$) THEN
         __UI_ShowInvisibleControls = (value$ = "True")
     ELSE
-        WriteSetting "InForm/InForm.ini", "InForm Settings", "Show invisible controls", "True"
+        Ini_WriteSetting "InForm/InForm.ini", "InForm Settings", "Show invisible controls", "True"
         __UI_ShowInvisibleControls = TRUE
     END IF
 
-    value$ = ReadSetting("InForm/InForm.ini", "InForm Settings", "Show font list")
+    value$ = Ini_ReadSetting("InForm/InForm.ini", "InForm Settings", "Show font list")
     IF LEN(value$) THEN
         ShowFontList = (value$ = "True")
     ELSE
-        WriteSetting "InForm/InForm.ini", "InForm Settings", "Show font list", "True"
+        Ini_WriteSetting "InForm/InForm.ini", "InForm Settings", "Show font list", "True"
         ShowFontList = TRUE
     END IF
 
