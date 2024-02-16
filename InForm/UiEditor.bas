@@ -2599,8 +2599,8 @@ SUB SaveSettings
 
     $IF WIN THEN
     $ELSE
-            IF __UI_MouseButtonsSwap THEN value$ = "True" ELSE value$ = "False"
-            WriteSetting "InForm/InForm.ini", "InForm Settings", "Swap mouse buttons", value$
+        IF __UI_MouseButtonsSwap THEN value$ = "True" ELSE value$ = "False"
+        Ini_WriteSetting "InForm/InForm.ini", "InForm Settings", "Swap mouse buttons", value$
     $END IF
 END SUB
 
@@ -2778,9 +2778,9 @@ SUB __UI_OnLoad
 
     $IF WIN THEN
     $ELSE
-            value$ = ReadSetting("InForm/InForm.ini", "InForm Settings", "Swap mouse buttons")
-            __UI_MouseButtonsSwap = (value$ = "True")
-            Control(OptionsMenuSwapButtons).Value = __UI_MouseButtonsSwap
+        value$ = Ini_ReadSetting("InForm/InForm.ini", "InForm Settings", "Swap mouse buttons")
+        __UI_MouseButtonsSwap = (value$ = "True")
+        Control(OptionsMenuSwapButtons).Value = __UI_MouseButtonsSwap
     $END IF
 
     Control(ViewMenuPreviewDetach).Value = PreviewAttached

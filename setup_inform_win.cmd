@@ -1,10 +1,30 @@
 @rem InForm for QB64-PE Setup script
 @echo off
 
-%~d0
-cd %~dp0
+rem Check if QB64-PE directory path is provided as an argument
+if "%~1" neq "" (
+    set "QB64PE_PATH=%~1"
+) else (
+    set "QB64PE_PATH=..\QB64pe\"
+)
 
-rem Adjust the path below to point to mingw32-make.exe in your QB64 installation
+cd /d "%~dp0"
+
 echo Compiling InForm...
-..\QB64pe\internal\c\c_compiler\bin\mingw32-make.exe -f makefile.inform clean OS=win QB64PE_PATH=../QB64pe/
-..\QB64pe\internal\c\c_compiler\bin\mingw32-make.exe -f makefile.inform OS=win QB64PE_PATH=../QB64pe/
+
+rem Attempt build with QB64-PE path
+%QB64PE_PATH%internal\c\c_compiler\bin\mingw32-make.exe -f makefile.inform clean OS=win QB64PE_PATH=%QB64PE_PATH%
+%QB64PE_PATH%internal\c\c_compiler\bin\mingw32-make.exe -f makefile.inform OS=win QB64PE_PATH=%QB64PE_PATH%
+if not errorlevel 1 exit /b
+
+echo Build failed with QB64-PE path: %QB64PE_PATH%
+echo Retrying with alternative QB64-PE directory...
+
+rem Retry build with ..\QB64pe\ as fallback if it exists
+
+set "QB64PE_PATH=..\QB64pe\"
+
+if exist %QB64PE_PATH% (
+    %QB64PE_PATH%internal\c\c_compiler\bin\mingw32-make.exe -f makefile.inform clean OS=win QB64PE_PATH=%QB64PE_PATH%
+    %QB64PE_PATH%internal\c\c_compiler\bin\mingw32-make.exe -f makefile.inform OS=win QB64PE_PATH=%QB64PE_PATH%
+)
