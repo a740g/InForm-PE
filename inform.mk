@@ -1,4 +1,3 @@
-
 # Makefile for InForm-PE
 
 # Determine the operating system

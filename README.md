@@ -36,7 +36,7 @@ Install InForm-PE and QB64-PE side-by-side in their own directories. There is no
 Assuming your setup is like the above, do the following:
 
 - Open Terminal and change to the InForm-PE directory using an appropriate OS command
-- Run `setup_inform_lnx.sh`, `setup_inform_osx.command` or `setup_inform_win.cmd` depending on the OS you are on. This will run make with the correct parameters. If the build fails, ensure QB64-PE is installed in the **QB64pe** directory (next to the InForm-PE directory). If QB64-PE is installed elsewhere, then edit the setup scripts to change the location
+- Run `setup_inform_lnx.sh`, `setup_inform_mac.command` or `setup_inform_win.cmd` depending on the OS you are on. This will run make with the correct parameters. If the build fails, ensure QB64-PE is installed in the **QB64pe** directory (next to the InForm-PE directory). If QB64-PE is installed elsewhere, then edit the setup scripts to change the location
 - Once InForm-PE is compiled, you will find the UiEditor[.exe] executable in the InForm-PE directory
 - Run UiEditor[.exe] to start designing your forms
 - After your form looks the way you want it to, click **File > Save** to export its contents and generate a **.bas** source file. Two files are exported:
