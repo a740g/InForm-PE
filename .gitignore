@@ -14,4 +14,4 @@
 *.frmbin
 #Ignore macOS stuff
 *.command
-!setup_inform_osx.command
+!setup_inform_mac.command

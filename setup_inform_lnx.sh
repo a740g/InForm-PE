@@ -3,19 +3,19 @@
 
 # Check if QB64-PE directory path is provided as an argument
 if [ -n "$1" ]; then
-    QB64PE_PATHS=("$1" "../qb64pe/" "../QB64pe/")
+    QB64PE_PATHS=("$1" "../qb64pe" "../QB64pe")
 else
-    QB64PE_PATHS=("../QB64pe/" "../qb64pe/")
+    QB64PE_PATHS=("../QB64pe" "../qb64pe")
 fi
 
 cd "$(dirname "$0")"
 
-echo "Compiling InForm..."
+echo "Compiling InForm-PE release. Please be patient..."
 
 # Loop through each QB64-PE path
 for path in "${QB64PE_PATHS[@]}"; do
-    make -f makefile.inform clean OS=lnx QB64PE_PATH="$path"
-    make -f makefile.inform OS=lnx QB64PE_PATH="$path"
+    make -f inform.mk clean OS=Linux QB64PE_PATH="$path"
+    make -f inform.mk release OS=Linux QB64PE_PATH="$path"
     if [ $? -eq 0 ]; then
         break  # If build succeeds, exit loop
     fi
