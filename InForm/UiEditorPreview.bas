@@ -75,10 +75,10 @@ $IF WIN THEN
     END DECLARE
     CONST PathSep$ = "\"
 $ELSE
-        DECLARE LIBRARY
-        FUNCTION PROCESS_CLOSED& ALIAS kill (BYVAL pid AS INTEGER, BYVAL signal AS INTEGER)
-        END DECLARE
-        CONST PathSep$ = "/"
+    DECLARE LIBRARY
+    FUNCTION PROCESS_CLOSED& ALIAS kill (BYVAL pid AS INTEGER, BYVAL signal AS INTEGER)
+    END DECLARE
+    CONST PathSep$ = "/"
 $END IF
 
 CONST EDITOR_IMAGE_CONTEXTMENU = 1
@@ -421,10 +421,10 @@ SUB __UI_BeforeUpdateDisplay
         END IF
         b& = CloseHandle(hnd&)
     $ELSE
-            IF PROCESS_CLOSED(UiEditorPID, 0) THEN
-            If _FileExists("InForm/UiEditorPreview.frmbin") Then Kill "InForm/UiEditorPreview.frmbin"
-            SYSTEM
-            END IF
+        IF PROCESS_CLOSED(UiEditorPID, 0) THEN
+        If _FileExists("InForm/UiEditorPreview.frmbin") Then Kill "InForm/UiEditorPreview.frmbin"
+        SYSTEM
+        END IF
     $END IF
 
     IF __UI_IsDragging THEN
@@ -1729,7 +1729,7 @@ SUB __UI_OnLoad
     $IF WIN THEN
         CONST TIMEOUT = 10
     $ELSE
-            CONST TIMEOUT = 120
+        CONST TIMEOUT = 120
     $END IF
 
     start! = TIMER
