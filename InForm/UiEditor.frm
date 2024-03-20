@@ -229,6 +229,9 @@ SUB __UI_LoadForm
         SetCaption __UI_NewID, "&Swap mouse buttons"
     $END IF
 
+    __UI_NewID = __UI_NewControl(__UI_Type_MenuItem, "OptionsMenuSaveFormOnly", 126, 20, 0, 44, __UI_GetID("OptionsMenu"))
+    SetCaption __UI_NewID, "Save &form only"
+
     __UI_NewID = __UI_NewControl(__UI_Type_MenuItem, "HelpMenuHelp", 0, 0, 0, 0, __UI_GetID("HelpMenu"))
     SetCaption __UI_NewID, "&What's all this?-"
 
@@ -815,6 +818,7 @@ SUB __UI_AssignIDs
     AlignMenuDistributeH = __UI_GetID("AlignMenuDistributeH")
     OptionsMenuAutoName = __UI_GetID("OptionsMenuAutoName")
     OptionsMenuSwapButtons = __UI_GetID("OptionsMenuSwapButtons")
+    OptionsMenuSaveFormOnly = __UI_GetID("OptionsMenuSaveFormOnly")
     HelpMenuHelp = __UI_GetID("HelpMenuHelp")
     HelpMenuAbout = __UI_GetID("HelpMenuAbout")
     AddButton = __UI_GetID("AddButton")
