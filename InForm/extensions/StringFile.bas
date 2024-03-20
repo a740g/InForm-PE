@@ -91,12 +91,8 @@ END SUB
 ' This will reset the StringFile object if it was previously being used
 FUNCTION StringFile_Load%% (stringFile AS StringFileType, fileName AS STRING)
     IF _FILEEXISTS(fileName) THEN
-        DIM AS LONG fh: fh = FREEFILE
-
-        OPEN fileName FOR BINARY ACCESS READ AS fh
-        stringFile.buffer = INPUT$(LOF(fh), fh)
+        stringFile.buffer = _READFILE$(fileName)
         stringFile.cursor = 0
-        CLOSE fh
 
         StringFile_Load = __STRINGFILE_TRUE
     END IF
@@ -108,11 +104,7 @@ END FUNCTION
 FUNCTION StringFile_Save%% (stringFile AS StringFileType, fileName AS STRING, overwrite AS _BYTE)
     IF _FILEEXISTS(fileName) AND NOT overwrite THEN EXIT FUNCTION
 
-    DIM fh AS LONG: fh = FREEFILE
-
-    OPEN fileName FOR OUTPUT AS fh ' open file in text mode to wipe out the file if it exists
-    PRINT #fh, stringFile.buffer; ' write the buffer to the file (works regardless of the file being opened in text mode)
-    CLOSE fh
+    _WRITEFILE fileName, stringFile.buffer
 
     StringFile_Save = __STRINGFILE_TRUE
 END FUNCTION

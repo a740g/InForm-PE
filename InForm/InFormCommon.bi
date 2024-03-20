@@ -14,7 +14,7 @@ $END IF
 '$INCLUDE:'InFormVersion.bi'
 '$INCLUDE:'extensions/HashTable.bi'
 
-CONST FALSE%% = 0%%, TRUE%% = NOT FALSE
+CONST FALSE%% = 0%%, TRUE%% = NOT FALSE ' Change case
 
 ' InForm theme image IDs
 CONST __INFORM_THEME_IMAGE_ARROWS~%% = 1~%%

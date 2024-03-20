@@ -16,8 +16,8 @@ $VERSIONINFO:OriginalFilename='UiEditor.exe'
 $VERSIONINFO:ProductName='InForm-PE Form Designer'
 $VERSIONINFO:Web='https://github.com/a740g/InForm-PE'
 $VERSIONINFO:Comments='https://github.com/a740g/InForm-PE'
-$VERSIONINFO:FILEVERSION#=1,5,3,0
-$VERSIONINFO:PRODUCTVERSION#=1,5,3,0
+$VERSIONINFO:FILEVERSION#=1,5,4,0
+$VERSIONINFO:PRODUCTVERSION#=1,5,4,0
 $EXEICON:'./resources/InForm.ico'
 
 'Controls: --------------------------------------------------------------------
@@ -31,10 +31,9 @@ DIM SHARED InsertMenu AS LONG, AlignMenu AS LONG, OptionsMenu AS LONG
 DIM SHARED HelpMenu AS LONG, FontSwitchMenu AS LONG
 
 'Frames
-DIM SHARED Toolbox AS LONG, ColorMixer AS LONG
-DIM SHARED OpenFrame AS LONG, ZOrdering AS LONG
-DIM SHARED ControlProperties AS LONG, ControlToggles AS LONG
-DIM SHARED SetControlBinding AS LONG
+DIM SHARED DialogBG AS LONG
+DIM SHARED Toolbox AS LONG, ColorMixer AS LONG, ZOrdering AS LONG
+DIM SHARED ControlProperties AS LONG, ControlToggles AS LONG, SetControlBinding AS LONG
 
 'Menu items
 DIM SHARED FileMenuNew AS LONG, FileMenuOpen AS LONG
@@ -106,14 +105,6 @@ DIM SHARED AutoSize AS LONG, SizeTB AS LONG
 DIM SHARED HideTicks AS LONG, AutoPlayGif AS LONG
 DIM SHARED AddGifExtensionToggle AS LONG
 
-'Open/Save dialog
-DIM SHARED DialogBG AS LONG, FileNameLB AS LONG
-DIM SHARED FileNameTextBox AS LONG, PathLB AS LONG
-DIM SHARED FilesLB AS LONG, FileList AS LONG
-DIM SHARED PathsLB AS LONG, DirList AS LONG
-DIM SHARED OpenBT AS LONG, SaveBT AS LONG, CancelBT AS LONG
-DIM SHARED ShowOnlyFrmbinFilesCB AS LONG, SaveFrmOnlyCB AS LONG
-
 'Z-ordering dialog
 DIM SHARED ControlList AS LONG, UpBT AS LONG
 DIM SHARED DownBT AS LONG, CloseZOrderingBT AS LONG
@@ -168,7 +159,6 @@ DIM SHARED PreviewFormID AS LONG, PreviewSelectionRectangle AS INTEGER
 DIM SHARED PreviewAttached AS _BYTE, AutoNameControls AS _BYTE
 DIM SHARED LastKeyPress AS DOUBLE
 DIM SHARED UiEditorTitle$, Edited AS _BYTE, ZOrderingDialogOpen AS _BYTE
-DIM SHARED OpenDialogOpen AS _BYTE
 DIM SHARED PropertySent AS _BYTE, RevertEdit AS _BYTE, OldColor AS _UNSIGNED LONG
 DIM SHARED ColorPreviewWord$, BlinkStatusBar AS SINGLE, StatusBarBackColor AS _UNSIGNED LONG
 DIM SHARED InstanceHost AS LONG, InstanceClient AS LONG
@@ -191,6 +181,8 @@ TYPE newInputBox
     DataType AS INTEGER
     Sent AS _BYTE
 END TYPE
+
+CONST COMMDLG_DELAY! = 0.2! ' amount of time to wait to let the UI refresh before opening a common dialog window
 
 CONST DT_Text = 1
 CONST DT_Integer = 2
@@ -222,41 +214,40 @@ DIM SHARED TotalFontsFound AS LONG
 REDIM SHARED FontFile(0) AS STRING
 
 CONST QB64_DISPLAY = "QB64-PE"
-DIM SHARED AS STRING QB64_EXE_PATH
 
-$IF WIN THEN
-    CONST PathSep$ = "\"
+$IF WINDOWS THEN
+    CONST DIRECTORY_SEPARATOR = "\"
     CONST QB64_EXE_NAME = "qb64pe.exe"
 $ELSE
-    CONST PathSep$ = "/"
+    CONST DIRECTORY_SEPARATOR = "/"
     CONST QB64_EXE_NAME = "qb64pe"
 $END IF
 
 UiEditorTitle$ = "InForm Designer"
 
-QB64_EXE_PATH = Ini_ReadSetting("InForm/InForm.ini", "InForm Settings", "QB64PE path") ' read the compiler path name from the INI
+DIM SHARED QB64PEExePath AS STRING: QB64PEExePath = Ini_ReadSetting("InForm/InForm.ini", "InForm Settings", "QB64PE path") ' read the compiler path name from the INI
 
-IF NOT _FILEEXISTS(QB64_EXE_PATH) THEN ' if the compiler is missing then look for it in obvious places
-    IF _FILEEXISTS("." + PathSep$ + QB64_EXE_NAME) THEN
-        QB64_EXE_PATH = "." + PathSep$ + QB64_EXE_NAME
-    ELSEIF _FILEEXISTS(".." + PathSep$ + QB64_EXE_NAME) THEN
-        QB64_EXE_PATH = ".." + PathSep$ + QB64_EXE_NAME
-    ELSEIF _FILEEXISTS(".." + PathSep$ + "QB64pe" + PathSep$ + QB64_EXE_NAME) THEN
-        QB64_EXE_PATH = ".." + PathSep$ + "QB64pe" + PathSep$ + QB64_EXE_NAME
-    ELSEIF _FILEEXISTS(".." + PathSep$ + "qb64pe" + PathSep$ + QB64_EXE_NAME) THEN
-        QB64_EXE_PATH = ".." + PathSep$ + "qb64pe" + PathSep$ + QB64_EXE_NAME
+IF NOT _FILEEXISTS(QB64PEExePath) THEN ' if the compiler is missing then look for it in obvious places
+    IF _FILEEXISTS("." + DIRECTORY_SEPARATOR + QB64_EXE_NAME) THEN
+        QB64PEExePath = "." + DIRECTORY_SEPARATOR + QB64_EXE_NAME
+    ELSEIF _FILEEXISTS(".." + DIRECTORY_SEPARATOR + QB64_EXE_NAME) THEN
+        QB64PEExePath = ".." + DIRECTORY_SEPARATOR + QB64_EXE_NAME
+    ELSEIF _FILEEXISTS(".." + DIRECTORY_SEPARATOR + "QB64pe" + DIRECTORY_SEPARATOR + QB64_EXE_NAME) THEN
+        QB64PEExePath = ".." + DIRECTORY_SEPARATOR + "QB64pe" + DIRECTORY_SEPARATOR + QB64_EXE_NAME
+    ELSEIF _FILEEXISTS(".." + DIRECTORY_SEPARATOR + "qb64pe" + DIRECTORY_SEPARATOR + QB64_EXE_NAME) THEN
+        QB64PEExePath = ".." + DIRECTORY_SEPARATOR + "qb64pe" + DIRECTORY_SEPARATOR + QB64_EXE_NAME
     ELSE
-        QB64_EXE_PATH = _SELECTFOLDERDIALOG$("Select QB64-PE directory:")
+        QB64PEExePath = _SELECTFOLDERDIALOG$("Select QB64-PE directory:")
 
-        IF _FILEEXISTS(QB64_EXE_PATH + PathSep$ + QB64_EXE_NAME) THEN
-            QB64_EXE_PATH = QB64_EXE_PATH + PathSep$ + QB64_EXE_NAME
+        IF _FILEEXISTS(QB64PEExePath + DIRECTORY_SEPARATOR + QB64_EXE_NAME) THEN
+            QB64PEExePath = QB64PEExePath + DIRECTORY_SEPARATOR + QB64_EXE_NAME
         ELSE
             _MESSAGEBOX UiEditorTitle$, QB64_DISPLAY + " executable not found.", "error"
 
             SYSTEM 1
         END IF
 
-        Ini_WriteSetting "InForm/InForm.ini", "InForm Settings", "QB64PE path", QB64_EXE_PATH ' save the complete path name to the INI
+        Ini_WriteSetting "InForm/InForm.ini", "InForm Settings", "QB64PE path", QB64PEExePath ' save the complete path name to the INI
     END IF
 END IF
 
@@ -278,80 +269,21 @@ $IF WIN THEN
     DECLARE DYNAMIC LIBRARY "user32"
         FUNCTION SetForegroundWindow& (BYVAL hWnd AS LONG)
     END DECLARE
-
-    ''Registry routines taken from the Wiki: http://www.qb64.org/wiki/Windows_Libraries#Registered_Fonts
-    ''Code courtesy of Michael Calkins
-    ''winreg.h
-    CONST HKEY_CLASSES_ROOT = &H80000000~&
-    CONST HKEY_CURRENT_USER = &H80000001~&
-    CONST HKEY_LOCAL_MACHINE = &H80000002~&
-    CONST HKEY_USERS = &H80000003~&
-    CONST HKEY_PERFORMANCE_DATA = &H80000004~&
-    CONST HKEY_CURRENT_CONFIG = &H80000005~&
-    CONST HKEY_DYN_DATA = &H80000006~&
-    CONST REG_OPTION_VOLATILE = 1
-    CONST REG_OPTION_NON_VOLATILE = 0
-    CONST REG_CREATED_NEW_KEY = 1
-    CONST REG_OPENED_EXISTING_KEY = 2
-
-    ''http://msdn.microsoft.com/en-us/library/ms724884(v=VS.85).aspx
-    CONST REG_NONE = 0
-    CONST REG_SZ = 1
-    CONST REG_EXPAND_SZ = 2
-    CONST REG_BINARY = 3
-    CONST REG_DWORD_LITTLE_ENDIAN = 4
-    CONST REG_DWORD = 4
-    CONST REG_DWORD_BIG_ENDIAN = 5
-    CONST REG_LINK = 6
-    CONST REG_MULTI_SZ = 7
-    CONST REG_RESOURCE_LIST = 8
-    CONST REG_FULL_RESOURCE_DESCRIPTOR = 9
-    CONST REG_RESOURCE_REQUIREMENTS_LIST = 10
-    CONST REG_QWORD_LITTLE_ENDIAN = 11
-    CONST REG_QWORD = 11
-    CONST REG_NOTIFY_CHANGE_NAME = 1
-    CONST REG_NOTIFY_CHANGE_ATTRIBUTES = 2
-    CONST REG_NOTIFY_CHANGE_LAST_SET = 4
-    CONST REG_NOTIFY_CHANGE_SECURITY = 8
-
-    ''http://msdn.microsoft.com/en-us/library/ms724878(v=VS.85).aspx
-    CONST KEY_ALL_ACCESS = &HF003F&
-    CONST KEY_CREATE_LINK = &H0020&
-    CONST KEY_CREATE_SUB_KEY = &H0004&
-    CONST KEY_ENUMERATE_SUB_KEYS = &H0008&
-    CONST KEY_EXECUTE = &H20019&
-    CONST KEY_NOTIFY = &H0010&
-    CONST KEY_QUERY_VALUE = &H0001&
-    CONST KEY_READ = &H20019&
-    CONST KEY_SET_VALUE = &H0002&
-    CONST KEY_WOW64_32KEY = &H0200&
-    CONST KEY_WOW64_64KEY = &H0100&
-    CONST KEY_WRITE = &H20006&
-
-    ''winerror.h
-    ''http://msdn.microsoft.com/en-us/library/ms681382(v=VS.85).aspx
-    CONST ERROR_SUCCESS = 0
-    CONST ERROR_FILE_NOT_FOUND = &H2&
-    CONST ERROR_INVALID_HANDLE = &H6&
-    CONST ERROR_MORE_DATA = &HEA&
-    CONST ERROR_NO_MORE_ITEMS = &H103&
-
-    DECLARE DYNAMIC LIBRARY "advapi32"
-        FUNCTION RegOpenKeyExA& (BYVAL hKey AS _OFFSET, BYVAL lpSubKey AS _OFFSET, BYVAL ulOptions AS _UNSIGNED LONG, BYVAL samDesired AS _UNSIGNED LONG, BYVAL phkResult AS _OFFSET)
-        FUNCTION RegCloseKey& (BYVAL hKey AS _OFFSET)
-        FUNCTION RegEnumValueA& (BYVAL hKey AS _OFFSET, BYVAL dwIndex AS _UNSIGNED LONG, BYVAL lpValueName AS _OFFSET, BYVAL lpcchValueName AS _OFFSET, BYVAL lpReserved AS _OFFSET, BYVAL lpType AS _OFFSET, BYVAL lpData AS _OFFSET, BYVAL lpcbData AS _OFFSET)
-    END DECLARE
 $ELSE
     DECLARE LIBRARY
     FUNCTION PROCESS_CLOSED& ALIAS kill (BYVAL pid AS INTEGER, BYVAL signal AS INTEGER)
     END DECLARE
 $END IF
 
+'$INCLUDE:'extensions/Pathname.bi'
 '$INCLUDE:'extensions/Ini.bi'
+'$INCLUDE:'extensions/FontMgr.bi'
 '$INCLUDE:'InForm.bi'
 '$INCLUDE:'UiEditor.frm'
 '$INCLUDE:'InForm.ui'
+'$INCLUDE:'extensions/Pathname.bas'
 '$INCLUDE:'extensions/Ini.bas'
+'$INCLUDE:'extensions/FontMgr.bas'
 
 'Event procedures: ---------------------------------------------------------------
 SUB __UI_Click (id AS LONG)
@@ -479,7 +411,7 @@ SUB __UI_Click (id AS LONG)
             SendData b$, 44
         CASE AddGifExtensionToggle
             IF Control(AddGifExtensionToggle).Value = FALSE AND TotalGifLoaded > 0 THEN
-                _DELAY 0.2: Answer = _MESSAGEBOX(UiEditorTitle$, "Removing the GIF extension will load the existing animations as static frames. Proceed?", "yesno", "question", 0)
+                _DELAY COMMDLG_DELAY: Answer = _MESSAGEBOX(UiEditorTitle$, "Removing the GIF extension will load the existing animations as static frames. Proceed?", "yesno", "question", 0)
                 IF Answer = 0 THEN
                     Control(AddGifExtensionToggle).Value = TRUE
                 ELSE
@@ -509,7 +441,7 @@ SUB __UI_Click (id AS LONG)
             END IF
         CASE FileMenuNew
             IF Edited THEN
-                _DELAY 0.2: Answer = _MESSAGEBOX(UiEditorTitle$, "Save the current form?", "yesnocancel", "question", 1)
+                _DELAY COMMDLG_DELAY: Answer = _MESSAGEBOX(UiEditorTitle$, "Save the current form?", "yesnocancel", "question", 1)
                 IF Answer = 0 THEN
                     EXIT SUB
                 ELSEIF Answer = 1 THEN
@@ -527,75 +459,54 @@ SUB __UI_Click (id AS LONG)
             LoadedWithGifExtension = FALSE
             Edited = FALSE
             SendSignal -5
+
         CASE FileMenuSave
             IF LEN(ThisFileName$) THEN
                 SaveForm TRUE, FALSE
             ELSE
                 GOTO SaveAs
             END IF
+
         CASE FileMenuSaveAs
             SaveAs:
-            'Refresh the file list control's contents
-            DIM TotalFiles%
-            IF CurrentPath$ = "" THEN CurrentPath$ = _STARTDIR$
-            Text(FileList) = idezfilelist$(CurrentPath$, Control(ShowOnlyFrmbinFilesCB).Value + 1, 1, TotalFiles%)
-            Control(FileList).Max = TotalFiles%
-            Control(FileList).LastVisibleItem = 0 'Reset it so it's recalculated
 
-            Control(DialogBG).Left = 0: Control(DialogBG).Top = 0
-            Control(OpenFrame).Left = 18: Control(OpenFrame).Top = 40
-            Caption(OpenFrame) = "Save as"
-            Control(SaveBT).Hidden = FALSE
-            Control(OpenBT).Hidden = TRUE
-            Control(SaveFrmOnlyCB).Hidden = FALSE
-            Control(ShowOnlyFrmbinFilesCB).Hidden = TRUE
-            Control(SaveFrmOnlyCB).Value = FALSE
-            OpenDialogOpen = TRUE
+            'Hide the preview
+            SendSignal -2
+
+            IF LEN(CurrentPath$) = 0 THEN CurrentPath$ = Pathname_FixDirectoryName(_STARTDIR$)
+
+            ' TODO
+            'Control(SaveFrmOnlyCB).Hidden = False
+
             Caption(StatusBar) = "Specify the name under which to save the current form..."
-            __UI_Focus = FileNameTextBox
-            IF LEN(ThisFileName$) THEN
-                Text(FileNameTextBox) = ThisFileName$
-            ELSE
-                Text(FileNameTextBox) = ""
-            END IF
-            IF LEN(Text(FileNameTextBox)) THEN
-                Control(FileNameTextBox).SelectionStart = 0
-                Control(FileNameTextBox).Cursor = LEN(Text(FileNameTextBox))
-                Control(FileNameTextBox).TextIsSelected = TRUE
-            END IF
-            __UI_ForceRedraw = TRUE
-        CASE SaveBT
-            SaveFile:
-            IF OpenDialogOpen THEN
-                DIM FileToOpen$, FreeFileNum AS INTEGER
-                FileToOpen$ = CurrentPath$ + PathSep$ + Text(FileNameTextBox)
-                ThisFileName$ = LTRIM$(RTRIM$(Text(FileNameTextBox)))
-                IF ThisFileName$ = "" THEN EXIT SUB
-                IF UCASE$(RIGHT$(ThisFileName$, 4)) <> ".FRM" THEN
-                    ThisFileName$ = ThisFileName$ + ".frm"
+
+            _DELAY COMMDLG_DELAY
+            DIM tmpFileName AS STRING: tmpFileName = _SAVEFILEDIALOG$(UiEditorTitle$ + ": Save As", CurrentPath$, "*.frm|*.FRM|*.Frm", "InForm form files")
+
+            IF LEN(tmpFileName) THEN
+                IF UCASE$(RIGHT$(tmpFileName, 4)) <> ".FRM" THEN
+                    tmpFileName = tmpFileName + ".frm"
                 END IF
-                Control(DialogBG).Left = -600: Control(DialogBG).Top = -600
-                Control(OpenFrame).Left = -600: Control(OpenFrame).Top = -600
-                Control(FileList).FirstVisibleLine = 1
-                Control(FileList).InputViewStart = 1
-                Control(FileList).Value = 0
-                Control(FileList).LastVisibleItem = 0 'Reset it so it's recalculated
-                Control(DirList).FirstVisibleLine = 1
-                Control(DirList).InputViewStart = 1
-                Control(DirList).Value = 0
-                Control(DirList).LastVisibleItem = 0 'Reset it so it's recalculated
-                OpenDialogOpen = FALSE
-                Caption(StatusBar) = "Ready."
-                __UI_Focus = 0
-                SaveForm TRUE, Control(SaveFrmOnlyCB).Value
+
+                ThisFileName$ = Pathname_GetFileName(tmpFileName)
+                CurrentPath$ = Pathname_GetPath(tmpFileName)
+                SaveForm TRUE, FALSE ' Control(SaveFrmOnlyCB).Value < TODO:
             END IF
+
+            Caption(StatusBar) = "Ready."
+
+            'Show the preview
+            SendSignal -3
+
+            __UI_ForceRedraw = TRUE
+
         CASE HelpMenuAbout
             MessageBox "InForm GUI engine for QB64-PE\n\nCopyright (c) 2024 Samuel Gomes - @a740g\nCopyright (c) 2023 George McGinn - gbytes58@gmail.com\nCopyright (c) 2022 Fellippe Heitor - @FellippeHeitor\n\n" + UiEditorTitle$ + " v" + __UI_Version + "\n\nhttps://github.com/a740g/InForm-PE", UiEditorTitle$ + " - About", MsgBox_Information
         CASE HelpMenuHelp
             MessageBox "Design a form and export the resulting code to generate an event-driven QB64-PE program.", UiEditorTitle$ + " - What's all this?", MsgBox_Information
         CASE FileMenuExit
             IF Edited THEN
-                _DELAY 0.2: Answer = _MESSAGEBOX(UiEditorTitle$, "Save the current form before leaving?", "yesnocancel", "question", 1)
+                _DELAY COMMDLG_DELAY: Answer = _MESSAGEBOX(UiEditorTitle$, "Save the current form before leaving?", "yesnocancel", "question", 1)
                 IF Answer = 0 THEN
                     EXIT SUB
                 ELSEIF Answer = 1 THEN
@@ -719,9 +630,10 @@ SUB __UI_Click (id AS LONG)
             Control(ControlList).Value = PrevListValue + 1
             __UI_Focus = ControlList
             __UI_ValueChanged ControlList
+
         CASE FileMenuOpen
             IF Edited THEN
-                _DELAY 0.2: Answer = _MESSAGEBOX(UiEditorTitle$, "Save the current form?", "yesnocancel", "question", 1)
+                _DELAY COMMDLG_DELAY: Answer = _MESSAGEBOX(UiEditorTitle$, "Save the current form?", "yesnocancel", "question", 1)
                 IF Answer = 0 THEN
                     EXIT SUB
                 ELSEIF Answer = 1 THEN
@@ -732,55 +644,27 @@ SUB __UI_Click (id AS LONG)
             'Hide the preview
             SendSignal -2
 
-            'Refresh the file list control's contents
-            IF CurrentPath$ = "" THEN CurrentPath$ = _STARTDIR$
-            Text(FileList) = idezfilelist$(CurrentPath$, Control(ShowOnlyFrmbinFilesCB).Value + 1, 1, TotalFiles%)
-            Control(FileList).Max = TotalFiles%
-            Control(FileList).LastVisibleItem = 0 'Reset it so it's recalculated
+            IF LEN(CurrentPath$) = 0 THEN CurrentPath$ = Pathname_FixDirectoryName(_STARTDIR$)
 
-            Control(DialogBG).Left = 0: Control(DialogBG).Top = 0
-            Control(OpenFrame).Left = 18: Control(OpenFrame).Top = 40
-            Caption(OpenFrame) = "Open"
-            Control(SaveBT).Hidden = TRUE
-            Control(OpenBT).Hidden = FALSE
-            Control(SaveFrmOnlyCB).Hidden = TRUE
-            Control(ShowOnlyFrmbinFilesCB).Hidden = FALSE
-            OpenDialogOpen = TRUE
             Caption(StatusBar) = "Select a form file to load..."
-            __UI_Focus = FileNameTextBox
-            IF LEN(Text(FileNameTextBox)) > 0 THEN
-                Control(FileNameTextBox).SelectionStart = 0
-                Control(FileNameTextBox).Cursor = LEN(Text(FileNameTextBox))
-                Control(FileNameTextBox).TextIsSelected = TRUE
-            END IF
-            __UI_ForceRedraw = TRUE
-        CASE CancelBT
-            Text(FileNameTextBox) = ""
-            Control(DialogBG).Left = -600: Control(DialogBG).Top = -600
-            Control(OpenFrame).Left = -600: Control(OpenFrame).Top = -600
-            OpenDialogOpen = FALSE
+
+            _DELAY COMMDLG_DELAY
+            tmpFileName = _OPENFILEDIALOG$(UiEditorTitle$ + ": Open", CurrentPath$, "*.frm|*.FRM|*.Frm", "InForm form files")
+
+            OpenForm tmpFileName
+
             Caption(StatusBar) = "Ready."
+
             'Show the preview
             SendSignal -3
 
-            __UI_Focus = 0
             __UI_ForceRedraw = TRUE
-        CASE FileMenuRecent1, FileMenuRecent2, FileMenuRecent3, FileMenuRecent4, FileMenuRecent5, FileMenuRecent6, FileMenuRecent7, FileMenuRecent8, FileMenuRecent9
-            DIM RecentToOpen$
-            RecentToOpen$ = ToolTip(id)
-            IF _FILEEXISTS(RecentToOpen$) THEN
-                IF INSTR(RecentToOpen$, "/") > 0 OR INSTR(RecentToOpen$, "\") > 0 THEN
-                    FOR i = LEN(RecentToOpen$) TO 1 STEP -1
-                        IF ASC(RecentToOpen$, i) = 92 OR ASC(RecentToOpen$, i) = 47 THEN
-                            CurrentPath$ = LEFT$(RecentToOpen$, i - 1)
-                            RecentToOpen$ = MID$(RecentToOpen$, i + 1)
-                            EXIT FOR
-                        END IF
-                    NEXT
-                END IF
 
+        CASE FileMenuRecent1, FileMenuRecent2, FileMenuRecent3, FileMenuRecent4, FileMenuRecent5, FileMenuRecent6, FileMenuRecent7, FileMenuRecent8, FileMenuRecent9
+            tmpFileName = ToolTip(id)
+            IF _FILEEXISTS(tmpFileName) THEN
                 IF Edited THEN
-                    _DELAY 0.2: Answer = _MESSAGEBOX(UiEditorTitle$, "Save the current form?", "yesnocancel", "question", 1)
+                    _DELAY COMMDLG_DELAY: Answer = _MESSAGEBOX(UiEditorTitle$, "Save the current form?", "yesnocancel", "question", 1)
                     IF Answer = 0 THEN
                         EXIT SUB
                     ELSEIF Answer = 1 THEN
@@ -788,101 +672,43 @@ SUB __UI_Click (id AS LONG)
                     END IF
                 END IF
 
-                Text(FileNameTextBox) = RecentToOpen$
-                OpenDialogOpen = TRUE
-                __UI_Click OpenBT
+                ' Check if GIFPlay library was used
+                LoadedWithGifExtension = FALSE
+
+                IF _FILEEXISTS(LEFT$(tmpFileName, LEN(tmpFileName) - 4) + ".bas") THEN
+                    b$ = LCASE$(_READFILE$(LEFT$(tmpFileName, LEN(tmpFileName) - 4) + ".bas"))
+                    IF INSTR(b$, CHR$(10) + "'$include:'inform/extensions/gifplay.bas'") > 0 THEN
+                        LoadedWithGifExtension = TRUE
+                    END IF
+                END IF
+
+                ThisFileName$ = Pathname_GetFileName(tmpFileName)
+                CurrentPath$ = Pathname_GetPath(tmpFileName)
+
+                'Send open command
+                IF LoadedWithGifExtension = FALSE THEN
+                    LoadedWithGifExtension = 1 'Set to 1 to check whether a loaded file already had the gif extension
+                    Control(AddGifExtensionToggle).Value = FALSE
+                ELSE
+                    Control(AddGifExtensionToggle).Value = TRUE
+                END IF
+                AddGifExtension = FALSE
+                b$ = "OPENFILE>" + tmpFileName + "<END>"
+                Send Client, b$
+
+                SendSignal -4
+
+                __UI_Focus = 0
+                Edited = FALSE
+                LastFormData$ = ""
+                Stream$ = ""
+                FormDataReceived = FALSE
+                InitialControlSet = ""
             ELSE
                 MessageBox "File not found.", UiEditorTitle$, MsgBox_Critical
-                RemoveFromRecentList RecentToOpen$
+                RemoveFromRecentList tmpFileName
             END IF
-        CASE OpenBT
-            OpenFile:
-            IF OpenDialogOpen THEN
-                FileToOpen$ = CurrentPath$ + PathSep$ + Text(FileNameTextBox)
-                IF _FILEEXISTS(FileToOpen$) THEN
-                    LoadedWithGifExtension = FALSE
-                    IF _FILEEXISTS(LEFT$(FileToOpen$, LEN(FileToOpen$) - 4) + ".bas") THEN
-                        FreeFileNum = FREEFILE
-                        OPEN LEFT$(FileToOpen$, LEN(FileToOpen$) - 4) + ".bas" FOR BINARY AS #FreeFileNum
-                        b$ = SPACE$(LOF(FreeFileNum))
-                        GET #FreeFileNum, 1, b$
-                        CLOSE #FreeFileNum
-                        IF INSTR(b$, CHR$(10) + "'$INCLUDE:'InForm/extensions/GIFPlay.bas'") > 0 THEN
-                            LoadedWithGifExtension = TRUE
-                        END IF
-                    END IF
 
-                    AddToRecentList FileToOpen$
-                    ThisFileName$ = Text(FileNameTextBox)
-
-                    'Send open command
-                    IF LoadedWithGifExtension = FALSE THEN
-                        LoadedWithGifExtension = 1 'Set to 1 to check whether a loaded file already had the gif extension
-                        Control(AddGifExtensionToggle).Value = FALSE
-                    ELSE
-                        Control(AddGifExtensionToggle).Value = TRUE
-                    END IF
-                    AddGifExtension = FALSE
-                    b$ = "OPENFILE>" + FileToOpen$ + "<END>"
-                    Send Client, b$
-
-                    SendSignal -4
-
-                    Control(DialogBG).Left = -600: Control(DialogBG).Top = -600
-                    Control(OpenFrame).Left = -600: Control(OpenFrame).Top = -600
-                    Control(FileList).FirstVisibleLine = 1
-                    Control(FileList).InputViewStart = 1
-                    Control(FileList).Value = 0
-                    Control(FileList).LastVisibleItem = 0 'Reset it so it's recalculated
-                    Control(DirList).FirstVisibleLine = 1
-                    Control(DirList).InputViewStart = 1
-                    Control(DirList).Value = 0
-                    Control(DirList).LastVisibleItem = 0 'Reset it so it's recalculated
-                    OpenDialogOpen = FALSE
-                    Caption(StatusBar) = "Ready."
-                    __UI_Focus = 0
-                    Edited = FALSE
-                    LastFormData$ = ""
-                    Stream$ = ""
-                    FormDataReceived = FALSE
-                    InitialControlSet = ""
-                ELSE
-                    MessageBox "File not found.", UiEditorTitle$, MsgBox_Critical
-                    Control(FileList).Value = 0
-                END IF
-            END IF
-        CASE FileList
-            Text(FileNameTextBox) = GetItem(FileList, Control(FileList).Value)
-            Control(DirList).Value = 0
-            IF Control(FileList).HoveringVScrollbarButton = 0 AND LastClickedID = id AND TIMER - LastClick# < .3 THEN 'Double click
-                IF LEN(Text(FileNameTextBox)) > 0 THEN
-                    IF Caption(OpenFrame) = "Open" THEN
-                        GOTO OpenFile
-                    ELSE
-                        GOTO SaveFile
-                    END IF
-                END IF
-            END IF
-        CASE DirList
-            Text(FileNameTextBox) = GetItem(DirList, Control(DirList).Value)
-            Control(FileList).Value = 0
-            IF LastClickedID = id AND TIMER - LastClick# < .3 THEN 'Double click
-                CurrentPath$ = idezchangepath(CurrentPath$, Text(FileNameTextBox))
-                Caption(PathLB) = "Path: " + CurrentPath$
-                Text(DirList) = idezpathlist$(CurrentPath$, TotalFiles%)
-                Control(DirList).Max = TotalFiles%
-                Control(DirList).LastVisibleItem = 0 'Reset it so it's recalculated
-                Control(DirList).Value = 0
-                GOTO ReloadList
-            END IF
-        CASE ShowOnlyFrmbinFilesCB
-            ReloadList:
-            Text(FileList) = idezfilelist$(CurrentPath$, Control(ShowOnlyFrmbinFilesCB).Value + 1, 1, TotalFiles%)
-            Control(FileList).Max = TotalFiles%
-            Control(FileList).FirstVisibleLine = 1
-            Control(FileList).InputViewStart = 1
-            Control(FileList).Value = 0
-            Control(FileList).LastVisibleItem = 0 'Reset it so it's recalculated
         CASE EditMenuUndo
             SendSignal 214
         CASE EditMenuRedo
@@ -949,7 +775,7 @@ SUB __UI_Click (id AS LONG)
 
     LastClickedID = id
     LastClick# = TIMER
-    IF Caption(StatusBar) = "" THEN Caption(StatusBar) = "Ready."
+    IF LEN(Caption(StatusBar)) = 0 THEN Caption(StatusBar) = "Ready."
 END SUB
 
 SUB __UI_MouseEnter (id AS LONG)
@@ -1042,18 +868,19 @@ SUB __UI_FocusIn (id AS LONG)
             InputBoxText(ThisInputBox) = Text(id)
             InputBox(ThisInputBox).Sent = FALSE
             Caption(StatusBar) = "Editing property"
-        CASE FileNameTextBox
-            IF OpenDialogOpen = FALSE THEN __UI_Focus = AddButton
+
         CASE ControlList
-            IF OpenDialogOpen THEN __UI_Focus = FileNameTextBox
+            IF ZOrderingDialogOpen = FALSE THEN __UI_Focus = AddButton
+
         CASE BlueValue
-            IF OpenDialogOpen THEN __UI_Focus = CancelBT
+
         CASE CloseZOrderingBT
             IF ZOrderingDialogOpen = FALSE THEN __UI_Focus = BlueValue
+
         CASE AddButton
             IF ZOrderingDialogOpen THEN __UI_Focus = ControlList
-        CASE CancelBT
-            IF ZOrderingDialogOpen THEN __UI_Focus = CloseZOrderingBT
+            IF SetBindingDialogOpen THEN __UI_Focus = SourcePropertyList
+
         CASE KeyboardComboBT
             __UI_BypassKeyCombos = TRUE
             Caption(KeyboardComboBT) = CHR$(7) + " hit a key combo... (ESC to clear)"
@@ -1109,6 +936,45 @@ SUB __UI_MouseUp (id AS LONG)
     END SELECT
 END SUB
 
+SUB OpenForm (frmFileName AS STRING)
+    IF LEN(frmFileName) THEN
+        ' Check if GIFPlay library was used
+        LoadedWithGifExtension = FALSE
+
+        IF _FILEEXISTS(LEFT$(frmFileName, LEN(frmFileName) - 4) + ".bas") THEN
+            DIM b$: b$ = LCASE$(_READFILE$(LEFT$(frmFileName, LEN(frmFileName) - 4) + ".bas"))
+            IF INSTR(b$, CHR$(10) + "'$include:'inform/extensions/gifplay.bas'") > 0 THEN
+                LoadedWithGifExtension = TRUE
+            END IF
+        END IF
+
+        AddToRecentList frmFileName
+
+        ThisFileName$ = Pathname_GetFileName(frmFileName)
+        CurrentPath$ = Pathname_GetPath(frmFileName)
+
+        'Send open command
+        IF LoadedWithGifExtension = FALSE THEN
+            LoadedWithGifExtension = 1 'Set to 1 to check whether a loaded file already had the gif extension
+            Control(AddGifExtensionToggle).Value = FALSE
+        ELSE
+            Control(AddGifExtensionToggle).Value = TRUE
+        END IF
+        AddGifExtension = FALSE
+        b$ = "OPENFILE>" + frmFileName + "<END>"
+        Send Client, b$
+
+        SendSignal -4
+
+        __UI_Focus = 0
+        Edited = FALSE
+        LastFormData$ = ""
+        Stream$ = ""
+        FormDataReceived = FALSE
+        InitialControlSet = ""
+    END IF
+END SUB
+
 SUB AddToRecentList (FileName$)
     DIM i AS LONG, j AS LONG, b$
 
@@ -1153,7 +1019,6 @@ SUB RemoveFromRecentList (FileName$)
     RecentListBuilt = FALSE
 END SUB
 
-
 SUB SendNewRGB
     DIM b$, NewColor AS _UNSIGNED LONG
     NewColor = _RGB32(Control(Red).Value, Control(Green).Value, Control(Blue).Value)
@@ -1176,18 +1041,27 @@ END SUB
 SUB SelectFontInList (FontSetup$)
     DIM i AS LONG, thisFile$, thisSize%
 
-    IF FontSetup$ = "" THEN EXIT SUB
+    IF LEN(FontSetup$) = 0 THEN EXIT SUB
 
     thisFile$ = UCASE$(LEFT$(FontSetup$, INSTR(FontSetup$, ",") - 1))
     thisSize% = VAL(MID$(FontSetup$, INSTR(FontSetup$, ",") + 1))
 
-    ResetList FontSizeList
-    FOR i = 8 TO 120
-        AddItem FontSizeList, LTRIM$(STR$(i))
-    NEXT
-    i = SelectItem(FontSizeList, LTRIM$(STR$(thisSize%)))
-
     IF LEN(thisFile$) > 0 THEN
+        ResetList FontSizeList
+
+        DIM AS _UNSIGNED _BYTE minSize, maxSize
+        IF FontMgr_GetSizeRange(thisFile$, 0, minSize, maxSize) THEN
+            FOR i = minSize TO maxSize
+                AddItem FontSizeList, LTRIM$(STR$(i))
+            NEXT
+        ELSE
+            FOR i = 8 TO 120
+                AddItem FontSizeList, LTRIM$(STR$(i))
+            NEXT
+        END IF
+
+        i = SelectItem(FontSizeList, LTRIM$(STR$(thisSize%)))
+
         FOR i = 1 TO UBOUND(FontFile)
             IF UCASE$(RIGHT$(FontFile(i), LEN(thisFile$))) = thisFile$ THEN
                 Control(FontList).Value = i
@@ -1214,7 +1088,7 @@ SUB SelectFontInList (FontSetup$)
     BypassShowFontList = TRUE
     IF AttemptToShowFontList THEN
         AttemptToShowFontList = FALSE
-        _DELAY 0.2: i = _MESSAGEBOX(UiEditorTitle$, "The current font isn't a system font.\nReset this control to the built-in font?", "yesno", "question", 1)
+        _DELAY COMMDLG_DELAY: i = _MESSAGEBOX(UiEditorTitle$, "The current font isn't a system font.\nReset this control to the built-in font?", "yesno", "question", 1)
         IF i = 1 THEN
             thisFile$ = ",16"
             thisFile$ = MKL$(LEN(thisFile$)) + thisFile$
@@ -1274,16 +1148,6 @@ SUB __UI_BeforeUpdateDisplay
         Control(KeyboardComboBT).Redraw = TRUE
     END IF
 
-    IF OpenDialogOpen THEN
-        IF LEN(RTRIM$(LTRIM$(Text(FileNameTextBox)))) = 0 THEN
-            Control(OpenBT).Disabled = TRUE
-            Control(SaveBT).Disabled = TRUE
-        ELSE
-            Control(OpenBT).Disabled = FALSE
-            Control(SaveBT).Disabled = FALSE
-        END IF
-    END IF
-
     IF RecentListBuilt = FALSE THEN
         'Build list of recent projects
         RecentListBuilt = TRUE
@@ -1291,9 +1155,9 @@ SUB __UI_BeforeUpdateDisplay
             b$ = Ini_ReadSetting("InForm/InForm.ini", "Recent Projects", STR$(i))
             IF LEN(b$) THEN
                 ToolTip(RecentMenuItem(i)) = b$
-                IF INSTR(b$, PathSep$) > 0 THEN
+                IF INSTR(b$, DIRECTORY_SEPARATOR) > 0 THEN
                     FOR j = LEN(b$) TO 1 STEP -1
-                        IF MID$(b$, j, 1) = PathSep$ THEN
+                        IF MID$(b$, j, 1) = DIRECTORY_SEPARATOR THEN
                             SetCaption RecentMenuItem(i), "&" + LTRIM$(STR$(i)) + " " + MID$(b$, j + 1)
                             EXIT FOR
                         END IF
@@ -1316,11 +1180,10 @@ SUB __UI_BeforeUpdateDisplay
     END IF
 
     IF __UI_Focus = 0 THEN
-        IF Caption(StatusBar) = "" THEN Caption(StatusBar) = "Ready."
+        IF LEN(Caption(StatusBar)) = 0 THEN Caption(StatusBar) = "Ready."
     END IF
 
-IF __UI_MouseDownOnID = Red OR __UI_MouseDownOnID = Green OR __UI_MouseDownOnID = Blue OR _
-__UI_PreviousMouseDownOnID = Red OR __UI_PreviousMouseDownOnID = Green OR __UI_PreviousMouseDownOnID = Blue THEN
+    IF __UI_MouseDownOnID = Red OR __UI_MouseDownOnID = Green OR __UI_MouseDownOnID = Blue OR __UI_PreviousMouseDownOnID = Red OR __UI_PreviousMouseDownOnID = Green OR __UI_PreviousMouseDownOnID = Blue THEN
 
         SELECT CASE __UI_MouseDownOnID + __UI_PreviousMouseDownOnID
             CASE Red
@@ -1368,7 +1231,7 @@ __UI_PreviousMouseDownOnID = Red OR __UI_PreviousMouseDownOnID = Green OR __UI_P
                     END IF
 
                     IF Edited THEN
-                        _DELAY 0.2: Answer = _MESSAGEBOX(UiEditorTitle$, "Save the current form?", "yesnocancel", "question", 1)
+                        _DELAY COMMDLG_DELAY: Answer = _MESSAGEBOX(UiEditorTitle$, "Save the current form?", "yesnocancel", "question", 1)
                         IF Answer = 0 THEN
                             CLOSE InstanceClient
                             InstanceClient = 0
@@ -1378,9 +1241,7 @@ __UI_PreviousMouseDownOnID = Red OR __UI_PreviousMouseDownOnID = Green OR __UI_P
                         END IF
                     END IF
 
-                    Text(FileNameTextBox) = InstanceStream$
-                    OpenDialogOpen = TRUE
-                    __UI_Click OpenBT
+                    OpenForm InstanceStream$
                 END IF
             END IF
             CLOSE InstanceClient
@@ -1547,7 +1408,7 @@ __UI_PreviousMouseDownOnID = Red OR __UI_PreviousMouseDownOnID = Green OR __UI_P
 
     IF NOT FormDataReceived THEN EXIT SUB
 
-    IF InitialControlSet = "" THEN
+    IF LEN(InitialControlSet) = 0 THEN
         InitialControlSet = CHR$(1)
         FOR i = 1 TO UBOUND(PreviewControls)
             IF PreviewControls(i).ID > 0 AND PreviewControls(i).Type <> __UI_Type_Font AND PreviewControls(i).Type <> __UI_Type_MenuPanel THEN
@@ -2569,11 +2430,11 @@ END SUB
 SUB __UI_BeforeUnload
     DIM Answer AS _BYTE
     IF Edited THEN
-        _DELAY 0.2: Answer = _MESSAGEBOX(UiEditorTitle$, "Save the current form before leaving?", "yesnocancel", "question", 1)
+        _DELAY COMMDLG_DELAY: Answer = _MESSAGEBOX(UiEditorTitle$, "Save the current form before leaving?", "yesnocancel", "question", 1)
         IF Answer = 0 THEN
             __UI_UnloadSignal = FALSE
         ELSEIF Answer = 1 THEN
-            IF ThisFileName$ = "" THEN
+            IF LEN(ThisFileName$) = 0 THEN
                 ThisFileName$ = "untitled"
             END IF
             SaveForm FALSE, FALSE
@@ -2833,7 +2694,7 @@ SUB __UI_OnLoad
                                     IF INSTR(COMMAND$, "/") > 0 OR INSTR(COMMAND$, "\") > 0 THEN
                                         FOR i = LEN(COMMAND$) TO 1 STEP -1
                                             IF ASC(COMMAND$, i) = 92 OR ASC(COMMAND$, i) = 47 THEN
-                                                FileToOpen$ = LEFT$(COMMAND$, i - 1) + PathSep$ + FileToOpen$
+                                                FileToOpen$ = LEFT$(COMMAND$, i - 1) + DIRECTORY_SEPARATOR + FileToOpen$
                                                 EXIT FOR
                                             END IF
                                         NEXT
@@ -2900,23 +2761,6 @@ SUB __UI_OnLoad
     $ELSE
         IF _FILEEXISTS("InForm/UiEditorPreview") = 0 THEN GOTO UiEditorPreviewNotFound
     $END IF
-
-    b$ = "Reading directory..."
-    GOSUB ShowMessage
-    'Fill "open dialog" listboxes:
-    '-------------------------------------------------
-    DIM TotalFiles%
-    IF CurrentPath$ = "" THEN CurrentPath$ = _STARTDIR$
-    Text(FileList) = idezfilelist$(CurrentPath$, 0, 1, TotalFiles%)
-    Control(FileList).Max = TotalFiles%
-    Control(FileList).LastVisibleItem = 0 'Reset it so it's recalculated
-
-    Text(DirList) = idezpathlist$(CurrentPath$, TotalFiles%)
-    Control(DirList).Max = TotalFiles%
-    Control(DirList).LastVisibleItem = 0 'Reset it so it's recalculated
-
-    Caption(PathLB) = "Path: " + CurrentPath$
-    '-------------------------------------------------
 
     'Load font list
     b$ = "Loading font list..."
@@ -3140,44 +2984,7 @@ SUB __UI_KeyPress (id AS LONG)
                 SelectPropertyFully id
             END IF
             Caption(StatusBar) = "Color changed."
-        CASE FileNameTextBox
-            IF OpenDialogOpen THEN
-                IF __UI_KeyHit = 27 THEN
-                    __UI_KeyHit = 0
-                    __UI_Click CancelBT
-                ELSEIF __UI_KeyHit = 13 THEN
-                    __UI_KeyHit = 0
-                    IF Caption(OpenFrame) = "Open" THEN
-                        __UI_Click OpenBT
-                    ELSE
-                        __UI_Click SaveBT
-                    END IF
-                ELSEIF __UI_KeyHit = 18432 OR __UI_KeyHit = 20480 THEN
-                    IF Control(FileList).Max > 0 THEN __UI_Focus = FileList
-                ELSE
-                    IF Control(FileList).Max > 0 THEN
-                        SELECT CASE __UI_KeyHit
-                            CASE 48 TO 57, 65 TO 90, 97 TO 122 'Alphanumeric
-                                IF Caption(OpenFrame) = "Open" THEN
-                                    __UI_ListBoxSearchItem Control(FileList)
-                                END IF
-                        END SELECT
-                    END IF
-                END IF
-            END IF
-        CASE FileList, DirList, CancelBT, OpenBT, SaveBT, ShowOnlyFrmbinFilesCB, SaveFrmOnlyCB
-            IF __UI_KeyHit = 27 THEN
-                __UI_Click CancelBT
-            END IF
-        CASE FileList
-            IF __UI_KeyHit = 13 THEN
-                __UI_KeyHit = 0
-                IF Caption(OpenFrame) = "Open" THEN
-                    __UI_Click OpenBT
-                ELSE
-                    __UI_Click SaveBT
-                END IF
-            END IF
+
         CASE ControlList, UpBT, DownBT, CloseZOrderingBT
             IF __UI_KeyHit = 27 THEN
                 __UI_Click CloseZOrderingBT
@@ -3213,8 +3020,7 @@ SUB __UI_KeyPress (id AS LONG)
                     ToolTip(KeyboardComboBT) = "Click to assign a key combination to the selected control"
                     SendData MKI$(0), 43
                     __UI_ForceRedraw = TRUE
-    CASE __UI_FKey(1), __UI_FKey(2), __UI_FKey(3), __UI_FKey(4), __UI_FKey(5), __UI_FKey(6), _
-        __UI_FKey(7), __UI_FKey(8), __UI_FKey(9), __UI_FKey(10), __UI_FKey(11), __UI_FKey(12)
+                CASE __UI_FKey(1), __UI_FKey(2), __UI_FKey(3), __UI_FKey(4), __UI_FKey(5), __UI_FKey(6), __UI_FKey(7), __UI_FKey(8), __UI_FKey(9), __UI_FKey(10), __UI_FKey(11), __UI_FKey(12)
                     FOR i = 1 TO 12
                         IF __UI_FKey(i) = __UI_KeyHit THEN
                             Combo$ = Combo$ + "F" + LTRIM$(STR$(i))
@@ -3284,8 +3090,7 @@ SUB __UI_TextChanged (id AS LONG)
             DIM TempID AS LONG
             TempID = __UI_GetID(LEFT$(UCASE$(RTRIM$(Control(id).Name)), LEN(UCASE$(RTRIM$(Control(id).Name))) - 5))
             Control(TempID).Value = VAL(Text(id))
-        CASE FileNameTextBox
-            PreselectFile
+
     END SELECT
 END SUB
 
@@ -3350,21 +3155,10 @@ SUB __UI_ValueChanged (id AS LONG)
                 b$ = MKL$(0)
             END IF
             SendData b$, 213
-        CASE FileList
-            Text(FileNameTextBox) = GetItem(FileList, Control(FileList).Value)
+
         CASE NameTB, CaptionTB, TextTB, MaskTB, TopTB, LeftTB, WidthTB, HeightTB, FontTB, TooltipTB, ValueTB, MinTB, MaxTB, IntervalTB, PaddingTB, MinIntervalTB, SizeTB
             Send Client, "LOCKCONTROLS><END>"
     END SELECT
-END SUB
-
-SUB PreselectFile
-    DIM b$
-    b$ = GetItem(FileList, Control(FileList).Value)
-    IF LCASE$(Text(FileNameTextBox)) = LCASE$(LEFT$(b$, LEN(Text(FileNameTextBox)))) THEN
-        Text(FileNameTextBox) = Text(FileNameTextBox) + MID$(b$, LEN(Text(FileNameTextBox)) + 1)
-        Control(FileNameTextBox).TextIsSelected = TRUE
-        Control(FileNameTextBox).SelectionStart = LEN(Text(FileNameTextBox))
-    END IF
 END SUB
 
 '---------------------------------------------------------------------------------
@@ -3652,7 +3446,7 @@ SUB LoadPreview
     IF LoadedWithGifExtension = 1 THEN LoadedWithGifExtension = FALSE
     IF PrevTotalGifLoaded <> TotalGifLoaded THEN
         IF PrevTotalGifLoaded = 0 AND LoadedWithGifExtension = FALSE THEN
-            _DELAY 0.2: Answer = _MESSAGEBOX(UiEditorTitle$, "You loaded an animated GIF file.\nDo you want to include the GIF extension?", "yesno", "question", 1)
+            _DELAY COMMDLG_DELAY: Answer = _MESSAGEBOX(UiEditorTitle$, "You loaded an animated GIF file.\nDo you want to include the GIF extension?", "yesno", "question", 1)
             IF Answer = 1 THEN
                 Control(AddGifExtensionToggle).Value = TRUE
             ELSE
@@ -3720,8 +3514,6 @@ END SUB
 SUB CheckPreview
     'Check if the preview window is still alive
     DIM b$
-
-    IF OpenDialogOpen THEN EXIT SUB
 
     $IF WIN THEN
         DIM hnd&, b&, c&, ExitCode&
@@ -3828,7 +3620,7 @@ SUB SaveForm (ExitToQB64 AS _BYTE, SaveOnlyFrm AS _BYTE)
         tempThisFileName$ = LEFT$(tempThisFileName$, LEN(tempThisFileName$) - 4)
     END IF
 
-    BaseOutputFileName = CurrentPath$ + PathSep$ + tempThisFileName$
+    BaseOutputFileName = CurrentPath$ + DIRECTORY_SEPARATOR + tempThisFileName$
 
     IF (_FILEEXISTS(BaseOutputFileName + ".bas") AND SaveOnlyFrm = FALSE) AND _FILEEXISTS(BaseOutputFileName + ".frm") THEN
         b$ = "These files will be overwritten:" + CHR$(10) + "    "
@@ -3844,14 +3636,14 @@ SUB SaveForm (ExitToQB64 AS _BYTE, SaveOnlyFrm AS _BYTE)
     END IF
 
     IF LEN(b$) > 0 THEN
-        _DELAY 0.2: Answer = _MESSAGEBOX(UiEditorTitle$, b$, "yesno", "question", 0)
+        _DELAY COMMDLG_DELAY: Answer = _MESSAGEBOX(UiEditorTitle$, b$, "yesno", "question", 0)
         IF Answer = 0 THEN EXIT SUB
     END IF
 
     AddGifExtension = Control(AddGifExtensionToggle).Value
 
     IF (AddGifExtension OR Control(AddGifExtensionToggle).Value) AND LoadedWithGifExtension = FALSE AND TotalGifLoaded = 0 THEN
-        _DELAY 0.2: Answer = _MESSAGEBOX(UiEditorTitle$, "Are you sure you want to include the GIF extension?\n(no animated GIFs have been added to this form)", "yesno", "question", 0)
+        _DELAY COMMDLG_DELAY: Answer = _MESSAGEBOX(UiEditorTitle$, "Are you sure you want to include the GIF extension?\n(no animated GIFs have been added to this form)", "yesno", "question", 0)
         AddGifExtension = (Answer = 1)
     END IF
 
@@ -4499,16 +4291,16 @@ SUB SaveForm (ExitToQB64 AS _BYTE, SaveOnlyFrm AS _BYTE)
     b$ = b$ + "    " + MID$(BaseOutputFileName, LEN(CurrentPath$) + 2) + ".frm"
 
     IF ExitToQB64 AND NOT SaveOnlyFrm THEN
-        IF _FILEEXISTS(QB64_EXE_PATH) THEN
+        IF _FILEEXISTS(QB64PEExePath) THEN
             b$ = b$ + CHR$(10) + CHR$(10) + "Exit to " + QB64_DISPLAY + "?"
-            _DELAY 0.2: Answer = _MESSAGEBOX(UiEditorTitle$, b$, "yesno", "question", 0)
+            _DELAY COMMDLG_DELAY: Answer = _MESSAGEBOX(UiEditorTitle$, b$, "yesno", "question", 0)
             IF Answer = 0 THEN Edited = FALSE: EXIT SUB
             IF _FILEEXISTS("InForm/UiEditorPreview.frmbin") THEN KILL "InForm/UiEditorPreview.frmbin"
-            SHELL _DONTWAIT QB64_EXE_PATH + " " + QuotedFilename$(BaseOutputFileName + ".bas")
+            SHELL _DONTWAIT QB64PEExePath + " " + GetQuotedFileName(BaseOutputFileName + ".bas")
             SYSTEM
         ELSE
             b$ = b$ + CHR$(10) + CHR$(10) + "Close the editor?"
-            _DELAY 0.2: Answer = _MESSAGEBOX(UiEditorTitle$, b$, "yesno", "question", 0)
+            _DELAY COMMDLG_DELAY: Answer = _MESSAGEBOX(UiEditorTitle$, b$, "yesno", "question", 0)
             IF Answer = 0 THEN Edited = FALSE: EXIT SUB
         END IF
     ELSE
@@ -4545,364 +4337,24 @@ SUB SaveForm (ExitToQB64 AS _BYTE, SaveOnlyFrm AS _BYTE)
 
 END SUB
 
-$IF WIN THEN
-    SUB LoadFontList
-        DIM hKey AS _OFFSET
-        DIM Ky AS _OFFSET
-        DIM SubKey AS STRING
-        DIM Value AS STRING
-        DIM bData AS STRING
-        DIM dwType AS _UNSIGNED LONG
-        DIM numBytes AS _UNSIGNED LONG
-        DIM numTchars AS _UNSIGNED LONG
-        DIM l AS LONG
-        DIM dwIndex AS _UNSIGNED LONG
+SUB LoadFontList
+    HasFontList = TRUE
+    TotalFontsFound = FontMgr_BuildList(FontFile())
 
-        hKey = hKey 'no warnings on my watch
-        Ky = HKEY_LOCAL_MACHINE
-        SubKey = "SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts" + CHR$(0)
-        Value = SPACE$(261) 'ANSI Value name limit 260 chars + 1 null
-        bData = SPACE$(&H7FFF) 'arbitrary
-
-        HasFontList = TRUE
-        AddItem FontList, "Built-in VGA font"
-        TotalFontsFound = 1
-
-        l = RegOpenKeyExA(Ky, _OFFSET(SubKey), 0, KEY_READ, _OFFSET(hKey))
-        IF l THEN
-            'HasFontList = False
-            EXIT SUB
-        ELSE
-            dwIndex = 0
-            DO
-                numBytes = LEN(bData)
-                numTchars = LEN(Value)
-                l = RegEnumValueA(hKey, dwIndex, _OFFSET(Value), _OFFSET(numTchars), 0, _OFFSET(dwType), _OFFSET(bData), _OFFSET(numBytes))
-                IF l THEN
-                    IF l <> ERROR_NO_MORE_ITEMS THEN
-                        'HasFontList = False
-                        EXIT SUB
-                    END IF
-                    EXIT DO
-                ELSE
-                    IF UCASE$(RIGHT$(formatData(dwType, numBytes, bData), 4)) = ".TTF" OR UCASE$(RIGHT$(formatData(dwType, numBytes, bData), 4)) = ".OTF" THEN
-                        TotalFontsFound = TotalFontsFound + 1
-                        IF TotalFontsFound > UBOUND(FontFile) THEN
-                            REDIM _PRESERVE FontFile(TotalFontsFound) AS STRING
-                        END IF
-                        DIM tempName$
-                        tempName$ = LEFT$(Value, numTchars)
-                        IF RIGHT$(tempName$, 11) = " (TrueType)" THEN
-                            tempName$ = LEFT$(tempName$, LEN(tempName$) - 11)
-                        END IF
-                        AddItem FontList, tempName$
-                        FontFile(TotalFontsFound) = formatData(dwType, numBytes, bData)
-                    END IF
-                END IF
-                dwIndex = dwIndex + 1
-            LOOP
-            l = RegCloseKey(hKey)
-        END IF
-
-        FOR l = 8 TO 120
-            AddItem FontSizeList, LTRIM$(STR$(l))
-        NEXT
-    END SUB
-
-    FUNCTION whatType$ (dwType AS _UNSIGNED LONG)
-        SELECT CASE dwType
-            CASE REG_SZ: whatType = "REG_SZ"
-            CASE REG_EXPAND_SZ: whatType = "REG_EXPAND_SZ"
-            CASE REG_BINARY: whatType = "REG_BINARY"
-            CASE REG_DWORD: whatType = "REG_DWORD"
-            CASE REG_DWORD_BIG_ENDIAN: whatType = "REG_DWORD_BIG_ENDIAN"
-            CASE REG_LINK: whatType = "REG_LINK"
-            CASE REG_MULTI_SZ: whatType = "REG_MULTI_SZ"
-            CASE REG_RESOURCE_LIST: whatType = "REG_RESOURCE_LIST"
-            CASE REG_FULL_RESOURCE_DESCRIPTOR: whatType = "REG_FULL_RESOURCE_DESCRIPTOR"
-            CASE REG_RESOURCE_REQUIREMENTS_LIST: whatType = "REG_RESOURCE_REQUIREMENTS_LIST"
-            CASE REG_QWORD: whatType = "REG_QWORD"
-            CASE ELSE: whatType = "unknown"
-        END SELECT
-    END FUNCTION
-
-    FUNCTION whatKey$ (hKey AS _OFFSET)
-        hKey = hKey 'the lengths I'll go not to have warnings....
-        SELECT CASE hKey
-            CASE HKEY_CLASSES_ROOT: whatKey = "HKEY_CLASSES_ROOT"
-            CASE HKEY_CURRENT_USER: whatKey = "HKEY_CURRENT_USER"
-            CASE HKEY_LOCAL_MACHINE: whatKey = "HKEY_LOCAL_MACHINE"
-            CASE HKEY_USERS: whatKey = "HKEY_USERS"
-            CASE HKEY_PERFORMANCE_DATA: whatKey = "HKEY_PERFORMANCE_DATA"
-            CASE HKEY_CURRENT_CONFIG: whatKey = "HKEY_CURRENT_CONFIG"
-            CASE HKEY_DYN_DATA: whatKey = "HKEY_DYN_DATA"
-        END SELECT
-    END FUNCTION
-
-    FUNCTION formatData$ (dwType AS _UNSIGNED LONG, numBytes AS _UNSIGNED LONG, bData AS STRING)
-        DIM t AS STRING
-        DIM ul AS _UNSIGNED LONG
-        DIM b AS _UNSIGNED _BYTE
-        SELECT CASE dwType
-            CASE REG_SZ, REG_EXPAND_SZ, REG_MULTI_SZ
-                formatData = LEFT$(bData, numBytes - 1)
-            CASE REG_DWORD
-                t = LCASE$(HEX$(CVL(LEFT$(bData, 4))))
-                formatData = "0x" + STRING$(8 - LEN(t), &H30) + t
-            CASE ELSE
-                IF numBytes THEN
-                    b = ASC(LEFT$(bData, 1))
-                    IF b < &H10 THEN
-                        t = t + "0" + LCASE$(HEX$(b))
-                    ELSE
-                        t = t + LCASE$(HEX$(b))
-                    END IF
-                END IF
-                FOR ul = 2 TO numBytes
-                    b = ASC(MID$(bData, ul, 1))
-                    IF b < &H10 THEN
-                        t = t + " 0" + LCASE$(HEX$(b))
-                    ELSE
-                        t = t + " " + LCASE$(HEX$(b))
-                    END IF
-                NEXT
-                formatData = t
-        END SELECT
-    END FUNCTION
-$ELSE
-    SUB LoadFontList
-    DIM TotalFiles%, FontPath$, i AS LONG, ThisFont$, depth%, x AS INTEGER
-
-    FontPath$ = "/usr/share/fonts"
-    depth% = 2
-    IF INSTR(_OS$, "MAC") > 0 THEN
-    FontPath$ = "/Library/Fonts"
-    depth% = 1
-    END IF
-    Text(FontList) = idezfilelist$(FontPath$, 1, depth%, TotalFiles%)
-    Control(FontList).Max = TotalFiles%
-    Control(FontList).LastVisibleItem = 0 'Reset it so it's recalculated
-
-    TotalFontsFound = TotalFiles%
-    FOR i = TotalFiles% TO 1 STEP -1
-    ThisFont$ = GetItem(FontList, i)
-    IF UCASE$(RIGHT$(ThisFont$, 4)) = ".TTF" OR UCASE$(RIGHT$(ThisFont$, 4)) = ".TTC" OR UCASE$(RIGHT$(ThisFont$, 4)) = ".OTF" THEN
-    'Valid font
-    ELSE
-    RemoveItem FontList, i
-    TotalFontsFound = TotalFontsFound - 1
-    END IF
-    NEXT
-
-    TotalFontsFound = TotalFontsFound + 1
-    Text(FontList) = "Built-in VGA font" + CHR$(10) + Text(FontList)
-    Control(FontList).Max = TotalFontsFound
-
-    REDIM FontFile(TotalFontsFound) AS STRING
-    IF INSTR(_OS$, "MAC") = 0 THEN FontPath$ = "" ELSE FontPath$ = FontPath$ + "/"
-    FOR i = 3 TO TotalFontsFound
-    ThisFont$ = GetItem(FontList, i)
-    FontFile(i) = FontPath$ + GetItem(FontList, i)
-    ThisFont$ = LEFT$(ThisFont$, LEN(ThisFont$) - 4) 'Remove extension from list
-
-    FOR x = LEN(ThisFont$) TO 1 STEP -1
-    IF ASC(ThisFont$, x) = 47 THEN '"/"
-    ThisFont$ = MID$(ThisFont$, x + 1)
-    EXIT FOR
-    END IF
-    NEXT
-
-    ReplaceItem FontList, i, ThisFont$
-    NEXT
+    DIM i AS _UNSIGNED LONG: FOR i = 1 TO TotalFontsFound
+        AddItem FontList, FontMgr_GetName(FontFile(i), 0, FONTMGR_NAME_FULL)
+    NEXT i
 
     FOR i = 8 TO 120
-    AddItem FontSizeList, LTRIM$(STR$(i))
+        AddItem FontSizeList, LTRIM$(STR$(i))
     NEXT
+END SUB
 
-    HasFontList = True
-    END SUB
-$END IF
-
-'FUNCTION idezfilelist$ and idezpathlist$ (and helper functions) were
-'adapted from ide_methods.bas (QB64):
-FUNCTION idezfilelist$ (path$, method, depth%, TotalFound AS INTEGER) 'method0=*.frm and *.frmbin, method1=*.*
-    DIM sep AS STRING * 1, filelist$, a$, dummy%
-    sep = CHR$(10)
-
-    TotalFound = 0
-    dummy% = depth%
+FUNCTION GetQuotedFileName$ (fileName AS STRING)
     $IF WIN THEN
-        OPEN "opendlgfiles.dat" FOR OUTPUT AS #150: CLOSE #150
-        IF method = 0 THEN SHELL _HIDE "dir /b /ON /A-D " + QuotedFilename$(path$) + "\*.frm >opendlgfiles.dat"
-        IF method = 1 THEN SHELL _HIDE "dir /b /ON /A-D " + QuotedFilename$(path$) + "\*.* >opendlgfiles.dat"
-        filelist$ = ""
-        OPEN "opendlgfiles.dat" FOR INPUT AS #150
-        DO UNTIL EOF(150)
-            LINE INPUT #150, a$
-            IF LEN(a$) THEN 'skip blank entries
-                IF filelist$ = "" THEN filelist$ = a$ ELSE filelist$ = filelist$ + sep + a$
-                TotalFound = TotalFound + 1
-            END IF
-        LOOP
-        CLOSE #150
-        KILL "opendlgfiles.dat"
-        idezfilelist$ = filelist$
-        EXIT FUNCTION
+        GetQuotedFileName = CHR$(34) + fileName + CHR$(34)
     $ELSE
-        filelist$ = ""
-        DIM i AS INTEGER, x AS INTEGER, a2$
-        FOR i = 1 TO 2 - method
-        OPEN "opendlgfiles.dat" FOR OUTPUT AS #150: CLOSE #150
-        IF method = 0 THEN
-        IF i = 1 THEN SHELL _HIDE "find " + QuotedFilename$(path$) + " -maxdepth " + LTRIM$(STR$(depth%)) + " -type f -name " + CHR$(34) + "*.frm*" + CHR$(34) + " >opendlgfiles.dat"
-        IF i = 2 THEN SHELL _HIDE "find " + QuotedFilename$(path$) + " -maxdepth " + LTRIM$(STR$(depth%)) + " -type f -name " + CHR$(34) + "*.FRM*" + CHR$(34) + " >opendlgfiles.dat"
-        END IF
-        IF method = 1 THEN
-        IF i = 1 THEN SHELL _HIDE "find " + QuotedFilename$(path$) + " -maxdepth " + LTRIM$(STR$(depth%)) + " -type f -name " + CHR$(34) + "*" + CHR$(34) + " >opendlgfiles.dat"
-        END IF
-        OPEN "opendlgfiles.dat" FOR INPUT AS #150
-        DO UNTIL EOF(150)
-        LINE INPUT #150, a$
-        IF LEN(a$) = 0 THEN EXIT DO
-        IF depth% = 1 THEN
-        FOR x = LEN(a$) TO 1 STEP -1
-        a2$ = MID$(a$, x, 1)
-        IF a2$ = "/" THEN
-        a$ = RIGHT$(a$, LEN(a$) - x)
-        EXIT FOR
-        END IF
-        NEXT
-        END IF
-        IF filelist$ = "" THEN filelist$ = a$ ELSE filelist$ = filelist$ + sep + a$
-        TotalFound = TotalFound + 1
-        LOOP
-        CLOSE #150
-        NEXT
-        KILL "opendlgfiles.dat"
-        idezfilelist$ = filelist$
-        EXIT FUNCTION
-    $END IF
-END FUNCTION
-
-FUNCTION idezpathlist$ (path$, TotalFound%)
-    DIM sep AS STRING * 1, a$, pathlist$, c AS INTEGER, x AS INTEGER, b$
-    DIM i AS INTEGER
-    sep = CHR$(10)
-
-    TotalFound% = 0
-    $IF WIN THEN
-        OPEN "opendlgfiles.dat" FOR OUTPUT AS #150: CLOSE #150
-        a$ = "": IF RIGHT$(path$, 1) = ":" THEN a$ = "\" 'use a \ after a drive letter
-        SHELL _HIDE "dir /b /ON /AD " + QuotedFilename$(path$ + a$) + " >opendlgfiles.dat"
-        pathlist$ = ""
-        OPEN "opendlgfiles.dat" FOR INPUT AS #150
-        DO UNTIL EOF(150)
-            LINE INPUT #150, a$
-            IF pathlist$ = "" THEN pathlist$ = a$ ELSE pathlist$ = pathlist$ + sep + a$
-            TotalFound% = TotalFound% + 1
-        LOOP
-        CLOSE #150
-        KILL "opendlgfiles.dat"
-        'count instances of / or \
-        c = 0
-        FOR x = 1 TO LEN(path$)
-            b$ = MID$(path$, x, 1)
-            IF b$ = PathSep$ THEN c = c + 1
-        NEXT
-        IF c >= 1 THEN
-            IF LEN(pathlist$) THEN pathlist$ = ".." + sep + pathlist$ ELSE pathlist$ = ".."
-            TotalFound% = TotalFound% + 1
-        END IF
-        'add drive paths
-        FOR i = 0 TO 25
-            IF LEN(pathlist$) THEN pathlist$ = pathlist$ + sep
-            pathlist$ = pathlist$ + CHR$(65 + i) + ":"
-            TotalFound% = TotalFound% + 1
-        NEXT
-        idezpathlist$ = pathlist$
-        EXIT FUNCTION
-    $ELSE
-        pathlist$ = ""
-        DIM a2$
-        OPEN "opendlgfiles.dat" FOR OUTPUT AS #150: CLOSE #150
-        SHELL _HIDE "find " + QuotedFilename$(path$) + " -maxdepth 1 -mindepth 1 -type d >opendlgfiles.dat"
-        OPEN "opendlgfiles.dat" FOR INPUT AS #150
-        DO UNTIL EOF(150)
-        LINE INPUT #150, a$
-        IF LEN(a$) = 0 THEN EXIT DO
-        FOR x = LEN(a$) TO 1 STEP -1
-        a2$ = MID$(a$, x, 1)
-        IF a2$ = "/" THEN
-        a$ = RIGHT$(a$, LEN(a$) - x)
-        EXIT FOR
-        END IF
-        NEXT
-        IF pathlist$ = "" THEN pathlist$ = a$ ELSE pathlist$ = pathlist$ + sep + a$
-        TotalFound% = TotalFound% + 1
-        LOOP
-        CLOSE #150
-        KILL "opendlgfiles.dat"
-
-        IF path$ <> "/" THEN
-        a$ = ".."
-
-        IF pathlist$ = "" THEN pathlist$ = a$ ELSE pathlist$ = a$ + sep + pathlist$
-        TotalFound% = TotalFound% + 1
-        END IF
-
-        idezpathlist$ = pathlist$
-        EXIT FUNCTION
-    $END IF
-END FUNCTION
-
-FUNCTION idezchangepath$ (path$, newpath$)
-    DIM x AS INTEGER, a$
-
-    idezchangepath$ = path$ 'default (for unsuccessful cases)
-
-    $IF WIN THEN
-        'go back a path
-        IF newpath$ = ".." THEN
-            FOR x = LEN(path$) TO 1 STEP -1
-                a$ = MID$(path$, x, 1)
-                IF a$ = "\" THEN
-                    idezchangepath$ = LEFT$(path$, x - 1)
-                    EXIT FOR
-                END IF
-            NEXT
-            EXIT FUNCTION
-        END IF
-        'change drive
-        IF LEN(newpath$) = 2 AND RIGHT$(newpath$, 1) = ":" THEN
-            idezchangepath$ = newpath$
-            EXIT FUNCTION
-        END IF
-        idezchangepath$ = path$ + "\" + newpath$
-        EXIT FUNCTION
-    $ELSE
-        'go back a path
-        IF newpath$ = ".." THEN
-        FOR x = LEN(path$) TO 1 STEP -1
-        a$ = MID$(path$, x, 1)
-        IF a$ = "/" THEN
-        idezchangepath$ = LEFT$(path$, x - 1)
-        IF x = 1 THEN idezchangepath$ = "/" 'root path cannot be ""
-        EXIT FOR
-        END IF
-        NEXT
-        EXIT FUNCTION
-        END IF
-        IF path$ = "/" THEN idezchangepath$ = "/" + newpath$ ELSE idezchangepath$ = path$ + "/" + newpath$
-        EXIT FUNCTION
-    $END IF
-
-END FUNCTION
-
-FUNCTION QuotedFilename$ (f$)
-    $IF WIN THEN
-        QuotedFilename$ = CHR$(34) + f$ + CHR$(34)
-    $ELSE
-        QuotedFilename$ = "'" + f$ + "'"
+        GetQuotedFileName = "'" + fileName + "'"
     $END IF
 END FUNCTION
 

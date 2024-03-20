@@ -2,6 +2,7 @@
 ': InForm - GUI library for QB64 - Beta version 9
 ': Fellippe Heitor, 2016-2019 - fellippe@qb64.org - @fellippeheitor
 '-----------------------------------------------------------
+
 SUB __UI_LoadForm
 
     DIM __UI_NewID AS LONG
@@ -47,10 +48,6 @@ SUB __UI_LoadForm
     Control(__UI_NewID).HasBorder = True
     Control(__UI_NewID).Value = 8
 
-    __UI_NewID = __UI_NewControl(__UI_Type_Frame, "OpenFrame", 563, 520, -600, -600, 0)
-    SetCaption __UI_NewID, "Open"
-    Control(__UI_NewID).HasBorder = True
-    
     __UI_NewID = __UI_NewControl(__UI_Type_Frame, "ZOrdering", 563, 520, -600, -600, 0)
     SetCaption __UI_NewID, "Z-Ordering"
     Control(__UI_NewID).HasBorder = True
@@ -128,7 +125,6 @@ SUB __UI_LoadForm
     
     __UI_NewID = __UI_NewControl(__UI_Type_MenuItem, "EditMenuSelectAll", 78, 18, 0, 22, __UI_GetID("EditMenu"))
     SetCaption __UI_NewID, "Select &all-"
-    
 
     __UI_NewID = __UI_NewControl(__UI_Type_MenuItem, "EditMenuCP437", 182, 18, 0, 46, __UI_GetID("EditMenu"))
     SetCaption __UI_NewID, "Use code page OEM-437"
@@ -671,62 +667,6 @@ SUB __UI_LoadForm
     Control(__UI_NewID).Align = __UI_Center
     Control(__UI_NewID).VAlign = __UI_Middle
 
-    __UI_NewID = __UI_NewControl(__UI_Type_Label, "FileNameLB", 73, 23, 15, 16, __UI_GetID("OpenFrame"))
-    SetCaption __UI_NewID, "File &name:"
-    Control(__UI_NewID).BackStyle = __UI_Transparent
-    Control(__UI_NewID).VAlign = __UI_Middle
-
-    __UI_NewID = __UI_NewControl(__UI_Type_TextBox, "FileNameTextBox", 463, 23, 89, 16, __UI_GetID("OpenFrame"))
-    Control(__UI_NewID).HasBorder = True
-    Control(__UI_NewID).CanHaveFocus = True
-
-    __UI_NewID = __UI_NewControl(__UI_Type_Label, "PathLB", 535, 23, 15, 44, __UI_GetID("OpenFrame"))
-    SetCaption __UI_NewID, "Path: C:\QB64"
-    Control(__UI_NewID).BackStyle = __UI_Transparent
-    Control(__UI_NewID).VAlign = __UI_Middle
-
-    __UI_NewID = __UI_NewControl(__UI_Type_Label, "FilesLB", 200, 23, 25, 72, __UI_GetID("OpenFrame"))
-    SetCaption __UI_NewID, "Files:"
-    Control(__UI_NewID).BackStyle = __UI_Transparent
-    Control(__UI_NewID).VAlign = __UI_Middle
-
-    __UI_NewID = __UI_NewControl(__UI_Type_ListBox, "FileList", 256, 378, 25, 99, __UI_GetID("OpenFrame"))
-    Control(__UI_NewID).HasBorder = True
-    Control(__UI_NewID).CanHaveFocus = True
-
-    __UI_NewID = __UI_NewControl(__UI_Type_Label, "PathsLB", 200, 23, 296, 72, __UI_GetID("OpenFrame"))
-    SetCaption __UI_NewID, "&Paths:"
-    Control(__UI_NewID).BackStyle = __UI_Transparent
-    Control(__UI_NewID).VAlign = __UI_Middle
-
-    __UI_NewID = __UI_NewControl(__UI_Type_ListBox, "DirList", 256, 378, 296, 99, __UI_GetID("OpenFrame"))
-    Control(__UI_NewID).HasBorder = True
-    Control(__UI_NewID).CanHaveFocus = True
-
-    __UI_NewID = __UI_NewControl(__UI_Type_CheckBox, "ShowOnlyFrmbinFilesCB", 300, 23, 25, 484, __UI_GetID("OpenFrame"))
-    SetCaption __UI_NewID, "Show only compatible files"
-    Control(__UI_NewID).BackStyle = __UI_Transparent
-    Control(__UI_NewID).Value = -1
-    Control(__UI_NewID).CanHaveFocus = True
-
-    __UI_NewID = __UI_NewControl(__UI_Type_CheckBox, "SaveFrmOnlyCB", 300, 23, 25, 484, __UI_GetID("OpenFrame"))
-    SetCaption __UI_NewID, "Don't save .bas project (Save .frm only)"
-    Control(__UI_NewID).Value = False
-    Control(__UI_NewID).CanHaveFocus = True
-
-    __UI_NewID = __UI_NewControl(__UI_Type_Button, "OpenBT", 80, 23, 382, 484, __UI_GetID("OpenFrame"))
-    SetCaption __UI_NewID, "Open"
-    Control(__UI_NewID).CanHaveFocus = True
-
-    __UI_NewID = __UI_NewControl(__UI_Type_Button, "SaveBT", 80, 23, 382, 484, __UI_GetID("OpenFrame"))
-    SetCaption __UI_NewID, "Save"
-    Control(__UI_NewID).CanHaveFocus = True
-    Control(__UI_NewID).Hidden = True
-
-    __UI_NewID = __UI_NewControl(__UI_Type_Button, "CancelBT", 80, 23, 470, 484, __UI_GetID("OpenFrame"))
-    SetCaption __UI_NewID, "&Cancel"
-    Control(__UI_NewID).CanHaveFocus = True
-
     __UI_NewID = __UI_NewControl(__UI_Type_Label, "ZDescriptionLB", 484, 58, 15, 419, __UI_GetID("ZOrdering"))
     SetCaption __UI_NewID, "Select a control in the list and use the up/down buttons to change the z-ordering/tab order. This affects both the order in which the controls are drawn (in case there are overlaps) and also the tab order for keyboard navigation by your users. "
     Control(__UI_NewID).VAlign = __UI_Middle
@@ -833,7 +773,6 @@ SUB __UI_AssignIDs
     HelpMenu = __UI_GetID("HelpMenu")
     Toolbox = __UI_GetID("Toolbox")
     ColorMixer = __UI_GetID("ColorMixer")
-    OpenFrame = __UI_GetID("OpenFrame")
     ZOrdering = __UI_GetID("ZOrdering")
     ControlProperties = __UI_GetID("ControlProperties")
     FileMenuNew = __UI_GetID("FileMenuNew")
@@ -915,18 +854,6 @@ SUB __UI_AssignIDs
     Blue = __UI_GetID("Blue")
     BlueValue = __UI_GetID("BlueValue")
     DialogBG = __UI_GetID("DialogBG")
-    FileNameLB = __UI_GetID("FileNameLB")
-    FileNameTextBox = __UI_GetID("FileNameTextBox")
-    PathLB = __UI_GetID("PathLB")
-    FilesLB = __UI_GetID("FilesLB")
-    FileList = __UI_GetID("FileList")
-    PathsLB = __UI_GetID("PathsLB")
-    DirList = __UI_GetID("DirList")
-    OpenBT = __UI_GetID("OpenBT")
-    SaveBT = __UI_GetID("SaveBT")
-    CancelBT = __UI_GetID("CancelBT")
-    ShowOnlyFrmbinFilesCB = __UI_GetID("ShowOnlyFrmbinFilesCB")
-    SaveFrmOnlyCB = __UI_GetID("SaveFrmOnlyCB")
     ControlList = __UI_GetID("ControlList")
     UpBT = __UI_GetID("UpBT")
     DownBT = __UI_GetID("DownBT")
