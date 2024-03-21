@@ -10,8 +10,8 @@ $INCLUDEONCE
 '-----------------------------------------------------------------------------------------------------------------------
 ' Test code for debugging the library
 '-----------------------------------------------------------------------------------------------------------------------
+'$DEBUG
 '$CONSOLE:ONLY
-
 '_DEFINE A-Z AS LONG
 'OPTION _EXPLICIT
 
@@ -50,14 +50,18 @@ FUNCTION FontMgr_BuildList~& (fontList() AS STRING)
     ' dirStack is a stack of directories that we'll need to traverse
     REDIM dirStack(0 TO 0) AS STRING
 
-    ' Add the system font directory to the stack
-    dirStack(0) = _DIR$("FONT")
+    ' Add the user font directory to the stack
+    dirStack(0) = _DIR$("USERFONT")
 
-    IF _DIR$("USERFONT") <> dirStack(0) THEN
-        ' Add the user font directory to the stack only if it is unique
+    ' Check if a user font directory even exists
+    IF dirStack(0) <> _DIR$("HOME") THEN
+        ' It does exists. So, make a spot for the system font directory
         REDIM _PRESERVE dirStack(0 TO 1) AS STRING
-        dirStack(1) = _DIR$("USERFONT")
     END IF
+
+    ' Add the system font directory to the stack
+    ' This may overwrite the user font directory in the stack based on the check above
+    dirStack(UBOUND(dirStack)) = _DIR$("FONT")
 
     ' This keeps the total count of fonts that we found and is returned to the caller
     DIM fontCount AS _UNSIGNED LONG
