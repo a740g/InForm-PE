@@ -263,17 +263,17 @@ CONST EDITOR_IMAGE_DISK~%% = 2~%%
 
 $IF WIN THEN
     DECLARE DYNAMIC LIBRARY "kernel32"
-        FUNCTION OpenProcess& (BYVAL dwDesiredAccess AS LONG, BYVAL bInheritHandle AS LONG, BYVAL dwProcessId AS LONG)
-        FUNCTION CloseHandle& (BYVAL hObject AS LONG)
-        FUNCTION GetExitCodeProcess& (BYVAL hProcess AS LONG, lpExitCode AS LONG)
+    FUNCTION OpenProcess& (BYVAL dwDesiredAccess AS LONG, BYVAL bInheritHandle AS LONG, BYVAL dwProcessId AS LONG)
+    FUNCTION CloseHandle& (BYVAL hObject AS LONG)
+    FUNCTION GetExitCodeProcess& (BYVAL hProcess AS LONG, lpExitCode AS LONG)
     END DECLARE
 
     DECLARE DYNAMIC LIBRARY "user32"
-        FUNCTION SetForegroundWindow& (BYVAL hWnd AS LONG)
+    FUNCTION SetForegroundWindow& (BYVAL hWnd AS LONG)
     END DECLARE
 $ELSE
     DECLARE LIBRARY
-    FUNCTION PROCESS_CLOSED& ALIAS kill (BYVAL pid AS INTEGER, BYVAL signal AS INTEGER)
+        FUNCTION PROCESS_CLOSED& ALIAS kill (BYVAL pid AS INTEGER, BYVAL signal AS INTEGER)
     END DECLARE
 $END IF
 
@@ -1279,24 +1279,24 @@ SUB __UI_BeforeUpdateDisplay
 
     $IF WIN THEN
         IF PreviewAttached THEN
-            IF prevScreenX <> _SCREENX OR prevScreenY <> _SCREENY THEN
-                prevScreenX = _SCREENX
-                prevScreenY = _SCREENY
-                b$ = "WINDOWPOSITION>" + MKI$(_SCREENX) + MKI$(_SCREENY) + "<END>"
-                Send Client, b$
-            END IF
+        IF prevScreenX <> _SCREENX OR prevScreenY <> _SCREENY THEN
+        prevScreenX = _SCREENX
+        prevScreenY = _SCREENY
+        b$ = "WINDOWPOSITION>" + MKI$(_SCREENX) + MKI$(_SCREENY) + "<END>"
+        Send Client, b$
+        END IF
         ELSE
-            IF prevScreenX <> -32001 OR prevScreenY <> -32001 THEN
-                prevScreenX = -32001
-                prevScreenY = -32001
-                b$ = "WINDOWPOSITION>" + MKI$(-32001) + MKI$(-32001) + "<END>"
-                Send Client, b$
-            END IF
+        IF prevScreenX <> -32001 OR prevScreenY <> -32001 THEN
+        prevScreenX = -32001
+        prevScreenY = -32001
+        b$ = "WINDOWPOSITION>" + MKI$(-32001) + MKI$(-32001) + "<END>"
+        Send Client, b$
+        END IF
         END IF
     $ELSE
         IF PreviewAttached = True THEN
-        PreviewAttached = False
-        SaveSettings
+            PreviewAttached = False
+            SaveSettings
         END IF
         Control(ViewMenuPreviewDetach).Disabled = True
         Control(ViewMenuPreviewDetach).Value = False
@@ -2912,7 +2912,7 @@ SUB __UI_OnLoad
     $IF WIN THEN
         SHELL _DONTWAIT ".\InForm\UiEditorPreview.exe " + HostPort
     $ELSE
-        Shell _DontWait "./InForm/UiEditorPreview " + HostPort
+        SHELL _DONTWAIT "./InForm/UiEditorPreview " + HostPort
     $END IF
 
     b$ = "Connecting to preview component..."
@@ -3524,56 +3524,17 @@ SUB CheckPreview
     $IF WIN THEN
         DIM hnd&, b&, c&, ExitCode&
         IF UiPreviewPID > 0 THEN
-            hnd& = OpenProcess(&H400, 0, UiPreviewPID)
-            b& = GetExitCodeProcess(hnd&, ExitCode&)
-            c& = CloseHandle(hnd&)
-            IF b& = 1 AND ExitCode& = 259 THEN
-                'Preview is active.
-                Control(ViewMenuPreview).Disabled = True
-            ELSE
-                'Preview was closed.
-
-                TIMER(__UI_EventsTimer) OFF
-
-                __UI_WaitMessage = "Reloading preview window..."
-                UiPreviewPID = 0
-                __UI_ProcessInputTimer = 0 'Make the "Please wait" message show up immediataly
-
-                CLOSE Client
-                Client = 0
-
-                __UI_UpdateDisplay
-
-                SHELL _DONTWAIT ".\InForm\UiEditorPreview.exe " + HostPort
-
-                DO
-                    Client = _OPENCONNECTION(Host)
-                    IF Client THEN EXIT DO
-                    IF _EXIT THEN SYSTEM 'Can't force user to wait...
-                    _DISPLAY
-                    _LIMIT 15
-                LOOP
-
-                Handshake
-
-                IF LEN(LastFormData$) THEN
-                    b$ = "RESTORECRASH>" + LastFormData$ + "<END>"
-                    Send Client, b$
-                    prevScreenX = -1
-                    prevScreenY = -1
-                    UndoPointer = 0
-                    TotalUndoImages = 0
-                END IF
-
-                TIMER(__UI_EventsTimer) ON
-            END IF
-        END IF
-    $ELSE
-        IF UiPreviewPID > 0 THEN
-        IF PROCESS_CLOSED(UiPreviewPID, 0) THEN
+        hnd& = OpenProcess(&H400, 0, UiPreviewPID)
+        b& = GetExitCodeProcess(hnd&, ExitCode&)
+        c& = CloseHandle(hnd&)
+        IF b& = 1 AND ExitCode& = 259 THEN
+        'Preview is active.
+        Control(ViewMenuPreview).Disabled = True
+        ELSE
         'Preview was closed.
+
         TIMER(__UI_EventsTimer) OFF
-        Control(ViewMenuPreview).Disabled = False
+
         __UI_WaitMessage = "Reloading preview window..."
         UiPreviewPID = 0
         __UI_ProcessInputTimer = 0 'Make the "Please wait" message show up immediataly
@@ -3583,7 +3544,7 @@ SUB CheckPreview
 
         __UI_UpdateDisplay
 
-        SHELL _DONTWAIT "./InForm/UiEditorPreview " + HostPort
+        SHELL _DONTWAIT ".\InForm\UiEditorPreview.exe " + HostPort
 
         DO
         Client = _OPENCONNECTION(Host)
@@ -3605,10 +3566,49 @@ SUB CheckPreview
         END IF
 
         TIMER(__UI_EventsTimer) ON
-        ELSE
-        'Preview is active.
-        Control(ViewMenuPreview).Disabled = True
         END IF
+        END IF
+    $ELSE
+        IF UiPreviewPID > 0 THEN
+            IF PROCESS_CLOSED(UiPreviewPID, 0) THEN
+                'Preview was closed.
+                TIMER(__UI_EventsTimer) OFF
+                Control(ViewMenuPreview).Disabled = False
+                __UI_WaitMessage = "Reloading preview window..."
+                UiPreviewPID = 0
+                __UI_ProcessInputTimer = 0 'Make the "Please wait" message show up immediataly
+
+                CLOSE Client
+                Client = 0
+
+                __UI_UpdateDisplay
+
+                SHELL _DONTWAIT "./InForm/UiEditorPreview " + HostPort
+
+                DO
+                    Client = _OPENCONNECTION(Host)
+                    IF Client THEN EXIT DO
+                    IF _EXIT THEN SYSTEM 'Can't force user to wait...
+                    _DISPLAY
+                    _LIMIT 15
+                LOOP
+
+                Handshake
+
+                IF LEN(LastFormData$) THEN
+                    b$ = "RESTORECRASH>" + LastFormData$ + "<END>"
+                    Send Client, b$
+                    prevScreenX = -1
+                    prevScreenY = -1
+                    UndoPointer = 0
+                    TotalUndoImages = 0
+                END IF
+
+                TIMER(__UI_EventsTimer) ON
+            ELSE
+                'Preview is active.
+                Control(ViewMenuPreview).Disabled = True
+            END IF
         END IF
     $END IF
 END SUB
@@ -4348,7 +4348,12 @@ SUB LoadFontList
     TotalFontsFound = FontMgr_BuildList(FontFile())
 
     DIM i AS _UNSIGNED LONG: FOR i = 1 TO TotalFontsFound
-        AddItem FontList, FontMgr_GetName(FontFile(i), 0, FONTMGR_NAME_FULL)
+        DIM fullFontName AS STRING: fullFontName = FontMgr_GetName(FontFile(i), 0, FONTMGR_NAME_FULL)
+        IF LEN(fullFontName) = 0 THEN
+            fullFontName = Pathname_RemoveFileExtension(Pathname_GetFileName(FontFile(i)))
+        END IF
+
+        AddItem FontList, fullFontName
     NEXT i
 
     FOR i = 8 TO 120

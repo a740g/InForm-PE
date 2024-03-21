@@ -136,7 +136,7 @@ FUNCTION FontMgr_GetName$ (filePath AS STRING, fontIndex AS _UNSIGNED LONG, name
             CASE ".fnt", ".pcf", ".bdf" ', ".fon"
                 IF fontIndex = 0 THEN
                     SELECT CASE nameId
-                        CASE FONTMGR_NAME_FAMILY, FONTMGR_NAME_FULL
+                        CASE FONTMGR_NAME_FAMILY, FONTMGR_NAME_FULL, FONTMGR_NAME_PREFERRED_FAMILY, FONTMGR_NAME_COMPATIBLE_FULL
                             FontMgr_GetName = Pathname_RemoveFileExtension(Pathname_GetFileName(filePath))
                     END SELECT
                 END IF
@@ -201,22 +201,26 @@ FUNCTION FontMgr_GetName$ (filePath AS STRING, fontIndex AS _UNSIGNED LONG, name
                     GET f, , ttRecord
                     ttRecord.uNameID = __FontMgr_BSwap16(ttRecord.uNameID)
                     ttRecord.uLanguageID = __FontMgr_BSwap16(ttRecord.uLanguageID)
+                    ttRecord.uPlatformID = __FontMgr_BSwap16(ttRecord.uPlatformID)
 
                     ' 1 specifies font name, this could be modified to get other info
-                    IF ttRecord.uNameID = nameId AND ttRecord.uLanguageID = __FONTMGR_LANGUAGE_ID THEN
-                        ttRecord.uStringLength = __FontMgr_BSwap16(ttRecord.uStringLength)
-                        ttRecord.uStringOffset = __FontMgr_BSwap16(ttRecord.uStringOffset)
+                    ' mac and unicode platform id should be 0 for english
+                    IF ttRecord.uNameID = nameId THEN
+                        IF (ttRecord.uPlatformID = __FONTMGR_PLATFORM_ID_UNI AND ttRecord.uLanguageID = __FONTMGR_LANGUAGE_ID_UNI) OR (ttRecord.uPlatformID = __FONTMGR_PLATFORM_ID_MAC AND ttRecord.uLanguageID = __FONTMGR_LANGUAGE_ID_MAC) OR (ttRecord.uPlatformID = __FONTMGR_PLATFORM_ID_WIN AND ttRecord.uLanguageID = __FONTMGR_LANGUAGE_ID_WIN) THEN
+                            ttRecord.uStringLength = __FontMgr_BSwap16(ttRecord.uStringLength)
+                            ttRecord.uStringOffset = __FontMgr_BSwap16(ttRecord.uStringOffset)
 
-                        DIM nPos AS _UNSIGNED LONG: nPos = LOC(f) ' save current file position
+                            DIM nPos AS _UNSIGNED LONG: nPos = LOC(f) ' save current file position
 
-                        IF ttRecord.uStringLength > 0 THEN
-                            DIM nameBuffer AS STRING: nameBuffer = SPACE$(ttRecord.uStringLength)
-                            GET f, 1 + tblDir.uOffset + ttRecord.uStringOffset + ttNTHeader.uStorageOffset, nameBuffer
+                            IF ttRecord.uStringLength > 0 THEN
+                                DIM nameBuffer AS STRING: nameBuffer = SPACE$(ttRecord.uStringLength)
+                                GET f, 1 + tblDir.uOffset + ttRecord.uStringOffset + ttNTHeader.uStorageOffset, nameBuffer
 
-                            EXIT WHILE ' break from the outer while loop
+                                EXIT WHILE ' break from the outer while loop
+                            END IF
+
+                            SEEK f, nPos ' search more
                         END IF
-
-                        SEEK f, nPos ' search more
                     END IF
 
                     j = j + 1
@@ -235,7 +239,7 @@ FUNCTION FontMgr_GetName$ (filePath AS STRING, fontIndex AS _UNSIGNED LONG, name
             IF char > 0 THEN sanitizedName = sanitizedName + CHR$(char)
         NEXT
 
-        FontMgr_GetName = sanitizedName
+        FontMgr_GetName = _TRIM$(sanitizedName)
     END IF
 END FUNCTION
 

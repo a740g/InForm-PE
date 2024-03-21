@@ -10,7 +10,12 @@ $INCLUDEONCE
 CONST __FONTMGR_FALSE~%% = 0~%%, __FONTMGR_TRUE~%% = NOT __FONTMGR_FALSE
 CONST __FONTMGR_PROBE_SIZE_MIN~%% = 8~% ' minimum font height that can be reported
 CONST __FONTMGR_PROBE_SIZE_MAX~%% = 120~%% ' maximum font height that can be reported
-CONST __FONTMGR_LANGUAGE_ID~% = 1033~% ' en-us
+CONST __FONTMGR_PLATFORM_ID_UNI~% = 0~%
+CONST __FONTMGR_PLATFORM_ID_MAC~% = 1~%
+CONST __FONTMGR_PLATFORM_ID_WIN~% = 3~%
+CONST __FONTMGR_LANGUAGE_ID_UNI~% = 0~% ' unicode
+CONST __FONTMGR_LANGUAGE_ID_MAC~% = 0~% ' mac english
+CONST __FONTMGR_LANGUAGE_ID_WIN~% = 1033~% ' Windows en-us
 CONST __FONTMGR_SIZE_OF_LONG~& = 4~&
 
 ' Bunch of nameIDs that can be passed to FontMgr_GetName()
