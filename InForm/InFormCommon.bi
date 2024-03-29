@@ -11,6 +11,8 @@ $IF VERSION < 3.12.0 THEN
     $ERROR 'This requires the latest version of QB64-PE from https://github.com/QB64-Phoenix-Edition/QB64pe/releases'
 $END IF
 
+$LET INFORMCOMMON_BI = TRUE
+
 '$INCLUDE:'InFormVersion.bi'
 '$INCLUDE:'extensions/HashTable.bi'
 
