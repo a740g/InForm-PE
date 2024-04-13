@@ -90,7 +90,7 @@ SUB Ini_DeleteKey (file$, __section$, __key$)
     section$ = __Ini_FormatSection(__section$)
     IF __ini.code THEN EXIT SUB
 
-    key$ = LTRIM$(RTRIM$(__key$))
+    key$ = _TRIM$(__key$)
     IF key$ = "" THEN __ini.code = 12: EXIT SUB
     __ini.lastKey = key$
 
@@ -165,7 +165,7 @@ FUNCTION __Ini_GetSectionData$ (__section$)
     SHARED __ini AS __IniType
 
     IF __ini.currentFileName = "" THEN __ini.code = 18: EXIT FUNCTION
-    IF __ini.currentFileLOF = 0 OR LEN(LTRIM$(RTRIM$(__ini.wholeFile))) = 0 THEN __ini.code = 17: EXIT FUNCTION
+    IF __ini.currentFileLOF = 0 OR LEN(_TRIM$(__ini.wholeFile)) = 0 THEN __ini.code = 17: EXIT FUNCTION
 
     __ini.code = 0
 
@@ -238,7 +238,7 @@ FUNCTION __Ini_FormatSection$ (__section$)
 
     DIM section$
 
-    section$ = LTRIM$(RTRIM$(__section$))
+    section$ = _TRIM$(__section$)
 
     'sections are in the format [section name] - add brackets if not passed
     IF LEFT$(section$, 1) <> "[" THEN section$ = "[" + section$
@@ -258,7 +258,7 @@ FUNCTION Ini_ReadSetting$ (file$, __section$, __key$)
     Ini_Load file$
     IF __ini.code THEN EXIT FUNCTION
 
-    IF __ini.currentFileLOF = 0 OR LEN(LTRIM$(RTRIM$(__ini.wholeFile))) = 0 THEN __ini.code = 17: EXIT FUNCTION
+    IF __ini.currentFileLOF = 0 OR LEN(_TRIM$(__ini.wholeFile)) = 0 THEN __ini.code = 17: EXIT FUNCTION
 
     DIM Equal AS _UNSIGNED LONG, tempValue$, key$, section$
     DIM Quote AS _UNSIGNED LONG, Comment AS _UNSIGNED LONG
@@ -277,7 +277,7 @@ FUNCTION Ini_ReadSetting$ (file$, __section$, __key$)
 
     __ini.position = 0
 
-    key$ = LTRIM$(RTRIM$(__key$))
+    key$ = _TRIM$(__key$)
     __ini.lastKey = ""
     IF key$ = "" THEN
         IF section$ = "[]" THEN __ini.sectionData = __ini.wholeFile
@@ -331,7 +331,7 @@ FUNCTION Ini_ReadSetting$ (file$, __section$, __key$)
             IF Equal = 0 THEN GOTO CheckKey
         END IF
 
-        tempValue$ = LTRIM$(RTRIM$(MID$(__ini.sectionData, Equal + 1, FoundLF - Equal - 1)))
+        tempValue$ = _TRIM$(MID$(__ini.sectionData, Equal + 1, FoundLF - Equal - 1))
 
         IF LEN(tempValue$) > 0 THEN
             IF LEFT$(tempValue$, 1) = CHR$(34) THEN
@@ -344,7 +344,7 @@ FUNCTION Ini_ReadSetting$ (file$, __section$, __key$)
                 Comment = INSTR(tempValue$, "#")
                 IF Comment = 0 THEN Comment = INSTR(tempValue$, ";")
                 IF Comment > 0 THEN
-                    tempValue$ = LTRIM$(RTRIM$(LEFT$(tempValue$, Comment - 1)))
+                    tempValue$ = _TRIM$(LEFT$(tempValue$, Comment - 1))
                 END IF
             END IF
         ELSE
@@ -402,11 +402,11 @@ SUB Ini_WriteSetting (file$, __section$, __key$, __value$)
     section$ = __Ini_FormatSection(__section$)
     IF __ini.code THEN EXIT SUB
 
-    key$ = LTRIM$(RTRIM$(__key$))
+    key$ = _TRIM$(__key$)
     IF key$ = "" THEN __ini.code = 12: EXIT SUB
     __ini.lastKey = key$
 
-    value$ = LTRIM$(RTRIM$(__value$))
+    value$ = _TRIM$(__value$)
     IF LTRIM$(STR$(VAL(value$))) <> value$ THEN
         'if not a numeric value and value contains spaces, add quotation marks
         IF INSTR(value$, CHR$(32)) THEN value$ = CHR$(34) + value$ + CHR$(34)
@@ -441,7 +441,7 @@ SUB Ini_WriteSetting (file$, __section$, __key$, __value$)
 
     IF __ini.code = 0 OR __ini.code = 2 THEN 'key found and read back; write new value$
         IF LCASE$(__ini.lastSection) = LCASE$(section$) THEN
-            IF LTRIM$(RTRIM$(__value$)) = tempValue$ AND LEN(LTRIM$(RTRIM$(__value$))) > 0 THEN
+            IF _TRIM$(__value$) = tempValue$ AND LEN(_TRIM$(__value$)) > 0 THEN
                 'identical values skip the writing routine
                 __ini.code = 8
                 EXIT SUB
@@ -655,7 +655,7 @@ FUNCTION Ini_GetNextKey$
     Equal = INSTR(position, __ini.sectionData + tempLF$, "=")
     IF Equal = 0 THEN position = 0: EXIT FUNCTION
 
-    tempKey$ = LTRIM$(RTRIM$(MID$(__ini.sectionData + tempLF$, position + 1, Equal - position - 1)))
+    tempKey$ = _TRIM$(MID$(__ini.sectionData + tempLF$, position + 1, Equal - position - 1))
 
     IF INSTR(tempKey$, CHR$(10)) > 0 THEN
         position = position + INSTR(tempKey$, CHR$(10)) + 1

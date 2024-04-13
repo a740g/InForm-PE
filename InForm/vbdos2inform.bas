@@ -86,7 +86,7 @@ DO
     eq = INSTR(a$, "=")
     IF eq THEN
         property$ = RTRIM$(LEFT$(a$, eq - 1))
-        value$ = LTRIM$(RTRIM$(MID$(a$, eq + 1)))
+        value$ = _TRIM$(MID$(a$, eq + 1))
         SELECT CASE property$
             CASE "Width"
                 IF LEFT$(value$, 5) = "Char(" THEN width$ = STR$(VAL(MID$(value$, 6)) * _FONTWIDTH + 5)

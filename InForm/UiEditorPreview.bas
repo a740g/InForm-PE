@@ -69,14 +69,14 @@ END DECLARE
 
 $IF WIN THEN
     DECLARE DYNAMIC LIBRARY "kernel32"
-        FUNCTION OpenProcess& (BYVAL dwDesiredAccess AS LONG, BYVAL bInheritHandle AS LONG, BYVAL dwProcessId AS LONG)
-        FUNCTION CloseHandle& (BYVAL hObject AS LONG)
-        FUNCTION GetExitCodeProcess& (BYVAL hProcess AS LONG, lpExitCode AS LONG)
+    FUNCTION OpenProcess& (BYVAL dwDesiredAccess AS LONG, BYVAL bInheritHandle AS LONG, BYVAL dwProcessId AS LONG)
+    FUNCTION CloseHandle& (BYVAL hObject AS LONG)
+    FUNCTION GetExitCodeProcess& (BYVAL hProcess AS LONG, lpExitCode AS LONG)
     END DECLARE
     CONST PathSep$ = "\"
 $ELSE
     DECLARE LIBRARY
-    FUNCTION PROCESS_CLOSED& ALIAS kill (BYVAL pid AS INTEGER, BYVAL signal AS INTEGER)
+        FUNCTION PROCESS_CLOSED& ALIAS kill (BYVAL pid AS INTEGER, BYVAL signal AS INTEGER)
     END DECLARE
     CONST PathSep$ = "/"
 $END IF
@@ -148,25 +148,27 @@ FUNCTION AddNewMenuBarControl&
     TempValue = __UI_NewControl(__UI_Type_MenuBar, "", 0, 0, 0, 0, 0)
     SetCaption TempValue, RTRIM$(Control(TempValue).Name)
     __UI_RefreshMenuBar
-    __UI_ActivateMenu Control(TempValue), FALSE
+    __UI_ActivateMenu Control(TempValue), False
     AddNewMenuBarControl& = TempValue
 END FUNCTION
 
 SUB SelectNewControl (id AS LONG)
     DIM i AS LONG
     FOR i = 1 TO UBOUND(Control)
-        Control(i).ControlIsSelected = FALSE
+        Control(i).ControlIsSelected = False
     NEXT
-    Control(id).ControlIsSelected = TRUE
+    Control(id).ControlIsSelected = True
     __UI_TotalSelectedControls = 1
     __UI_FirstSelectedID = id
-    __UI_ForceRedraw = TRUE
+    __UI_ForceRedraw = True
 END SUB
 
 SUB __UI_BeforeUpdateDisplay
     DIM a$, b$, TempValue AS LONG, i AS LONG, j AS LONG
     DIM FileNameToLoad$
-    STATIC EditorWasActive AS _BYTE
+    $IF WIN THEN
+        STATIC EditorWasActive AS _BYTE
+    $END IF
     STATIC WasDragging AS _BYTE, WasResizing AS _BYTE
     STATIC NewWindowTop AS INTEGER, NewWindowLeft AS INTEGER
 
@@ -306,7 +308,7 @@ SUB __UI_BeforeUpdateDisplay
                             SetCaption TempValue, RTRIM$(Control(TempValue).Name)
                             ThisContainer = __UI_ParentMenu(__UI_TotalActiveMenus)
                             __UI_CloseAllMenus
-                            __UI_ActivateMenu Control(ThisContainer), FALSE
+                            __UI_ActivateMenu Control(ThisContainer), False
                         END IF
                     ELSE
                         TempValue = __UI_NewControl(TempValue, "", defW, defH, TempWidth \ 2 - defW \ 2, TempTop - defH \ 2, ThisContainer)
@@ -319,7 +321,7 @@ SUB __UI_BeforeUpdateDisplay
                         CASE __UI_Type_ContextMenu
                             Control(TempValue).HelperCanvas = _COPYIMAGE(ContextMenuIcon, 32)
                             RefreshContextMenus
-                            __UI_ActivateMenu Control(TempValue), FALSE
+                            __UI_ActivateMenu Control(TempValue), False
                     END SELECT
 
                     IF __UI_TotalActiveMenus > 0 AND (Control(TempValue).Type <> __UI_Type_ContextMenu AND Control(TempValue).Type <> __UI_Type_MenuBar AND Control(TempValue).Type <> __UI_Type_MenuItem) THEN
@@ -343,7 +345,7 @@ SUB __UI_BeforeUpdateDisplay
             CASE "PAUSEALLGIF"
                 FOR i = 1 TO UBOUND(Control)
                     IF AutoPlayGif(i) THEN
-                        AutoPlayGif(i) = FALSE
+                        AutoPlayGif(i) = False
                         GIF_Stop i
                     END IF
                 NEXT
@@ -397,7 +399,7 @@ SUB __UI_BeforeUpdateDisplay
 
     $IF WIN THEN
         IF NewWindowLeft <> -32001 AND NewWindowTop <> -32001 AND (NewWindowLeft <> _SCREENX OR NewWindowTop <> _SCREENY) THEN
-            _SCREENMOVE NewWindowLeft + 612, NewWindowTop
+        _SCREENMOVE NewWindowLeft + 612, NewWindowTop
         END IF
     $END IF
 
@@ -407,45 +409,45 @@ SUB __UI_BeforeUpdateDisplay
         hnd& = OpenProcess(&H400, 0, UiEditorPID)
         b& = GetExitCodeProcess(hnd&, ExitCode&)
         IF b& = 1 AND ExitCode& = 259 THEN
-            'Editor is active.
-            EditorWasActive = TRUE
+        'Editor is active.
+        EditorWasActive = TRUE
         ELSE
-            'Editor was closed.
-            IF EditorWasActive = FALSE THEN
-                'Preview was launched by user
-                _SCREENHIDE
-                MessageBox "__UI_BeforeUpdateDisplay: InForm Designer is not running. Please run the main program.", _TITLE$, MsgBox_Critical
-            END IF
-            IF _FILEEXISTS("InForm/UiEditorPreview.frmbin") THEN KILL "InForm/UiEditorPreview.frmbin"
-            SYSTEM
+        'Editor was closed.
+        IF EditorWasActive = FALSE THEN
+        'Preview was launched by user
+        _SCREENHIDE
+        MessageBox "__UI_BeforeUpdateDisplay: InForm Designer is not running. Please run the main program.", _TITLE$, MsgBox_Critical
+        END IF
+        IF _FILEEXISTS("InForm/UiEditorPreview.frmbin") THEN KILL "InForm/UiEditorPreview.frmbin"
+        SYSTEM
         END IF
         b& = CloseHandle(hnd&)
     $ELSE
         IF PROCESS_CLOSED(UiEditorPID, 0) THEN
-        If _FileExists("InForm/UiEditorPreview.frmbin") Then Kill "InForm/UiEditorPreview.frmbin"
-        SYSTEM
+            IF _FILEEXISTS("InForm/UiEditorPreview.frmbin") THEN KILL "InForm/UiEditorPreview.frmbin"
+            SYSTEM
         END IF
     $END IF
 
     IF __UI_IsDragging THEN
         IF NOT WasDragging THEN
-            WasDragging = TRUE
+            WasDragging = True
         END IF
     ELSE
         IF WasDragging THEN
             SaveUndoImage
-            WasDragging = FALSE
+            WasDragging = False
         END IF
     END IF
 
     IF __UI_IsResizing THEN
         IF NOT WasResizing THEN
-            WasResizing = TRUE
+            WasResizing = True
         END IF
     ELSE
         IF WasResizing THEN
             SaveUndoImage
-            WasResizing = FALSE
+            WasResizing = False
         END IF
     END IF
 
@@ -479,7 +481,7 @@ SUB __UI_BeforeUpdateDisplay
                 prevTurnsInto = __UI_Type(Control(__UI_FirstSelectedID).Type).TurnsInto
                 IF Control(__UI_FirstSelectedID).Type = __UI_Type_TextBox THEN
                     'Offer to turn text to numeric-only TextBox and vice-versa
-                    IF Control(__UI_FirstSelectedID).NumericOnly = FALSE THEN
+                    IF Control(__UI_FirstSelectedID).NumericOnly = False THEN
                         prevTurnsInto = -1
                     ELSE
                         prevTurnsInto = -2
@@ -489,7 +491,7 @@ SUB __UI_BeforeUpdateDisplay
                 SendData b$, "TURNSINTO"
             END IF
 
-            IF __UI_DesignMode = TRUE AND __UI_ShowInvisibleControls = TRUE THEN
+            IF __UI_DesignMode = True AND __UI_ShowInvisibleControls = True THEN
                 'Check if this control has a ContextMenu attached to it
                 'and indicate that
                 IF Control(__UI_FirstSelectedID).Type = __UI_Type_ContextMenu THEN
@@ -500,7 +502,7 @@ SUB __UI_BeforeUpdateDisplay
                             ELSE
                                 Control(i).ControlState = 1
                             END IF
-                            Control(i).Redraw = TRUE
+                            Control(i).Redraw = True
                         END IF
                     NEXT
                 ELSE
@@ -511,7 +513,7 @@ SUB __UI_BeforeUpdateDisplay
                             ELSE
                                 Control(i).ControlState = 1
                             END IF
-                            Control(i).Redraw = TRUE
+                            Control(i).Redraw = True
                         END IF
                     NEXT
                 END IF
@@ -519,17 +521,17 @@ SUB __UI_BeforeUpdateDisplay
         ELSEIF __UI_TotalSelectedControls > 1 THEN
             DIM SearchType AS INTEGER, AllControlsTurnInto AS _BYTE
             SearchType = Control(__UI_FirstSelectedID).Type
-            AllControlsTurnInto = TRUE
+            AllControlsTurnInto = True
             FOR i = 1 TO UBOUND(Control)
                 IF Control(i).ControlIsSelected THEN
                     IF SearchType = __UI_Type_TextBox THEN
                         IF Control(i).NumericOnly <> Control(__UI_FirstSelectedID).NumericOnly THEN
-                            AllControlsTurnInto = FALSE
+                            AllControlsTurnInto = False
                             EXIT FOR
                         END IF
                     ELSE
                         IF Control(i).Type <> SearchType THEN
-                            AllControlsTurnInto = FALSE
+                            AllControlsTurnInto = False
                             EXIT FOR
                         END IF
                     END IF
@@ -537,7 +539,7 @@ SUB __UI_BeforeUpdateDisplay
             NEXT
             SearchType = __UI_Type(SearchType).TurnsInto
             IF SearchType = 0 AND Control(__UI_FirstSelectedID).Type = __UI_Type_TextBox THEN
-                IF Control(__UI_FirstSelectedID).NumericOnly = FALSE THEN
+                IF Control(__UI_FirstSelectedID).NumericOnly = False THEN
                     SearchType = -1
                 ELSE
                     SearchType = -2
@@ -550,23 +552,23 @@ SUB __UI_BeforeUpdateDisplay
                 SendData b$, "TURNSINTO"
             END IF
 
-            IF __UI_DesignMode = TRUE AND __UI_ShowInvisibleControls = TRUE THEN
+            IF __UI_DesignMode = True AND __UI_ShowInvisibleControls = True THEN
                 'Check if all selected controls have the same ContextMenu
                 'attached to them and indicate that
                 DIM SelectionContextMenu AS LONG, AllControlsHaveTheSameContextMenu AS _BYTE
-                AllControlsHaveTheSameContextMenu = TRUE
+                AllControlsHaveTheSameContextMenu = True
                 SelectionContextMenu = Control(__UI_FirstSelectedID).ContextMenuID
                 IF SelectionContextMenu > 0 THEN
                     FOR i = 1 TO UBOUND(Control)
                         IF Control(i).ControlIsSelected THEN
                             IF Control(i).ContextMenuID <> SelectionContextMenu THEN
-                                AllControlsHaveTheSameContextMenu = FALSE
+                                AllControlsHaveTheSameContextMenu = False
                                 EXIT FOR
                             END IF
                         END IF
                     NEXT
                 ELSE
-                    AllControlsHaveTheSameContextMenu = FALSE
+                    AllControlsHaveTheSameContextMenu = False
                 END IF
 
                 IF AllControlsHaveTheSameContextMenu THEN
@@ -577,14 +579,14 @@ SUB __UI_BeforeUpdateDisplay
                             ELSE
                                 Control(i).ControlState = 1
                             END IF
-                            Control(i).Redraw = TRUE
+                            Control(i).Redraw = True
                         END IF
                     NEXT
                 ELSE
                     FOR i = 1 TO UBOUND(Control)
                         IF Control(i).Type = __UI_Type_ContextMenu THEN
                             Control(i).ControlState = 1
-                            Control(i).Redraw = TRUE
+                            Control(i).Redraw = True
                         END IF
                     NEXT
                 END IF
@@ -594,7 +596,7 @@ SUB __UI_BeforeUpdateDisplay
         FOR i = 1 TO UBOUND(Control)
             IF Control(i).Type = __UI_Type_ContextMenu THEN
                 Control(i).ControlState = 1 'normal state
-                Control(i).Redraw = TRUE
+                Control(i).Redraw = True
             END IF
         NEXT
     END IF
@@ -611,7 +613,7 @@ SUB __UI_BeforeUpdateDisplay
             _SCREENSHOW
         ELSEIF TempValue = -4 THEN
             'Load an existing file
-            IsCreating = TRUE
+            IsCreating = True
             DIM FileToLoad AS INTEGER
             FileToLoad = FREEFILE
             OPEN FileNameToLoad$ FOR BINARY AS #FileToLoad
@@ -636,7 +638,7 @@ SUB __UI_BeforeUpdateDisplay
             SendSignal -7 'Form just loaded
         ELSEIF TempValue = -5 THEN
             'Reset request (new form)
-            IsCreating = TRUE
+            IsCreating = True
             a$ = Base64_Decode(EMPTY_FORM)
 
             FileToLoad = FREEFILE
@@ -675,15 +677,15 @@ SUB __UI_BeforeUpdateDisplay
     LOOP
 
     DIM PropertyApplied AS _BYTE, LockedControlsGOSUB AS _BYTE
-    PropertyApplied = FALSE
-    IF TotalLockedControls THEN LockedControlsGOSUB = TRUE ELSE LockedControlsGOSUB = FALSE
+    PropertyApplied = False
+    IF TotalLockedControls THEN LockedControlsGOSUB = True ELSE LockedControlsGOSUB = False
     DO WHILE LEN(Property$)
         DIM FloatValue AS _FLOAT, temp$, temp2$
         'Editor sent property value
         b$ = ReadSequential$(Property$, 2)
         TempValue = CVI(b$)
         SaveUndoImage
-        PropertyApplied = TRUE
+        PropertyApplied = True
         SELECT CASE TempValue
             CASE 1 'Name
                 b$ = ReadSequential$(Property$, 4)
@@ -721,13 +723,13 @@ SUB __UI_BeforeUpdateDisplay
                                 ChangeCaption:
                                 IF Control(i).Type = __UI_Type_Label THEN
                                     DIM TotalReplacements AS LONG
-                                    b$ = Replace(b$, "\n", CHR$(10), FALSE, TotalReplacements)
+                                    b$ = Replace(b$, "\n", CHR$(10), False, TotalReplacements)
                                 END IF
                                 SetCaption i, b$
                                 IF Control(i).Type = __UI_Type_Label THEN AutoSizeLabel Control(i)
                                 IF LEN(b$) > 0 AND b$ <> "&" THEN GOSUB AutoName
                                 IF Control(i).Type = __UI_Type_MenuItem THEN
-                                    __UI_ActivateMenu Control(Control(i).ParentID), FALSE
+                                    __UI_ActivateMenu Control(Control(i).ParentID), False
                                 END IF
                                 IF LockedControlsGOSUB THEN RETURN
                             END IF
@@ -803,7 +805,7 @@ SUB __UI_BeforeUpdateDisplay
                                         IF LEN(b$) > 0 AND b$ <> "&" THEN GOSUB AutoName
                                     END IF
                                 ELSEIF Control(i).Type = __UI_Type_ListBox OR Control(i).Type = __UI_Type_DropdownList THEN
-                                    Text(i) = Replace(b$, "\n", CHR$(10), FALSE, TotalReplacements)
+                                    Text(i) = Replace(b$, "\n", CHR$(10), False, TotalReplacements)
                                     IF Control(i).Max < TotalReplacements + 1 THEN Control(i).Max = TotalReplacements + 1
                                     Control(i).LastVisibleItem = 0 'Reset it so it's recalculated
                                 END IF
@@ -944,12 +946,12 @@ SUB __UI_BeforeUpdateDisplay
                                     _FONT Control(i).Font
                                     SELECT CASE Control(i).Type
                                         CASE __UI_Type_Label
-                                            IF Control(i).WordWrap = FALSE THEN
+                                            IF Control(i).WordWrap = False THEN
                                                 Control(i).Height = uspacing + 6 + (ABS(Control(i).HasBorder) * Control(i).BorderSize)
                                                 AutoSizeLabel Control(i)
                                             END IF
                                         CASE __UI_Type_TextBox
-                                            IF Control(i).Multiline = FALSE THEN
+                                            IF Control(i).Multiline = False THEN
                                                 Control(i).Height = uspacing + 6 + (ABS(Control(i).HasBorder) * Control(i).BorderSize)
                                             END IF
                                         CASE __UI_Type_CheckBox, __UI_Type_RadioButton
@@ -976,7 +978,7 @@ SUB __UI_BeforeUpdateDisplay
                             FOR i = 1 TO UBOUND(Control)
                                 IF Control(i).Type = __UI_Type_MenuBar OR Control(i).Type = __UI_Type_MenuItem OR Control(i).Type = __UI_Type_MenuPanel OR Control(i).Type = __UI_Type_ContextMenu THEN
                                     Control(i).Font = SetFont(NewFontFile, NewFontSize)
-                                    MustRedrawMenus = TRUE
+                                    MustRedrawMenus = True
                                 END IF
                             NEXT
                             IF MustRedrawMenus THEN __UI_RefreshMenuBar
@@ -996,7 +998,7 @@ SUB __UI_BeforeUpdateDisplay
                     FOR i = 1 TO UBOUND(Control)
                         IF Control(i).ControlIsSelected THEN
                             ChangeTooltip:
-                            ToolTip(i) = Replace(b$, "\n", CHR$(10), FALSE, 0)
+                            ToolTip(i) = Replace(b$, "\n", CHR$(10), False, 0)
                             IF LockedControlsGOSUB THEN RETURN
                         END IF
                     NEXT
@@ -1014,15 +1016,15 @@ SUB __UI_BeforeUpdateDisplay
                             ChangeValue:
                             IF Control(i).Type = __UI_Type_CheckBox OR (Control(i).Type = __UI_Type_MenuItem AND Control(i).BulletStyle = __UI_CheckMark) OR Control(i).Type = __UI_Type_ToggleSwitch THEN
                                 IF _CV(_FLOAT, b$) <> 0 THEN
-                                    Control(i).Value = TRUE
+                                    Control(i).Value = True
                                 ELSE
-                                    Control(i).Value = FALSE
+                                    Control(i).Value = False
                                 END IF
                             ELSEIF Control(i).Type = __UI_Type_RadioButton OR (Control(i).Type = __UI_Type_MenuItem AND Control(i).BulletStyle = __UI_Bullet) THEN
                                 IF _CV(_FLOAT, b$) <> 0 THEN
                                     SetRadioButtonValue i
                                 ELSE
-                                    Control(i).Value = FALSE
+                                    Control(i).Value = False
                                 END IF
                             ELSE
                                 Control(i).Value = _CV(_FLOAT, b$)
@@ -1178,7 +1180,7 @@ SUB __UI_BeforeUpdateDisplay
                             ChangeHidden:
                             Control(i).Hidden = CVI(b$)
                             IF Control(i).Type = __UI_Type_MenuItem AND __UI_ParentMenu(__UI_TotalActiveMenus) = Control(i).ParentID THEN
-                                __UI_ActivateMenu Control(Control(i).ParentID), FALSE
+                                __UI_ActivateMenu Control(Control(i).ParentID), False
                             END IF
                             IF LockedControlsGOSUB THEN RETURN
                         END IF
@@ -1459,7 +1461,7 @@ SUB __UI_BeforeUpdateDisplay
                             IF Control(LockedControls(j)).Type = __UI_Type_TextBox THEN
                                 tempFont = _FONT
                                 _FONT Control(LockedControls(j)).Font
-                                IF Control(LockedControls(j)).Multiline = FALSE THEN Control(LockedControls(j)).Height = uspacing + 6 + (ABS(Control(LockedControls(j)).HasBorder) * Control(LockedControls(j)).BorderSize)
+                                IF Control(LockedControls(j)).Multiline = False THEN Control(LockedControls(j)).Height = uspacing + 6 + (ABS(Control(LockedControls(j)).HasBorder) * Control(LockedControls(j)).BorderSize)
                                 _FONT tempFont
                             END IF
                         END IF
@@ -1472,7 +1474,7 @@ SUB __UI_BeforeUpdateDisplay
                                 IF Control(i).Type = __UI_Type_TextBox THEN
                                     tempFont = _FONT
                                     _FONT Control(i).Font
-                                    IF Control(i).Multiline = FALSE THEN Control(i).Height = uspacing + 6 + (ABS(Control(i).HasBorder) * Control(i).BorderSize)
+                                    IF Control(i).Multiline = False THEN Control(i).Height = uspacing + 6 + (ABS(Control(i).HasBorder) * Control(i).BorderSize)
                                     _FONT tempFont
                                 END IF
                             END IF
@@ -1483,7 +1485,7 @@ SUB __UI_BeforeUpdateDisplay
                 b$ = ReadSequential$(Property$, 2)
                 b$ = ReadSequential$(Property$, CVI(b$))
                 Control(__UI_GetID(b$)).ControlState = 2 'highlight ContextMenu handle
-                Control(__UI_GetID(b$)).Redraw = TRUE 'highlight ContextMenu handle
+                Control(__UI_GetID(b$)).Redraw = True 'highlight ContextMenu handle
                 IF TotalLockedControls THEN
                     FOR j = 1 TO TotalLockedControls
                         i = LockedControls(j)
@@ -1528,7 +1530,7 @@ SUB __UI_BeforeUpdateDisplay
                     FOR j = 1 TO TotalLockedControls
                         i = RegisterKeyCombo(b$, LockedControls(j))
                         IF Control(LockedControls(j)).Type = __UI_Type_MenuItem THEN
-                            __UI_ActivateMenu Control(Control(LockedControls(j)).ParentID), FALSE
+                            __UI_ActivateMenu Control(Control(LockedControls(j)).ParentID), False
                             EXIT FOR
                         END IF
                     NEXT
@@ -1537,7 +1539,7 @@ SUB __UI_BeforeUpdateDisplay
                         IF Control(i).ControlIsSelected THEN
                             j = RegisterKeyCombo(b$, Control(i).ID)
                             IF Control(i).Type = __UI_Type_MenuItem THEN
-                                __UI_ActivateMenu Control(Control(i).ParentID), FALSE
+                                __UI_ActivateMenu Control(Control(i).ParentID), False
                                 EXIT FOR
                             END IF
                         END IF
@@ -1582,9 +1584,9 @@ SUB __UI_BeforeUpdateDisplay
 
                 IF __UI_TotalActiveMenus > 0 AND LEFT$(Control(__UI_ParentMenu(__UI_TotalActiveMenus)).Name, 5) <> "__UI_" THEN
                     IF Control(CVL(a$)).Type = __UI_Type_MenuItem THEN
-                        __UI_ActivateMenu Control(Control(CVL(a$)).ParentID), FALSE
+                        __UI_ActivateMenu Control(Control(CVL(a$)).ParentID), False
                     ELSEIF Control(CVL(b$)).Type = __UI_Type_MenuItem THEN
-                        __UI_ActivateMenu Control(Control(CVL(b$)).ParentID), FALSE
+                        __UI_ActivateMenu Control(Control(CVL(b$)).ParentID), False
                     ELSE
                         __UI_CloseAllMenus
                     END IF
@@ -1595,10 +1597,10 @@ SUB __UI_BeforeUpdateDisplay
 
                 'Desselect all first:
                 FOR i = 1 TO UBOUND(Control)
-                    Control(i).ControlIsSelected = FALSE
+                    Control(i).ControlIsSelected = False
                 NEXT
 
-                IF CVL(b$) > 0 THEN Control(CVL(b$)).ControlIsSelected = TRUE
+                IF CVL(b$) > 0 THEN Control(CVL(b$)).ControlIsSelected = True
             CASE 216 TO 221
                 __UI_KeyPress TempValue
             CASE 222 'New textbox control with the NumericOnly property set to true
@@ -1615,19 +1617,19 @@ SUB __UI_BeforeUpdateDisplay
                 END IF
 
                 FOR i = 1 TO UBOUND(Control)
-                    Control(i).ControlIsSelected = FALSE
+                    Control(i).ControlIsSelected = False
                 NEXT
-                Control(TempValue).ControlIsSelected = TRUE
+                Control(TempValue).ControlIsSelected = True
                 __UI_TotalSelectedControls = 1
                 __UI_FirstSelectedID = TempValue
-                __UI_ForceRedraw = TRUE
+                __UI_ForceRedraw = True
             CASE 223
                 b$ = ReadSequential$(Property$, 2)
                 AlternateNumericOnlyProperty
             CASE 225
                 ConvertControlToAlternativeType
         END SELECT
-        __UI_ForceRedraw = TRUE
+        __UI_ForceRedraw = True
     LOOP
     IF PropertyApplied THEN TotalLockedControls = 0
 
@@ -1637,16 +1639,16 @@ SUB __UI_BeforeUpdateDisplay
         PUT #Host, , b$
     ELSEIF __UI_TotalActiveMenus > 0 AND LEFT$(Control(__UI_ParentMenu(__UI_TotalActiveMenus)).Name, 5) = "__UI_" THEN
         STATIC LocalMenuShown AS _BYTE, LocalMenuShownSignalSent AS _BYTE
-        LocalMenuShown = TRUE
+        LocalMenuShown = True
     ELSE
-        LocalMenuShown = FALSE
-        LocalMenuShownSignalSent = FALSE
+        LocalMenuShown = False
+        LocalMenuShownSignalSent = False
     END IF
 
     IF LocalMenuShown AND NOT LocalMenuShownSignalSent THEN
         b$ = "SIGNAL>" + MKI$(-5) + "<END>" 'Signal to the editor that a context menu is successfully shown
         PUT #Host, , b$
-        LocalMenuShownSignalSent = TRUE
+        LocalMenuShownSignalSent = True
     END IF
 
     STATIC prevTotalSelected AS LONG, prevFirstSelected AS LONG
@@ -1673,12 +1675,12 @@ SUB __UI_BeforeUpdateDisplay
 END SUB
 
 SUB __UI_BeforeUnload
-    __UI_UnloadSignal = FALSE
+    __UI_UnloadSignal = False
     SendSignal -9
 END SUB
 
 SUB __UI_BeforeInit
-    __UI_DesignMode = TRUE
+    __UI_DesignMode = True
 
     IF _FILEEXISTS("InForm/UiEditorPreview.frmbin") THEN
         DIM FileToLoad AS INTEGER, a$
@@ -1699,7 +1701,7 @@ END SUB
 SUB __UI_FormResized
     STATIC TimesResized AS INTEGER
 
-    IF IsCreating THEN TimesResized = 0: IsCreating = FALSE
+    IF IsCreating THEN TimesResized = 0: IsCreating = False
 
     TimesResized = TimesResized + 1
 
@@ -1814,7 +1816,7 @@ SUB __UI_KeyPress (id AS LONG)
             TempValue = __UI_NewControl(__UI_Type_ContextMenu, "", 22, 22, 0, 0, 0)
             Control(TempValue).HelperCanvas = _COPYIMAGE(ContextMenuIcon, 32)
             RefreshContextMenus
-            __UI_ActivateMenu Control(TempValue), FALSE
+            __UI_ActivateMenu Control(TempValue), False
             SelectNewControl TempValue
         CASE 227 'Toggle __UI_ShowInvisibleControls
             __UI_ShowInvisibleControls = NOT __UI_ShowInvisibleControls
@@ -1839,7 +1841,7 @@ SUB __UI_KeyPress (id AS LONG)
 END SUB
 
 SUB AlternateNumericOnlyProperty
-    IF Control(__UI_FirstSelectedID).NumericOnly = TRUE THEN
+    IF Control(__UI_FirstSelectedID).NumericOnly = True THEN
         Control(__UI_FirstSelectedID).NumericOnly = __UI_NumericWithBounds
         IF VAL(Text(__UI_FirstSelectedID)) > Control(__UI_FirstSelectedID).Max THEN
             Text(__UI_FirstSelectedID) = LTRIM$(STR$(Control(__UI_FirstSelectedID).Max))
@@ -1847,7 +1849,7 @@ SUB AlternateNumericOnlyProperty
             Text(__UI_FirstSelectedID) = LTRIM$(STR$(Control(__UI_FirstSelectedID).Min))
         END IF
     ELSEIF Control(__UI_FirstSelectedID).NumericOnly = __UI_NumericWithBounds THEN
-        Control(__UI_FirstSelectedID).NumericOnly = TRUE
+        Control(__UI_FirstSelectedID).NumericOnly = True
     END IF
 END SUB
 
@@ -2035,7 +2037,7 @@ SUB DoAlign (AlignMode AS INTEGER)
             'are currently placed vertically:
 
             REDIM SubList(1 TO __UI_TotalSelectedControls) AS LONG
-            __UI_AutoRefresh = FALSE
+            __UI_AutoRefresh = False
             FOR FindTops = 0 TO Control(__UI_FormID).Height - 1
                 FOR i = 1 TO UBOUND(Control)
                     IF Control(i).ControlIsSelected AND Control(i).Top = FindTops THEN
@@ -2068,14 +2070,14 @@ SUB DoAlign (AlignMode AS INTEGER)
                 FindTops = FindTops + Control(SubList(i)).Height
             NEXT
 
-            __UI_AutoRefresh = TRUE
-            __UI_ForceRedraw = TRUE
+            __UI_AutoRefresh = True
+            __UI_ForceRedraw = True
         CASE 210 'Distribute horizontally
             'Build a sublist containing the selected controls in the order they
             'are currently placed horizontally:
 
             REDIM SubList(1 TO __UI_TotalSelectedControls) AS LONG
-            __UI_AutoRefresh = FALSE
+            __UI_AutoRefresh = False
             FOR FindLefts = 0 TO Control(__UI_FormID).Width - 1
                 FOR i = 1 TO UBOUND(Control)
                     IF Control(i).ControlIsSelected AND Control(i).Left = FindLefts THEN
@@ -2108,8 +2110,8 @@ SUB DoAlign (AlignMode AS INTEGER)
                 FindLefts = FindLefts + Control(SubList(i)).Width
             NEXT
 
-            __UI_AutoRefresh = TRUE
-            __UI_ForceRedraw = TRUE
+            __UI_AutoRefresh = True
+            __UI_ForceRedraw = True
     END SELECT
 END SUB
 
@@ -2135,14 +2137,14 @@ SUB ConvertControlToAlternativeType
                     Control(i).HelperCanvas = _COPYIMAGE(ContextMenuIcon, 32)
                 END IF
             ELSEIF NewType = __UI_Type_TextBox THEN
-                IF Control(i).NumericOnly = FALSE THEN
+                IF Control(i).NumericOnly = False THEN
                     Control(i).NumericOnly = __UI_NumericWithBounds
                     IF Control(i).Min = 0 AND Control(i).Max = 0 THEN
                         Control(i).Min = -32768
                         Control(i).Max = 32767
                     END IF
                 ELSE
-                    Control(i).NumericOnly = FALSE
+                    Control(i).NumericOnly = False
                     IF Control(i).Min = -32768 AND Control(i).Max = 32767 THEN
                         Control(i).Min = 0
                         Control(i).Max = 0
@@ -2156,10 +2158,10 @@ SUB ConvertControlToAlternativeType
         __UI_RefreshMenuBar
         __UI_HasMenuBar = (__UI_FirstMenuBarControl > 0)
         RefreshContextMenus
-        __UI_ActivateMenu Control(__UI_FirstSelectedID), FALSE
+        __UI_ActivateMenu Control(__UI_FirstSelectedID), False
     END IF
 
-    __UI_ForceRedraw = TRUE
+    __UI_ForceRedraw = True
 END SUB
 
 SUB SelectAllControls
@@ -2167,12 +2169,12 @@ SUB SelectAllControls
     IF __UI_TotalSelectedControls = 1 AND Control(__UI_FirstSelectedID).Type = __UI_Type_Frame THEN
         DIM ThisContainer AS LONG
         ThisContainer = Control(__UI_FirstSelectedID).ID
-        Control(__UI_FirstSelectedID).ControlIsSelected = FALSE
+        Control(__UI_FirstSelectedID).ControlIsSelected = False
         __UI_TotalSelectedControls = 0
         FOR i = 1 TO UBOUND(Control)
             IF Control(i).Type <> __UI_Type_Frame AND Control(i).Type <> __UI_Type_Form AND Control(i).Type <> __UI_Type_Font AND Control(i).Type <> __UI_Type_MenuBar AND Control(i).Type <> __UI_Type_MenuItem AND Control(i).Type <> __UI_Type_MenuPanel AND Control(i).Type <> __UI_Type_ContextMenu AND Control(i).Type <> __UI_Type_MenuItem THEN
                 IF Control(i).ID > 0 AND Control(i).ParentID = ThisContainer THEN
-                    Control(i).ControlIsSelected = TRUE
+                    Control(i).ControlIsSelected = True
                     __UI_TotalSelectedControls = __UI_TotalSelectedControls + 1
                     IF __UI_TotalSelectedControls = 1 THEN __UI_FirstSelectedID = Control(i).ID
                 END IF
@@ -2183,7 +2185,7 @@ SUB SelectAllControls
         FOR i = 1 TO UBOUND(Control)
             IF Control(i).Type <> __UI_Type_Frame AND Control(i).Type <> __UI_Type_Form AND Control(i).Type <> __UI_Type_Font AND Control(i).Type <> __UI_Type_MenuBar AND Control(i).Type <> __UI_Type_MenuItem AND Control(i).Type <> __UI_Type_MenuPanel AND Control(i).Type <> __UI_Type_ContextMenu AND Control(i).Type <> __UI_Type_MenuItem THEN
                 IF Control(i).ID > 0 AND Control(i).ParentID = 0 THEN
-                    Control(i).ControlIsSelected = TRUE
+                    Control(i).ControlIsSelected = True
                     __UI_TotalSelectedControls = __UI_TotalSelectedControls + 1
                     IF __UI_TotalSelectedControls = 1 THEN __UI_FirstSelectedID = Control(i).ID
                 END IF
@@ -2196,8 +2198,8 @@ SUB SelectChildrenControls (id AS LONG)
     DIM i AS LONG
     FOR i = 1 TO UBOUND(Control)
         IF Control(i).ParentID = id THEN
-            IF Control(i).ControlIsSelected = FALSE THEN
-                Control(i).ControlIsSelected = TRUE
+            IF Control(i).ControlIsSelected = False THEN
+                Control(i).ControlIsSelected = True
                 __UI_TotalSelectedControls = __UI_TotalSelectedControls + 1
                 IF Control(i).Type = __UI_Type_MenuItem THEN
                     'Recursively select children's children too:
@@ -2228,9 +2230,9 @@ SUB DeleteSelectedControls
             IF Control(i).Type = __UI_Type_MenuBar OR Control(i).Type = __UI_Type_ContextMenu THEN
                 DIM MustRefreshMenuBar AS _BYTE, MustRefreshContextMenus AS _BYTE
                 IF Control(i).Type = __UI_Type_MenuBar THEN
-                    MustRefreshMenuBar = TRUE
+                    MustRefreshMenuBar = True
                 ELSE
-                    MustRefreshContextMenus = TRUE
+                    MustRefreshContextMenus = True
                 END IF
             END IF
             IF __UI_TotalActiveMenus > 0 AND __UI_ParentMenu(__UI_TotalActiveMenus) = Control(i).ID THEN
@@ -2240,8 +2242,8 @@ SUB DeleteSelectedControls
             __UI_DestroyControl Control(i)
             IF MustRefreshMenuBar THEN __UI_RefreshMenuBar
             IF MustRefreshContextMenus THEN RefreshContextMenus
-            __UI_ForceRedraw = TRUE
-            didDelete = TRUE
+            __UI_ForceRedraw = True
+            didDelete = True
         END IF
     NEXT
     IF didDelete THEN __UI_TotalSelectedControls = 0
@@ -2287,18 +2289,18 @@ SUB LoadPreview (Destination AS _BYTE)
     DIM BinaryFileNum AS INTEGER, LogFileNum AS INTEGER
     DIM CorruptedData AS _BYTE, UndoBuffer AS _BYTE
 
-    CONST LogFileLoad = FALSE
+    CONST LogFileLoad = False
 
     IF _FILEEXISTS("InForm/UiEditorPreview.frmbin") = 0 AND Destination = InDisk THEN
         EXIT SUB
     END IF
 
     IF Destination = InDisk THEN
-        Disk = TRUE
+        Disk = True
         BinaryFileNum = FREEFILE
         OPEN "InForm/UiEditorPreview.frmbin" FOR BINARY AS #BinaryFileNum
     ELSEIF Destination = ToUndoBuffer THEN
-        UndoBuffer = TRUE
+        UndoBuffer = True
     END IF
 
     LogFileNum = FREEFILE
@@ -2315,7 +2317,7 @@ SUB LoadPreview (Destination AS _BYTE)
         Clip$ = UndoImage$(UndoPointer)
     ELSEIF Destination = FromEditor THEN
         Clip$ = RestoreCrashData$
-        UndoBuffer = TRUE
+        UndoBuffer = True
     ELSE
         Clip$ = _CLIPBOARD$
         b$ = ReadSequential$(Clip$, LEN(__UI_ClipboardCheck$))
@@ -2327,7 +2329,7 @@ SUB LoadPreview (Destination AS _BYTE)
 
     IF LogFileLoad THEN PRINT #LogFileNum, "FOUND INFORM+1"
 
-    __UI_AutoRefresh = FALSE
+    __UI_AutoRefresh = False
 
     IF Disk THEN
         FOR i = UBOUND(Control) TO 1 STEP -1
@@ -2370,8 +2372,8 @@ SUB LoadPreview (Destination AS _BYTE)
     ELSE
         DIM ShiftPosition AS _BYTE
         FOR i = 1 TO UBOUND(Control)
-            IF Control(i).ControlIsSelected THEN ShiftPosition = TRUE
-            Control(i).ControlIsSelected = FALSE
+            IF Control(i).ControlIsSelected THEN ShiftPosition = True
+            Control(i).ControlIsSelected = False
         NEXT
 
         __UI_TotalSelectedControls = 0
@@ -2393,7 +2395,7 @@ SUB LoadPreview (Destination AS _BYTE)
         LOOP
 
         b$ = ReadSequential$(Clip$, VAL("&H" + ClipLen$))
-        b$ = Replace$(b$, CHR$(10), "", FALSE, 0)
+        b$ = Replace$(b$, CHR$(10), "", False, 0)
         Clip$ = Base64_Decode(b$)
     END IF
 
@@ -2443,9 +2445,9 @@ SUB LoadPreview (Destination AS _BYTE)
             DIM OriginalName$, DidRename AS _BYTE
 
             OriginalName$ = RTRIM$(NewName)
-            DidRename = FALSE
+            DidRename = False
             DO WHILE __UI_GetID(NewName) > 0
-                DidRename = TRUE
+                DidRename = True
                 IF INSTR(NameChanges$, OriginalName$ + "=") = 0 THEN
                     NameChanges$ = NameChanges$ + OriginalName$ + "="
                 END IF
@@ -2487,13 +2489,13 @@ SUB LoadPreview (Destination AS _BYTE)
         TempValue = __UI_NewControl(NewType, NewName, NewWidth, NewHeight, NewLeft, NewTop, __UI_GetID(NewParentID))
 
         IF NOT Disk AND NOT UndoBuffer THEN
-            Control(TempValue).ControlIsSelected = TRUE
+            Control(TempValue).ControlIsSelected = True
             __UI_TotalSelectedControls = __UI_TotalSelectedControls + 1
             IF __UI_TotalSelectedControls = 1 THEN FirstToBeSelected = TempValue
         END IF
         IF NewType = __UI_Type_PictureBox THEN
-            Control(TempValue).HasBorder = FALSE
-            Control(TempValue).Stretch = FALSE
+            Control(TempValue).HasBorder = False
+            Control(TempValue).Stretch = False
         ELSEIF NewType = __UI_Type_ContextMenu THEN
             Control(TempValue).HelperCanvas = _COPYIMAGE(ContextMenuIcon, 32)
             Control(TempValue).Width = 22
@@ -2527,7 +2529,7 @@ SUB LoadPreview (Destination AS _BYTE)
                     END IF
                     IF LogFileLoad THEN PRINT #LogFileNum, "TEXT:" + Text(TempValue)
                 CASE -4 'Stretch
-                    Control(TempValue).Stretch = TRUE
+                    Control(TempValue).Stretch = True
                     IF LogFileLoad THEN PRINT #LogFileNum, "STRETCH"
                 CASE -5 'Font
                     IF LogFileLoad THEN PRINT #LogFileNum, "FONT:";
@@ -2572,7 +2574,7 @@ SUB LoadPreview (Destination AS _BYTE)
                     Control(TempValue).BackStyle = __UI_Transparent
                     IF LogFileLoad THEN PRINT #LogFileNum, "BACKSTYLE:TRANSPARENT"
                 CASE -12
-                    Control(TempValue).HasBorder = TRUE
+                    Control(TempValue).HasBorder = True
                     IF Control(TempValue).BorderSize = 0 THEN
                         Control(TempValue).BorderSize = 1
                     END IF
@@ -2594,19 +2596,19 @@ SUB LoadPreview (Destination AS _BYTE)
                     Control(TempValue).Max = _CV(_FLOAT, b$)
                     IF LogFileLoad THEN PRINT #LogFileNum, "MAX="; Control(TempValue).Max
                 CASE -19
-                    Control(TempValue).ShowPercentage = TRUE
+                    Control(TempValue).ShowPercentage = True
                     IF LogFileLoad THEN PRINT #LogFileNum, "SHOWPERCENTAGE"
                 CASE -20
-                    Control(TempValue).CanHaveFocus = TRUE
+                    Control(TempValue).CanHaveFocus = True
                     IF LogFileLoad THEN PRINT #LogFileNum, "CANHAVEFOCUS"
                 CASE -21
-                    Control(TempValue).Disabled = TRUE
+                    Control(TempValue).Disabled = True
                     IF LogFileLoad THEN PRINT #LogFileNum, "DISABLED"
                 CASE -22
-                    Control(TempValue).Hidden = TRUE
+                    Control(TempValue).Hidden = True
                     IF LogFileLoad THEN PRINT #LogFileNum, "HIDDEN"
                 CASE -23
-                    Control(TempValue).CenteredWindow = TRUE
+                    Control(TempValue).CenteredWindow = True
                     IF LogFileLoad THEN PRINT #LogFileNum, "CENTEREDWINDOW"
                 CASE -24 'Tips
                     IF NOT Disk THEN b$ = ReadSequential$(Clip$, 4) ELSE b$ = SPACE$(4): GET #BinaryFileNum, , b$
@@ -2624,7 +2626,7 @@ SUB LoadPreview (Destination AS _BYTE)
                     Control(TempValue).Interval = _CV(_FLOAT, b$)
                     IF LogFileLoad THEN PRINT #LogFileNum, "INTERVAL="; Control(TempValue).Interval
                 CASE -27
-                    Control(TempValue).WordWrap = TRUE
+                    Control(TempValue).WordWrap = True
                     IF LogFileLoad THEN PRINT #LogFileNum, "WORDWRAP"
                 CASE -28
                     IF NOT Disk THEN b$ = ReadSequential$(Clip$, 4) ELSE b$ = SPACE$(4): GET #BinaryFileNum, , b$
@@ -2632,7 +2634,7 @@ SUB LoadPreview (Destination AS _BYTE)
                     IF LogFileLoad THEN PRINT #LogFileNum, "TRANSPARENTCOLOR"
                     __UI_ClearColor Control(TempValue).HelperCanvas, Control(TempValue).TransparentColor, -1
                 CASE -29
-                    Control(TempValue).CanResize = TRUE
+                    Control(TempValue).CanResize = True
                     IF LogFileLoad THEN PRINT #LogFileNum, "CANRESIZE"
                 CASE -31
                     IF NOT Disk THEN b$ = ReadSequential$(Clip$, 2) ELSE b$ = SPACE$(2): GET #BinaryFileNum, , b$
@@ -2643,7 +2645,7 @@ SUB LoadPreview (Destination AS _BYTE)
                     Control(TempValue).VAlign = _CV(_BYTE, b$)
                     IF LogFileLoad THEN PRINT #LogFileNum, "VALIGN="; Control(TempValue).VAlign
                 CASE -33
-                    Control(TempValue).PasswordField = TRUE
+                    Control(TempValue).PasswordField = True
                     IF LogFileLoad THEN PRINT #LogFileNum, "PASSWORDFIELD"
                 CASE -34
                     IF NOT Disk THEN b$ = ReadSequential$(Clip$, 4) ELSE b$ = SPACE$(4): GET #BinaryFileNum, , b$
@@ -2662,15 +2664,15 @@ SUB LoadPreview (Destination AS _BYTE)
                     Control(TempValue).MinInterval = _CV(_FLOAT, b$)
                     IF LogFileLoad THEN PRINT #LogFileNum, "MININTERVAL="; Control(TempValue).MinInterval
                 CASE -38
-                    Control(TempValue).NumericOnly = TRUE
+                    Control(TempValue).NumericOnly = True
                 CASE -39
                     Control(TempValue).NumericOnly = __UI_NumericWithBounds
                 CASE -40
                     Control(TempValue).BulletStyle = __UI_Bullet
                 CASE -41
-                    Control(TempValue).AutoScroll = TRUE
+                    Control(TempValue).AutoScroll = True
                 CASE -42
-                    Control(TempValue).AutoSize = TRUE
+                    Control(TempValue).AutoSize = True
                 CASE -43
                     IF NOT Disk THEN b$ = ReadSequential$(Clip$, 2) ELSE b$ = SPACE$(2): GET #BinaryFileNum, , b$
                     Control(TempValue).BorderSize = CVI(b$)
@@ -2683,21 +2685,21 @@ SUB LoadPreview (Destination AS _BYTE)
                     IF LogFileLoad THEN PRINT #LogFileNum, "KEY COMBO:"; Combo
                 CASE -46
                     IF TempValue <= UBOUND(AutoPlayGif) THEN
-                        AutoPlayGif(i) = TRUE
+                        AutoPlayGif(i) = True
                     END IF
                 CASE -47
-                    Control(TempValue).ControlIsSelected = TRUE
+                    Control(TempValue).ControlIsSelected = True
                 CASE -1 'new control
                     IF LogFileLoad THEN PRINT #LogFileNum, "READ NEW CONTROL: -1"
                     EXIT DO
                 CASE -1024
                     IF LogFileLoad THEN PRINT #LogFileNum, "READ END OF FILE: -1024"
-                    __UI_EOF = TRUE
+                    __UI_EOF = True
                     EXIT DO
                 CASE ELSE
                     IF LogFileLoad THEN PRINT #LogFileNum, "UNKNOWN PROPERTY ="; CVI(b$)
-                    __UI_EOF = TRUE 'Stop reading if corrupted data is found
-                    CorruptedData = TRUE
+                    __UI_EOF = True 'Stop reading if corrupted data is found
+                    CorruptedData = True
                     EXIT DO
             END SELECT
         LOOP
@@ -2712,9 +2714,9 @@ SUB LoadPreview (Destination AS _BYTE)
             __UI_DestroyControl Control(TempValue)
             __UI_TotalSelectedControls = __UI_TotalSelectedControls - 1
         END IF
-        __UI_ForceRedraw = TRUE
+        __UI_ForceRedraw = True
     END IF
-    __UI_AutoRefresh = TRUE
+    __UI_AutoRefresh = True
     EXIT SUB
 
     LoadError:
@@ -2723,7 +2725,7 @@ SUB LoadPreview (Destination AS _BYTE)
         KILL "InForm/UiEditorPreview.frmbin"
     END IF
     IF LogFileLoad THEN CLOSE #LogFileNum
-    __UI_AutoRefresh = TRUE
+    __UI_AutoRefresh = True
 END SUB
 
 SUB LoadPreviewText
@@ -2735,7 +2737,7 @@ SUB LoadPreviewText
     DIM BinaryFileNum AS INTEGER, LogFileNum AS INTEGER
     DIM NewRed AS _UNSIGNED _BYTE, NewGreen AS _UNSIGNED _BYTE, NewBlue AS _UNSIGNED _BYTE
 
-    CONST LogFileLoad = FALSE
+    CONST LogFileLoad = False
 
     IF _FILEEXISTS("InForm/UiEditorPreview.frmbin") = 0 THEN
         EXIT SUB
@@ -2751,7 +2753,7 @@ SUB LoadPreviewText
         LOOP UNTIL b$ = "SUB __UI_LoadForm"
         IF LogFileLoad THEN PRINT #LogFileNum, "FOUND SUB __UI_LOADFORM"
 
-        __UI_AutoRefresh = FALSE
+        __UI_AutoRefresh = False
         FOR i = UBOUND(Control) TO 1 STEP -1
             IF LEFT$(Control(i).Name, 5) <> "__UI_" THEN
                 GIF_Free i
@@ -2819,8 +2821,8 @@ SUB LoadPreviewText
             END IF
 
             IF NewType = __UI_Type_PictureBox THEN
-                Control(TempValue).HasBorder = FALSE
-                Control(TempValue).Stretch = FALSE
+                Control(TempValue).HasBorder = False
+                Control(TempValue).Stretch = False
             ELSEIF NewType = __UI_Type_ContextMenu THEN
                 Control(TempValue).HelperCanvas = _COPYIMAGE(ContextMenuIcon, 32)
                 Control(TempValue).Width = 22
@@ -2832,7 +2834,7 @@ SUB LoadPreviewText
             DO 'read properties
                 DO
                     LINE INPUT #BinaryFileNum, b$
-                    b$ = LTRIM$(RTRIM$(b$))
+                    b$ = _TRIM$(b$)
                     IF LEN(b$) > 0 THEN EXIT DO
                 LOOP
                 IF LEFT$(b$, 20) = "Control(__UI_NewID)." THEN
@@ -2902,7 +2904,7 @@ SUB LoadPreviewText
                             END IF
                         CASE "HasBorder"
                             IF DummyText$ = "True" THEN
-                                Control(TempValue).HasBorder = TRUE
+                                Control(TempValue).HasBorder = True
                                 IF Control(TempValue).BorderSize = 0 THEN
                                     Control(TempValue).BorderSize = 1
                                 END IF
@@ -2964,7 +2966,7 @@ SUB LoadPreviewText
                             Control(TempValue).Encoding = VAL(DummyText$)
                         CASE "NumericOnly"
                             IF DummyText$ = "True" THEN
-                                Control(TempValue).NumericOnly = TRUE
+                                Control(TempValue).NumericOnly = True
                             ELSEIF DummyText$ = "__UI_NumericWithBounds" THEN
                                 Control(TempValue).NumericOnly = __UI_NumericWithBounds
                             END IF
@@ -3021,7 +3023,7 @@ SUB LoadPreviewText
                 ELSEIF b$ = "IF __UI_RegisterResult THEN GIF_Play __UI_NewID" OR LEFT$(b$, 9) = "GIF_Play " THEN
                     IF LogFileLoad THEN PRINT #LogFileNum, "AUTOPLAY GIF"
                     'Auto-play gif
-                    AutoPlayGif(TempValue) = TRUE
+                    AutoPlayGif(TempValue) = True
                     GIF_Play TempValue
                 ELSEIF LEFT$(b$, 22) = "ToolTip(__UI_NewID) = " THEN
                     IF LogFileLoad THEN PRINT #LogFileNum, "TOOLTIP"
@@ -3068,35 +3070,35 @@ SUB LoadPreviewText
                     SourceProperty$ = nextParameter$(b$)
                     TargetProperty$ = nextParameter$(b$)
 
-                    SourceSet = FALSE: TargetSet = FALSE
+                    SourceSet = False: TargetSet = False
                     FOR i = 1 TO UBOUND(Control)
                         IF RTRIM$(Control(i).Name) = SourceControl$ THEN
                             Control(i).BoundTo = __UI_GetID(TargetControl$)
                             Control(i).BoundProperty = __UI_PropertyEnum(SourceProperty$, 0)
-                            SourceSet = TRUE
+                            SourceSet = True
                         ELSEIF RTRIM$(Control(i).Name) = TargetControl$ THEN
                             Control(i).BoundTo = __UI_GetID(SourceControl$)
                             Control(i).BoundProperty = __UI_PropertyEnum(TargetProperty$, 0)
-                            TargetSet = TRUE
+                            TargetSet = True
                         END IF
                         IF SourceSet AND TargetSet THEN EXIT FOR
                     NEXT
                 ELSEIF b$ = "END SUB" THEN
                     IF LogFileLoad THEN PRINT #LogFileNum, "END OF FILE"
-                    __UI_EOF = TRUE
+                    __UI_EOF = True
                     EXIT DO
                 END IF
             LOOP
         LOOP UNTIL __UI_EOF
         CLOSE #BinaryFileNum
         IF LogFileLoad THEN CLOSE #LogFileNum
-        __UI_AutoRefresh = TRUE
+        __UI_AutoRefresh = True
         EXIT SUB
 
         LoadError:
         CLOSE #BinaryFileNum
         KILL "InForm/UiEditorPreview.frmbin"
-        __UI_AutoRefresh = TRUE
+        __UI_AutoRefresh = True
         EXIT SUB
     END IF
     EXIT SUB
@@ -3114,7 +3116,7 @@ SUB PreviewLoadImage (This AS __UI_ControlTYPE, fileName$)
                     _FREEIMAGE This.HelperCanvas
                 END IF
                 This.HelperCanvas = _NEWIMAGE(GIF_GetWidth(This.ID), GIF_GetHeight(This.ID), 32)
-                AutoPlayGif(This.ID) = FALSE
+                AutoPlayGif(This.ID) = False
                 GIF_Draw This.ID
                 EXIT SUB
             END IF
@@ -3131,7 +3133,7 @@ FUNCTION nextParameter$ (__text$)
     STATIC position1 AS LONG, position2 AS LONG
     DIM text$, thisParameter$
 
-    text$ = LTRIM$(RTRIM$(__text$))
+    text$ = _TRIM$(__text$)
     IF text$ <> lastText$ THEN
         lastText$ = text$
         position1 = INSTR(text$, "(")
@@ -3158,14 +3160,14 @@ FUNCTION nextParameter$ (__text$)
     IF position2 = 0 THEN position2 = INSTR(position1, text$, ")")
     IF position2 > 0 THEN
         'check that this bracket is outside quotation marks
-        quote = FALSE
+        quote = False
         FOR i = 1 TO position2
             IF ASC(text$, i) = 34 THEN quote = NOT quote
         NEXT
         IF quote THEN position2 = 0
     END IF
     IF position2 = 0 THEN position2 = LEN(text$) + 1
-    thisParameter$ = LTRIM$(RTRIM$(MID$(text$, position1, position2 - position1)))
+    thisParameter$ = _TRIM$(MID$(text$, position1, position2 - position1))
     nextParameter$ = RemoveQuotation$(thisParameter$)
     position1 = position2 + 1
 END FUNCTION
@@ -3189,16 +3191,16 @@ SUB SavePreview (Destination AS _BYTE)
     DIM Clip$, Disk AS _BYTE, TCP AS _BYTE, UndoBuffer AS _BYTE
     DIM PreviewData$, Dummy AS LONG
 
-    CONST Debug = FALSE
+    CONST Debug = False
 
     IF Destination = InDisk THEN
-        Disk = TRUE
+        Disk = True
         BinFileNum = FREEFILE
         OPEN "InForm/UiEditorPreview.frmbin" FOR BINARY AS #BinFileNum
     ELSEIF Destination = ToEditor THEN
-        TCP = TRUE
+        TCP = True
     ELSEIF Destination = ToUndoBuffer THEN
-        UndoBuffer = TRUE
+        UndoBuffer = True
     ELSE
         IF __UI_TotalSelectedControls = 0 THEN EXIT SUB
 
@@ -3231,7 +3233,7 @@ SUB SavePreview (Destination AS _BYTE)
         FOR i = 1 TO UBOUND(Control)
             IF Destination = InClipboard THEN
                 IF Control(i).Type = __UI_Type_Form OR Control(i).Type = __UI_Type_MenuBar THEN _CONTINUE
-                IF Control(i).ControlIsSelected = FALSE THEN
+                IF Control(i).ControlIsSelected = False THEN
                     IF INSTR(SelectedFrames$, ";" + RTRIM$(Control(Control(i).ParentID).Name) + ";") = 0 THEN
                         _CONTINUE
                     END IF
@@ -3413,7 +3415,7 @@ SUB SavePreview (Destination AS _BYTE)
                     b$ = MKI$(-32) + _MK$(_BYTE, Control(i).VAlign)
                     IF Disk THEN PUT #BinFileNum, , b$ ELSE Clip$ = Clip$ + b$
                 END IF
-                IF Control(i).PasswordField = TRUE THEN
+                IF Control(i).PasswordField = True THEN
                     b$ = MKI$(-33)
                     IF Disk THEN PUT #BinFileNum, , b$ ELSE Clip$ = Clip$ + b$
                 END IF
@@ -3479,7 +3481,7 @@ SUB SavePreview (Destination AS _BYTE)
                     b$ = MKI$(-31) + MKI$(Control(i).Padding)
                     IF Disk THEN PUT #BinFileNum, , b$ ELSE Clip$ = Clip$ + b$
                 END IF
-                IF Control(i).NumericOnly = TRUE THEN
+                IF Control(i).NumericOnly = True THEN
                     b$ = MKI$(-38)
                     IF Disk THEN
                         PUT #BinFileNum, , b$
@@ -3503,7 +3505,7 @@ SUB SavePreview (Destination AS _BYTE)
                         Clip$ = Clip$ + b$
                     END IF
                 END IF
-                IF Control(i).AutoScroll = TRUE THEN
+                IF Control(i).AutoScroll = True THEN
                     b$ = MKI$(-41)
                     IF Disk THEN
                         PUT #BinFileNum, , b$
@@ -3511,7 +3513,7 @@ SUB SavePreview (Destination AS _BYTE)
                         Clip$ = Clip$ + b$
                     END IF
                 END IF
-                IF Control(i).AutoSize = TRUE THEN
+                IF Control(i).AutoSize = True THEN
                     b$ = MKI$(-42)
                     IF Disk THEN
                         PUT #BinFileNum, , b$
@@ -3569,7 +3571,7 @@ SUB SavePreview (Destination AS _BYTE)
         CLOSE #BinFileNum
     ELSEIF TCP THEN
         PreviewData$ = PreviewData$ + Clip$ + b$ + "<END>"
-        IF LastPreviewDataSent$ <> PreviewData$ AND __UI_IsDragging = FALSE AND __UI_IsResizing = FALSE THEN
+        IF LastPreviewDataSent$ <> PreviewData$ AND __UI_IsDragging = False AND __UI_IsResizing = False THEN
             LastPreviewDataSent$ = PreviewData$
             PUT #Host, , PreviewData$
         END IF
@@ -3667,12 +3669,12 @@ FUNCTION AdaptName$ (tName$, TargetID AS LONG)
             IF AlphaNumeric(ASC(Name$, i)) THEN
                 IF NextIsCapital THEN
                     NewName$ = NewName$ + UCASE$(MID$(Name$, i, 1))
-                    IF ASC(RIGHT$(NewName$, 1)) >= 65 AND ASC(RIGHT$(NewName$, 1)) <= 90 THEN NextIsCapital = FALSE
+                    IF ASC(RIGHT$(NewName$, 1)) >= 65 AND ASC(RIGHT$(NewName$, 1)) <= 90 THEN NextIsCapital = False
                 ELSE
                     NewName$ = NewName$ + MID$(Name$, i, 1)
                 END IF
             ELSE
-                IF ASC(Name$, i) = 32 THEN NextIsCapital = TRUE
+                IF ASC(Name$, i) = 32 THEN NextIsCapital = True
             END IF
         NEXT
     ELSE
@@ -3850,9 +3852,9 @@ END SUB
 
 FUNCTION IS_KEYWORD (Text$)
     DIM uText$, i AS LONG
-    uText$ = UCASE$(RTRIM$(LTRIM$(Text$)))
+    uText$ = UCASE$(_TRIM$(Text$))
     FOR i = 1 TO UBOUND(QB64KEYWORDS)
-        IF QB64KEYWORDS(i) = uText$ THEN IS_KEYWORD = TRUE: EXIT FUNCTION
+        IF QB64KEYWORDS(i) = uText$ THEN IS_KEYWORD = True: EXIT FUNCTION
     NEXT i
 END FUNCTION
 
@@ -3874,25 +3876,7 @@ END SUB
 
 SUB LoadDefaultFonts
     IF Control(__UI_FormID).Font = 8 OR Control(__UI_FormID).Font = 16 THEN
-        Control(__UI_FormID).Font = SetFont("segoeui.ttf", 12)
-    END IF
-    IF Control(__UI_FormID).Font = 8 OR Control(__UI_FormID).Font = 16 THEN
-        Control(__UI_FormID).Font = SetFont("arial.ttf", 12)
-    END IF
-    IF Control(__UI_FormID).Font = 8 OR Control(__UI_FormID).Font = 16 THEN
-        Control(__UI_FormID).Font = SetFont("cour.ttf", 12)
-    END IF
-    IF Control(__UI_FormID).Font = 8 OR Control(__UI_FormID).Font = 16 THEN
-        Control(__UI_FormID).Font = SetFont("/Library/Fonts/Arial.ttf", 12)
-    END IF
-    IF Control(__UI_FormID).Font = 8 OR Control(__UI_FormID).Font = 16 THEN
-        Control(__UI_FormID).Font = SetFont("/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf", 12)
-    END IF
-    IF Control(__UI_FormID).Font = 8 OR Control(__UI_FormID).Font = 16 THEN
-        Control(__UI_FormID).Font = SetFont("/usr/share/fonts/TTF/arial.ttf", 12)
-    END IF
-    IF Control(__UI_FormID).Font = 8 OR Control(__UI_FormID).Font = 16 THEN
-        Control(__UI_FormID).Font = SetFont("InForm/resources/NotoMono-Regular.ttf", 12)
+        Control(__UI_FormID).Font = SetFont(__INFORM_DEFAULT_FONTS, 12)
     END IF
 END SUB
 

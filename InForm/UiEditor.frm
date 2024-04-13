@@ -9,7 +9,7 @@ SUB __UI_LoadForm
 
     __UI_NewID = __UI_NewControl(__UI_Type_Form, "UiEditor", 600, 601, 0, 0, 0)
     SetCaption __UI_NewID, UiEditorTitle$
-    Control(__UI_NewID).Font = SetFont("segoeui.ttf?arial.ttf?/Library/Fonts/Arial.ttf?/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf?/usr/share/fonts/TTF/arial.ttf?InForm/resources/NotoMono-Regular.ttf?cour.ttf", 12)
+    Control(__UI_NewID).Font = SetFont(__INFORM_DEFAULT_FONTS, 12)
 
     __UI_NewID = __UI_NewControl(__UI_Type_Label, "StatusBar", 600, 23, 0, 578, 0)
     SetCaption __UI_NewID, "Ready."
@@ -620,7 +620,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).CanHaveFocus = True
 
     __UI_NewID = __UI_NewControl(__UI_Type_PictureBox, "ColorPreview", 159, 115, 10, 51, __UI_GetID("ColorMixer"))
-    Control(__UI_NewID).Font = SetFont("segoeui.ttf?arial.ttf?/Library/Fonts/Arial.ttf?InForm/resources/NotoMono-Regular.ttf?cour.ttf", 22)
+    Control(__UI_NewID).Font = SetFont(__INFORM_DEFAULT_FONTS, 22)
     Control(__UI_NewID).Stretch = True
     Control(__UI_NewID).HasBorder = True
     Control(__UI_NewID).Align = __UI_Center
@@ -676,7 +676,7 @@ SUB __UI_LoadForm
     Control(__UI_NewID).WordWrap = True
 
     __UI_NewID = __UI_NewControl(__UI_Type_ListBox, "ControlList", 485, 399, 15, 15, __UI_GetID("ZOrdering"))
-    Control(__UI_NewID).Font = SetFont("cour.ttf?/Library/Fonts/Courier New.ttf", 12)
+    Control(__UI_NewID).Font = SetFont(__INFORM_DEFAULT_FONTS_MONO, 12)
     Control(__UI_NewID).HasBorder = True
     Control(__UI_NewID).CanHaveFocus = True
 
@@ -696,7 +696,7 @@ SUB __UI_LoadForm
 
     __UI_NewID = __UI_NewControl(__UI_Type_Frame, "SetControlBinding", 434, 263, -600, -600, 0)
     SetCaption __UI_NewID, "Set control binding"
-    Control(__UI_NewID).Font = SetFont("segoeui.ttf?arial.ttf?/Library/Fonts/Arial.ttf?/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf?/usr/share/fonts/TTF/arial.ttf?InForm/resources/NotoMono-Regular.ttf?cour.ttf", 12)
+    Control(__UI_NewID).Font = SetFont(__INFORM_DEFAULT_FONTS, 12)
     Control(__UI_NewID).HasBorder = True
     Control(__UI_NewID).BorderSize = 1
 

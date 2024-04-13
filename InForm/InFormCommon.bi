@@ -37,6 +37,10 @@ CONST __INFORM_THEME_IMAGE_SCROLLTRACK~%% = 15~%%
 CONST __INFORM_THEME_IMAGE_SLIDERDOWN~%% = 16~%%
 CONST __INFORM_THEME_IMAGE_SLIDERTRACK~%% = 17~%%
 
+' Default font list
+CONST __INFORM_DEFAULT_FONTS = "segoeui.ttf?arial.ttf?Arial.ttf?Helvetica.ttc?Geneva.ttf?truetype/liberation/LiberationSans-Regular.ttf?TTF/arial.ttf?InForm/resources/NotoMono-Regular.ttf?cour.ttf?Courier.ttc"
+CONST __INFORM_DEFAULT_FONTS_MONO = "cour.ttf?Courier New.ttf?truetype/liberation/LiberationMono-Regular.ttf?Monaco.ttf?Courier.ttc"
+
 'Control types:
 CONST __UI_Type_Form%% = 1%%
 CONST __UI_Type_Frame%% = 2%%
@@ -126,7 +130,7 @@ END DECLARE
 
 $IF WIN THEN
     DECLARE LIBRARY
-        FUNCTION GetSystemMetrics& (BYVAL WhichMetric&)
+    FUNCTION GetSystemMetrics& (BYVAL WhichMetric&)
     END DECLARE
 
     CONST __UI_SM_SWAPBUTTON = 23
