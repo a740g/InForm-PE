@@ -1695,9 +1695,8 @@ SUB __UI_BeforeUpdateDisplay
         Control(Toggles(i)).Hidden = False
     NEXT
 
-    DIM ShadeOfGreen AS _UNSIGNED LONG, ShadeOfRed AS _UNSIGNED LONG
-    ShadeOfGreen = _RGB32(28, 150, 50)
-    ShadeOfRed = _RGB32(233, 44, 0)
+    CONST ShadeOfGreen~& = _RGB32(28, 150, 50)
+    CONST ShadeOfRed~& = _RGB32(233, 44, 0)
 
     CONST PropertyUpdateDelay = .1
 
@@ -1721,6 +1720,7 @@ SUB __UI_BeforeUpdateDisplay
                 END IF
             END IF
         END IF
+
         IF __UI_Focus <> CaptionTB OR (__UI_Focus = CaptionTB AND RevertEdit = True) THEN
             Text(CaptionTB) = Replace(__UI_TrimAt0$(PreviewCaptions(FirstSelected)), CHR$(10), "\n", False, 0)
             IF (__UI_Focus = CaptionTB AND RevertEdit = True) THEN RevertEdit = False: SelectPropertyFully __UI_Focus
@@ -1737,6 +1737,7 @@ SUB __UI_BeforeUpdateDisplay
                 END IF
             END IF
         END IF
+
         IF __UI_Focus <> TextTB OR (__UI_Focus = TextTB AND RevertEdit = True) THEN
             IF PreviewControls(FirstSelected).Type = __UI_Type_ListBox OR PreviewControls(FirstSelected).Type = __UI_Type_DropdownList THEN
                 Text(TextTB) = Replace(PreviewTexts(FirstSelected), CHR$(10), "\n", False, 0)
@@ -1752,7 +1753,7 @@ SUB __UI_BeforeUpdateDisplay
         ELSEIF __UI_Focus = TextTB THEN
             Control(TextTB).NumericOnly = PreviewControls(FirstSelected).NumericOnly
             IF PropertyFullySelected(TextTB) THEN
-                IF ((PreviewControls(FirstSelected).Type = __UI_Type_ListBox OR PreviewControls(FirstSelected).Type = __UI_Type_DropdownList) AND Text(TextTB) = Replace(PreviewTexts(FirstSelected), CHR$(13), "\n", False, 0)) OR ((PreviewControls(FirstSelected).Type <> __UI_Type_ListBox AND PreviewControls(FirstSelected).Type <> __UI_Type_DropdownList) AND Text(TextTB) = PreviewTexts(FirstSelected)) THEN
+                IF ((PreviewControls(FirstSelected).Type = __UI_Type_ListBox OR PreviewControls(FirstSelected).Type = __UI_Type_DropdownList) AND Text(TextTB) = Replace(PreviewTexts(FirstSelected), CHR$(10), "\n", False, 0)) OR ((PreviewControls(FirstSelected).Type <> __UI_Type_ListBox AND PreviewControls(FirstSelected).Type <> __UI_Type_DropdownList) AND Text(TextTB) = PreviewTexts(FirstSelected)) THEN
                     Control(__UI_Focus).BorderColor = ShadeOfGreen
                 ELSE
                     IF TIMER - InputBox(ThisInputBox).LastEdited < PropertyUpdateDelay THEN
@@ -1763,6 +1764,7 @@ SUB __UI_BeforeUpdateDisplay
                 END IF
             END IF
         END IF
+
         IF __UI_Focus <> MaskTB OR (__UI_Focus = MaskTB AND RevertEdit = True) THEN
             Text(MaskTB) = PreviewMasks(FirstSelected)
             IF (__UI_Focus = MaskTB AND RevertEdit = True) THEN RevertEdit = False: SelectPropertyFully __UI_Focus
@@ -1779,6 +1781,7 @@ SUB __UI_BeforeUpdateDisplay
                 END IF
             END IF
         END IF
+
         IF __UI_Focus <> TopTB OR (__UI_Focus = TopTB AND RevertEdit = True) THEN
             Text(TopTB) = LTRIM$(STR$(PreviewControls(FirstSelected).Top))
             IF (__UI_Focus = TopTB AND RevertEdit = True) THEN RevertEdit = False: SelectPropertyFully __UI_Focus
@@ -1795,6 +1798,7 @@ SUB __UI_BeforeUpdateDisplay
                 END IF
             END IF
         END IF
+
         IF __UI_Focus <> LeftTB OR (__UI_Focus = LeftTB AND RevertEdit = True) THEN
             Text(LeftTB) = LTRIM$(STR$(PreviewControls(FirstSelected).Left))
             IF (__UI_Focus = LeftTB AND RevertEdit = True) THEN RevertEdit = False: SelectPropertyFully __UI_Focus
@@ -1811,6 +1815,7 @@ SUB __UI_BeforeUpdateDisplay
                 END IF
             END IF
         END IF
+
         IF __UI_Focus <> WidthTB OR (__UI_Focus = WidthTB AND RevertEdit = True) THEN
             Text(WidthTB) = LTRIM$(STR$(PreviewControls(FirstSelected).Width))
             IF (__UI_Focus = WidthTB AND RevertEdit = True) THEN RevertEdit = False: SelectPropertyFully __UI_Focus
@@ -1827,6 +1832,7 @@ SUB __UI_BeforeUpdateDisplay
                 END IF
             END IF
         END IF
+
         IF __UI_Focus <> HeightTB OR (__UI_Focus = HeightTB AND RevertEdit = True) THEN
             Text(HeightTB) = LTRIM$(STR$(PreviewControls(FirstSelected).Height))
             IF (__UI_Focus = HeightTB AND RevertEdit = True) THEN RevertEdit = False: SelectPropertyFully __UI_Focus
@@ -1843,6 +1849,7 @@ SUB __UI_BeforeUpdateDisplay
                 END IF
             END IF
         END IF
+
         IF __UI_Focus <> FontTB OR (__UI_Focus = FontTB AND RevertEdit = True) THEN
             IF LEN(PreviewFonts(FirstSelected)) > 0 THEN
                 Text(FontTB) = PreviewFonts(FirstSelected)
@@ -1863,11 +1870,13 @@ SUB __UI_BeforeUpdateDisplay
                 END IF
             END IF
         END IF
+
         IF LEN(PreviewFonts(FirstSelected)) > 0 THEN
             SelectFontInList PreviewActualFonts(FirstSelected)
         ELSE
             SelectFontInList PreviewActualFonts(PreviewFormID)
         END IF
+
         IF __UI_Focus <> TooltipTB OR (__UI_Focus = TooltipTB AND RevertEdit = True) THEN
             Text(TooltipTB) = Replace(PreviewTips(FirstSelected), CHR$(10), "\n", False, 0)
             IF (__UI_Focus = TooltipTB AND RevertEdit = True) THEN RevertEdit = False: SelectPropertyFully __UI_Focus
@@ -1884,6 +1893,7 @@ SUB __UI_BeforeUpdateDisplay
                 END IF
             END IF
         END IF
+
         IF __UI_Focus <> ValueTB OR (__UI_Focus = ValueTB AND RevertEdit = True) THEN
             Text(ValueTB) = LTRIM$(STR$(PreviewControls(FirstSelected).Value))
             IF (__UI_Focus = ValueTB AND RevertEdit = True) THEN RevertEdit = False: SelectPropertyFully __UI_Focus
@@ -1900,6 +1910,7 @@ SUB __UI_BeforeUpdateDisplay
                 END IF
             END IF
         END IF
+
         IF __UI_Focus <> MinTB OR (__UI_Focus = MinTB AND RevertEdit = True) THEN
             Text(MinTB) = LTRIM$(STR$(PreviewControls(FirstSelected).Min))
             IF (__UI_Focus = MinTB AND RevertEdit = True) THEN RevertEdit = False: SelectPropertyFully __UI_Focus
@@ -1916,6 +1927,7 @@ SUB __UI_BeforeUpdateDisplay
                 END IF
             END IF
         END IF
+
         IF __UI_Focus <> MaxTB OR (__UI_Focus = MaxTB AND RevertEdit = True) THEN
             Text(MaxTB) = LTRIM$(STR$(PreviewControls(FirstSelected).Max))
             IF (__UI_Focus = MaxTB AND RevertEdit = True) THEN RevertEdit = False: SelectPropertyFully __UI_Focus
@@ -1932,6 +1944,7 @@ SUB __UI_BeforeUpdateDisplay
                 END IF
             END IF
         END IF
+
         IF __UI_Focus <> IntervalTB OR (__UI_Focus = IntervalTB AND RevertEdit = True) THEN
             Text(IntervalTB) = LTRIM$(STR$(PreviewControls(FirstSelected).Interval))
             IF (__UI_Focus = IntervalTB AND RevertEdit = True) THEN RevertEdit = False: SelectPropertyFully __UI_Focus
@@ -1948,6 +1961,7 @@ SUB __UI_BeforeUpdateDisplay
                 END IF
             END IF
         END IF
+
         IF __UI_Focus <> MinIntervalTB OR (__UI_Focus = MinIntervalTB AND RevertEdit = True) THEN
             Text(MinIntervalTB) = LTRIM$(STR$(PreviewControls(FirstSelected).MinInterval))
         ELSEIF __UI_Focus = MinIntervalTB THEN
@@ -1963,6 +1977,7 @@ SUB __UI_BeforeUpdateDisplay
                 END IF
             END IF
         END IF
+
         IF __UI_Focus <> PaddingTB OR (__UI_Focus = PaddingTB AND RevertEdit = True) THEN
             Text(PaddingTB) = LTRIM$(STR$(PreviewControls(FirstSelected).Padding))
             IF (__UI_Focus = PaddingTB AND RevertEdit = True) THEN RevertEdit = False: SelectPropertyFully __UI_Focus
@@ -1979,6 +1994,7 @@ SUB __UI_BeforeUpdateDisplay
                 END IF
             END IF
         END IF
+
         IF __UI_Focus <> SizeTB OR (__UI_Focus = SizeTB AND RevertEdit = True) THEN
             Text(SizeTB) = LTRIM$(STR$(PreviewControls(FirstSelected).BorderSize))
             IF (__UI_Focus = SizeTB AND RevertEdit = True) THEN RevertEdit = False: SelectPropertyFully __UI_Focus
