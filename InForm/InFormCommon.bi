@@ -7,8 +7,8 @@
 $INCLUDEONCE
 
 ' Do a complier check to ensure we have the minimum version needed
-$IF VERSION < 3.12.0 THEN
-    $ERROR 'This requires the latest version of QB64-PE from https://github.com/QB64-Phoenix-Edition/QB64pe/releases'
+$IF VERSION < 3.13.1 THEN
+    $ERROR 'This requires the latest version of QB64-PE from https://github.com/QB64-Phoenix-Edition/QB64pe/releases/latest'
 $END IF
 
 $LET INFORMCOMMON_BI = TRUE
@@ -130,7 +130,7 @@ END DECLARE
 
 $IF WIN THEN
     DECLARE LIBRARY
-    FUNCTION GetSystemMetrics& (BYVAL WhichMetric&)
+        FUNCTION GetSystemMetrics& (BYVAL WhichMetric&)
     END DECLARE
 
     CONST __UI_SM_SWAPBUTTON = 23

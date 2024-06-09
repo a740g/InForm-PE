@@ -113,6 +113,9 @@ FUNCTION FontMgr_BuildList~& (fontList() AS STRING)
         LOOP WHILE LEN(entry) > 0
     WEND
 
+    ' Sort the array (else it looks really ugly)
+    IF fontCount > 1 THEN FontMgr_SortStringArray fontList(), 1, fontCount
+
     FontMgr_BuildList = fontCount
 END FUNCTION
 
@@ -351,5 +354,36 @@ FUNCTION FontMgr_GetSizeRange%% (filePath AS STRING, fontIndex AS _UNSIGNED LONG
         END IF
     END IF
 END FUNCTION
+
+
+''' @brief Sorts a string array
+''' @param strArr The string array to sort
+''' @param l The lower index
+''' @param u The upper index
+SUB FontMgr_SortStringArray (strArr() AS STRING, l AS _UNSIGNED LONG, u AS _UNSIGNED LONG)
+    DIM i AS _UNSIGNED LONG: i = l
+    DIM j AS _UNSIGNED LONG: j = u
+    DIM pivot AS STRING: pivot = strArr((l + u) \ 2)
+
+    WHILE i <= j
+        WHILE _STRCMP(strArr(i), pivot) < 0
+            i = i + 1
+        WEND
+
+        WHILE _STRCMP(strArr(j), pivot) > 0
+            j = j - 1
+        WEND
+
+        IF i <= j THEN
+            SWAP strArr(i), strArr(j)
+            i = i + 1
+            j = j - 1
+        END IF
+    WEND
+
+    ' Recursively sort the partitions
+    IF l < j THEN FontMgr_SortStringArray strArr(), l, j
+    IF i < u THEN FontMgr_SortStringArray strArr(), i, u
+END SUB
 
 '$INCLUDE:'Pathname.bas'
