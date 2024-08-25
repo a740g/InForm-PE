@@ -68,7 +68,7 @@ FUNCTION Pathname_IsAbsolute%% (pathName AS STRING)
     $ELSE
         ' /
         IF LEN(pathName) > 0 THEN
-        Pathname_IsAbsolute = (ASC(pathName, 1) = PATHNAME_DIR_SEPARATOR_CODE)
+            Pathname_IsAbsolute = (ASC(pathName, 1) = PATHNAME_DIR_SEPARATOR_CODE)
         END IF
     $END IF
 END FUNCTION
@@ -85,10 +85,10 @@ FUNCTION Pathname_FixDirectoryName$ (pathName AS STRING)
         END IF
     $ELSE
         IF LEN(pathName) > 0 THEN
-        IF ASC(pathName, LEN(pathName)) <> PATHNAME_DIR_SEPARATOR_CODE THEN
-        Pathname_FixDirectoryName = pathName + PATHNAME_DIR_SEPARATOR
-        EXIT FUNCTION
-        END IF
+            IF ASC(pathName, LEN(pathName)) <> PATHNAME_DIR_SEPARATOR_CODE THEN
+                Pathname_FixDirectoryName = pathName + PATHNAME_DIR_SEPARATOR
+                EXIT FUNCTION
+            END IF
         END IF
     $END IF
 
@@ -106,7 +106,7 @@ FUNCTION Pathname_FixDirectorySeparators$ (pathName AS STRING)
         NEXT
     $ELSE
         FOR i = 1 TO LEN(buffer)
-        IF ASC(buffer, i) = PATHNAME_DIR_SEPARATOR_CODE_WIN THEN ASC(buffer, i) = PATHNAME_DIR_SEPARATOR_CODE_NIX
+            IF ASC(buffer, i) = PATHNAME_DIR_SEPARATOR_CODE_WIN THEN ASC(buffer, i) = PATHNAME_DIR_SEPARATOR_CODE_NIX
         NEXT
     $END IF
 
@@ -175,12 +175,12 @@ FUNCTION Pathname_HasFileExtension%% (pathOrURL AS STRING)
             END SELECT
         $ELSE
             SELECT CASE ASC(pathOrURL, i)
-            CASE PATHNAME_DIR_SEPARATOR_CODE
-            EXIT FOR
+                CASE PATHNAME_DIR_SEPARATOR_CODE
+                    EXIT FOR
 
-            CASE PATHNAME_EXT_SEPARATOR_CODE
-            Pathname_HasFileExtension = __PATHNAME_TRUE
-            EXIT FOR
+                CASE PATHNAME_EXT_SEPARATOR_CODE
+                    Pathname_HasFileExtension = __PATHNAME_TRUE
+                    EXIT FOR
             END SELECT
         $END IF
     NEXT
@@ -203,12 +203,12 @@ FUNCTION Pathname_GetFileExtension$ (pathOrURL AS STRING)
             END SELECT
         $ELSE
             SELECT CASE ASC(pathOrURL, i)
-            CASE PATHNAME_DIR_SEPARATOR_CODE
-            EXIT FOR
+                CASE PATHNAME_DIR_SEPARATOR_CODE
+                    EXIT FOR
 
-            CASE PATHNAME_EXT_SEPARATOR_CODE
-            Pathname_GetFileExtension = RIGHT$(pathOrURL, LEN(pathOrURL) - i + 1)
-            EXIT FOR
+                CASE PATHNAME_EXT_SEPARATOR_CODE
+                    Pathname_GetFileExtension = RIGHT$(pathOrURL, LEN(pathOrURL) - i + 1)
+                    EXIT FOR
             END SELECT
         $END IF
     NEXT
@@ -230,12 +230,12 @@ FUNCTION Pathname_RemoveFileExtension$ (pathOrURL AS STRING)
             END SELECT
         $ELSE
             SELECT CASE ASC(pathOrURL, i)
-            CASE PATHNAME_DIR_SEPARATOR_CODE
-            EXIT FOR
+                CASE PATHNAME_DIR_SEPARATOR_CODE
+                    EXIT FOR
 
-            CASE PATHNAME_EXT_SEPARATOR_CODE
-            Pathname_RemoveFileExtension = LEFT$(pathOrURL, i - 1)
-            EXIT FUNCTION
+                CASE PATHNAME_EXT_SEPARATOR_CODE
+                    Pathname_RemoveFileExtension = LEFT$(pathOrURL, i - 1)
+                    EXIT FUNCTION
             END SELECT
         $END IF
     NEXT
