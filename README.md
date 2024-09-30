@@ -77,6 +77,7 @@ InForm/extensions/*.*
 | Name | Author |
 |------|-------------|
 | Bin2Include | Zachary Spriggs |
+| Bubble-Universe | Samuel Gomes |
 | Calculator | Terry Ritchie |
 | ClickTheVoid | Fellippe Heitor |
 | ClockPatience | Richard Notley |
@@ -95,6 +96,7 @@ InForm/extensions/*.*
 | Pelmanism | Richard Notley |
 | PictureGrid | Richard Notley |
 | PlayFX | Samuel Gomes |
+| R2P | bobalooie |
 | RockPaperScissorsSpockLizard | TempodiBasic |
 | Stopwatch | Fellippe Heitor |
 | TextFetch | B+ |
