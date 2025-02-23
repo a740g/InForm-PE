@@ -1,6 +1,6 @@
 '-----------------------------------------------------------------------------------------------------------------------
 ' Animated GIF Player library
-' Copyright (c) 2024 Samuel Gomes
+' Copyright (c) 2025 Samuel Gomes
 '-----------------------------------------------------------------------------------------------------------------------
 
 $INCLUDEONCE
@@ -32,7 +32,7 @@ $INCLUDEONCE
 '        DO
 '            DIM k AS LONG: k = _KEYHIT
 
-'            IF k = 32 THEN
+'            IF k = _ASC_SPACE THEN
 '                IF GIF_IsPlaying(GIF_ID) THEN GIF_Pause (GIF_ID) ELSE GIF_Play (GIF_ID)
 '            END IF
 
@@ -41,7 +41,7 @@ $INCLUDEONCE
 '            _DISPLAY
 
 '            _LIMIT 30
-'        LOOP UNTIL k = 27
+'        LOOP UNTIL k = _KEY_ESC
 
 '        SCREEN 0
 '        _FREEIMAGE surface
@@ -55,8 +55,8 @@ $INCLUDEONCE
 FUNCTION GIF_LoadFromMemory%% (Id AS LONG, buffer AS STRING)
     $IF INFORM_BI = DEFINED THEN
         IF Control(ID).Type <> __UI_Type_PictureBox THEN
-        ERROR 5
-        EXIT FUNCTION
+            ERROR _ERR_ILLEGAL_FUNCTION_CALL
+            EXIT FUNCTION
         END IF
     $END IF
 
@@ -72,8 +72,8 @@ END FUNCTION
 FUNCTION GIF_LoadFromFile%% (Id AS LONG, fileName AS STRING)
     $IF INFORM_BI = DEFINED THEN
         IF Control(ID).Type <> __UI_Type_PictureBox THEN
-        ERROR 5
-        EXIT FUNCTION
+            ERROR _ERR_ILLEGAL_FUNCTION_CALL
+            EXIT FUNCTION
         END IF
     $END IF
 
@@ -109,7 +109,7 @@ SUB GIF_Free (Id AS LONG)
         END IF
 
         ' Mark the frame slot as unused so that it can be reused
-        __GIFPlayFrame(__GIFPlay(idx).frame).isUsed = __GIF_FALSE
+        __GIFPlayFrame(__GIFPlay(idx).frame).isUsed = _FALSE
 
         ' Note the lowest free frame
         IF __GIF_FirstFreeFrame > __GIFPlay(idx).frame THEN __GIF_FirstFreeFrame = __GIFPlay(idx).frame
@@ -131,7 +131,7 @@ SUB GIF_Free (Id AS LONG)
     END IF
 
     ' Finally mark the GIF slot as unused so that it can be reused
-    __GIFPlay(idx).isUsed = __GIF_FALSE
+    __GIFPlay(idx).isUsed = _FALSE
 
     ' Remove Id from the hash table
     HashTable_Remove __GIFPlayHashTable(), Id
@@ -190,7 +190,7 @@ SUB GIF_Play (Id AS LONG)
     IF HashTable_IsKeyPresent(__GIFPlayHashTable(), Id) THEN
         DIM idx AS LONG: idx = HashTable_LookupLong(__GIFPlayHashTable(), Id)
 
-        __GIFPlay(idx).isPlaying = __GIF_TRUE
+        __GIFPlay(idx).isPlaying = _TRUE
         __GIFPlay(idx).lastTick = __GIF_GetTicks
     END IF
 END SUB
@@ -202,7 +202,7 @@ SUB GIF_Pause (Id AS LONG)
     SHARED __GIFPlay() AS __GIFPlayType
 
     IF HashTable_IsKeyPresent(__GIFPlayHashTable(), Id) THEN
-        __GIFPlay(HashTable_LookupLong(__GIFPlayHashTable(), Id)).isPlaying = __GIF_FALSE
+        __GIFPlay(HashTable_LookupLong(__GIFPlayHashTable(), Id)).isPlaying = _FALSE
     END IF
 END SUB
 
@@ -215,13 +215,13 @@ SUB GIF_Stop (Id AS LONG)
     IF HashTable_IsKeyPresent(__GIFPlayHashTable(), Id) THEN
         DIM idx AS LONG: idx = HashTable_LookupLong(__GIFPlayHashTable(), Id)
 
-        __GIFPlay(idx).isPlaying = __GIF_FALSE
+        __GIFPlay(idx).isPlaying = _FALSE
         __GIFPlay(idx).frame = __GIFPlay(idx).firstFrame
         __GIFPlay(idx).frameNumber = 0
         __GIFPlay(idx).loopCounter = 0
         __GIFPlay(idx).elapsedTime = 0
         __GIFPlay(idx).lastFrameRendered = -1
-        __GIFPlay(idx).hasSavedImage = __GIF_FALSE
+        __GIFPlay(idx).hasSavedImage = _FALSE
     END IF
 END SUB
 
@@ -347,7 +347,7 @@ FUNCTION GIF_GetFrame& (Id AS LONG)
                 IF __GIFPlay(idx).hasSavedImage THEN
                     ' Copy back the saved image and unset the flag
                     _PUTIMAGE , __GIFPlay(idx).savedImage, __GIFPlay(idx).image
-                    __GIFPlay(idx).hasSavedImage = __GIF_FALSE
+                    __GIFPlay(idx).hasSavedImage = _FALSE
                 END IF
 
                 ' All other disposal methods do not require any action
@@ -357,7 +357,7 @@ FUNCTION GIF_GetFrame& (Id AS LONG)
     ' If the current frame's disposal method is 3 (restore to previous) then save the current rendered frame and set the flag
     IF __GIFPlayFrame(__GIFPlay(idx).frame).disposalMethod = 3 THEN
         _PUTIMAGE , __GIFPlay(idx).image, __GIFPlay(idx).savedImage
-        __GIFPlay(idx).hasSavedImage = __GIF_TRUE
+        __GIFPlay(idx).hasSavedImage = _TRUE
     END IF
 
     ' Render the frame at the correct (x, y) offset on the final image
@@ -604,7 +604,7 @@ FUNCTION __GIF_DecodeLZW%% (sf AS StringFileType, bmpMem AS _MEM)
         prev = code
     LOOP
 
-    __GIF_DecodeLZW = __GIF_TRUE
+    __GIF_DecodeLZW = _TRUE
 END FUNCTION
 
 
@@ -660,25 +660,25 @@ FUNCTION __GIF_Load%% (Id AS LONG, sf AS StringFileType)
     ' No free GIF slots?
     IF idx > UBOUND(__GIFPlay) THEN REDIM _PRESERVE __GIFPlay(0 TO idx) AS __GIFPlayType
 
-    __GIFPlay(idx).isUsed = __GIF_TRUE ' occupy the slot
+    __GIFPlay(idx).isUsed = _TRUE ' occupy the slot
     HashTable_InsertLong __GIFPlayHashTable(), Id, idx ' add it to the hash table
 
     ' Reset some stuff
-    __GIFPlay(idx).isReady = __GIF_FALSE
+    __GIFPlay(idx).isReady = _FALSE
     __GIFPlay(idx).firstFrame = -1
     __GIFPlay(idx).lastFrame = -1
     __GIFPlay(idx).frame = -1
     __GIFPlay(idx).frameCount = 0
     __GIFPlay(idx).frameNumber = 0
-    __GIFPlay(idx).isPlaying = __GIF_FALSE
+    __GIFPlay(idx).isPlaying = _FALSE
     __GIFPlay(idx).loops = 0
     __GIFPlay(idx).loopCounter = 0
     __GIFPlay(idx).duration = 0
     __GIFPlay(idx).lastTick = 0
     __GIFPlay(idx).elapsedTime = 0
     __GIFPlay(idx).lastFrameRendered = -1
-    __GIFPlay(idx).hasSavedImage = __GIF_FALSE
-    __GIFPlay(idx).overlayEnabled = __GIF_TRUE
+    __GIFPlay(idx).hasSavedImage = _FALSE
+    __GIFPlay(idx).overlayEnabled = _TRUE
 
     ' Get width and height
     DIM W AS _UNSIGNED INTEGER: W = StringFile_ReadInteger(sf)
@@ -737,7 +737,7 @@ FUNCTION __GIF_Load%% (Id AS LONG, sf AS StringFileType)
                 IF frameIdx > UBOUND(__GIFPlayFrame) THEN REDIM _PRESERVE __GIFPlayFrame(0 TO frameIdx) AS __GIFPlayFrameType
 
                 ' Occupy the slot
-                __GIFPlayFrame(frameIdx).isUsed = __GIF_TRUE
+                __GIFPlayFrame(frameIdx).isUsed = _TRUE
 
                 ' Read frame size and offset
                 __GIFPlayFrame(frameIdx).L = StringFile_ReadInteger(sf)
@@ -854,14 +854,14 @@ FUNCTION __GIF_Load%% (Id AS LONG, sf AS StringFileType)
 
     '__GIF_PrintDebugInfo idx
 
-    __GIFPlay(idx).isReady = __GIF_TRUE ' set the ready flag
+    __GIFPlay(idx).isReady = _TRUE ' set the ready flag
 
     ' Render the first frame and then stop
     GIF_Play Id
     DIM dummy AS LONG: dummy = GIF_GetFrame(Id)
     GIF_Stop Id
 
-    __GIF_Load = __GIF_TRUE
+    __GIF_Load = _TRUE
     EXIT FUNCTION
 
     gif_load_error:
@@ -916,7 +916,7 @@ END FUNCTION
 ' This gets the GIF overlay image (real loading only happens once)
 FUNCTION __GIF_GetOverlayImage&
     CONST SIZE_GIFOVERLAYIMAGE_BMP_16506~& = 16506~&
-    CONST COMP_GIFOVERLAYIMAGE_BMP_16506%% = -1%%
+    CONST COMP_GIFOVERLAYIMAGE_BMP_16506%% = _TRUE
         CONST DATA_GIFOVERLAYIMAGE_BMP_16506 = _
             "eNpy8q1yYACDKiDOAWIHKGZkUGBgZsAF/kMQjDM4gRSgfbsGjt+I4jgexj+2YU57nd27H0Nl6htD6wkzJ31hqFyFWkMVZmZm5rzjMyjfzcwLvEKj" + _
             "tXTnFbyZjxn0O60WBBjDdVjDU/gAP0LwK77CW3gKa7gOY+B3c1k13Ic3ICm9gftQQ8h1BIt4GdInL2MRRxBKHcd1+BIyIF/iehzHYdWpmMXnkEPy" + _

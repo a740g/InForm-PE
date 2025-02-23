@@ -1,13 +1,13 @@
 '-----------------------------------------------------------------------------------------------------------------------
 ' Common InForm header. This is included by the main InForm header file
-' Copyright (c) 2024 Samuel Gomes
+' Copyright (c) 2025 Samuel Gomes
 ' Copyright (c) 2022 Fellippe Heitor
 '-----------------------------------------------------------------------------------------------------------------------
 
 $INCLUDEONCE
 
 ' Do a complier check to ensure we have the minimum version needed
-$IF VERSION < 3.13.1 THEN
+$IF VERSION < 4.1.0 THEN
     $ERROR 'This requires the latest version of QB64-PE from https://github.com/QB64-Phoenix-Edition/QB64pe/releases/latest'
 $END IF
 
@@ -16,7 +16,7 @@ $LET INFORMCOMMON_BI = TRUE
 '$INCLUDE:'InFormVersion.bi'
 '$INCLUDE:'extensions/HashTable.bi'
 
-CONST False%% = 0%%, True%% = NOT False
+CONST False%% = _FALSE, True%% = _TRUE
 
 ' InForm theme image IDs
 CONST __INFORM_THEME_IMAGE_ARROWS~%% = 1~%%

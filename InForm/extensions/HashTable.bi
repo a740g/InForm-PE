@@ -1,11 +1,10 @@
 '-----------------------------------------------------------------------------------------------------------------------
 ' A simple hash table for integers and QB64-PE handles
-' Copyright (c) 2024 Samuel Gomes
+' Copyright (c) 2025 Samuel Gomes
 '-----------------------------------------------------------------------------------------------------------------------
 
 $INCLUDEONCE
 
-CONST __HASHTABLE_FALSE%% = 0%%, __HASHTABLE_TRUE%% = NOT __HASHTABLE_FALSE
 CONST __HASHTABLE_KEY_EXISTS& = -1&
 CONST __HASHTABLE_KEY_UNAVAILABLE& = -2&
 

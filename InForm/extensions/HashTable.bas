@@ -1,6 +1,6 @@
 '-----------------------------------------------------------------------------------------------------------------------
 ' A simple hash table for integers and QB64-PE handles
-' Copyright (c) 2024 Samuel Gomes
+' Copyright (c) 2025 Samuel Gomes
 '-----------------------------------------------------------------------------------------------------------------------
 
 $INCLUDEONCE
@@ -13,10 +13,13 @@ $INCLUDEONCE
 'DEFLNG A-Z
 'OPTION _EXPLICIT
 
-'REDIM MyHashTable(0 TO 0) AS HashTableType
-
 'CONST TEST_LB = 1
 'CONST TEST_UB = 9999999
+
+'REDIM MyHashTable(0 TO 0) AS HashTableType
+
+'WIDTH , 60
+'_FONT 14
 
 'RANDOMIZE TIMER
 
@@ -61,13 +64,15 @@ $INCLUDEONCE
 '    PRINT USING "#####.##### seconds"; TIMER - t
 'NEXT
 
-'FOR i = TEST_UB TO TEST_LB STEP -1
+'REDIM MyHashTable(0 TO 0) AS HashTableType
+
+'FOR i = TEST_LB TO TEST_UB
 '    LOCATE , 1: PRINT "Adding key"; i; "Size:"; UBOUND(MyHashTable) + 1;
 '    HashTable_InsertLong MyHashTable(), i, myarray(i)
 'NEXT
 'PRINT
 
-'FOR i = TEST_UB TO TEST_LB STEP -1
+'FOR i = TEST_LB TO TEST_UB
 '    LOCATE , 1: PRINT "Verifying key: "; i;
 '    IF HashTable_LookupLong(MyHashTable(), i) <> myarray(i) THEN
 '        PRINT "[fail] ";
@@ -181,7 +186,7 @@ SUB HashTable_Remove (hashTable() AS HashTableType, k AS _UNSIGNED LONG)
     DIM idx AS LONG: idx = __HashTable_GetLookupIndex(hashTable(), k)
 
     IF idx >= 0 THEN
-        hashTable(idx).U = __HASHTABLE_FALSE
+        hashTable(idx).U = _FALSE
     ELSE
         ERROR 9
     END IF
@@ -193,7 +198,7 @@ SUB HashTable_InsertLong (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v A
     DIM idx AS LONG: idx = __HashTable_GetInsertIndex(hashTable(), k)
 
     IF idx >= 0 THEN
-        hashTable(idx).U = __HASHTABLE_TRUE
+        hashTable(idx).U = _TRUE
         hashTable(idx).K = k
         hashTable(idx).V = v
     ELSE

@@ -1,6 +1,6 @@
 '-----------------------------------------------------------------------------------------------------------------------
 ' InForm-PE GUI engine for QB64-PE
-' Copyright (c) 2024 Samuel Gomes
+' Copyright (c) 2025 Samuel Gomes
 ' Copyright (c) 2023 George McGinn
 ' Copyright (c) 2022 Fellippe Heitor
 '-----------------------------------------------------------------------------------------------------------------------
@@ -69,9 +69,9 @@ END DECLARE
 
 $IF WIN THEN
     DECLARE DYNAMIC LIBRARY "kernel32"
-    FUNCTION OpenProcess& (BYVAL dwDesiredAccess AS LONG, BYVAL bInheritHandle AS LONG, BYVAL dwProcessId AS LONG)
-    FUNCTION CloseHandle& (BYVAL hObject AS LONG)
-    FUNCTION GetExitCodeProcess& (BYVAL hProcess AS LONG, lpExitCode AS LONG)
+        FUNCTION OpenProcess& (BYVAL dwDesiredAccess AS LONG, BYVAL bInheritHandle AS LONG, BYVAL dwProcessId AS LONG)
+        FUNCTION CloseHandle& (BYVAL hObject AS LONG)
+        FUNCTION GetExitCodeProcess& (BYVAL hProcess AS LONG, lpExitCode AS LONG)
     END DECLARE
     CONST PathSep$ = "\"
 $ELSE
@@ -399,7 +399,7 @@ SUB __UI_BeforeUpdateDisplay
 
     $IF WIN THEN
         IF NewWindowLeft <> -32001 AND NewWindowTop <> -32001 AND (NewWindowLeft <> _SCREENX OR NewWindowTop <> _SCREENY) THEN
-        _SCREENMOVE NewWindowLeft + 612, NewWindowTop
+            _SCREENMOVE NewWindowLeft + 612, NewWindowTop
         END IF
     $END IF
 
@@ -409,17 +409,17 @@ SUB __UI_BeforeUpdateDisplay
         hnd& = OpenProcess(&H400, 0, UiEditorPID)
         b& = GetExitCodeProcess(hnd&, ExitCode&)
         IF b& = 1 AND ExitCode& = 259 THEN
-        'Editor is active.
-        EditorWasActive = TRUE
+            'Editor is active.
+            EditorWasActive = True
         ELSE
-        'Editor was closed.
-        IF EditorWasActive = FALSE THEN
-        'Preview was launched by user
-        _SCREENHIDE
-        MessageBox "__UI_BeforeUpdateDisplay: InForm Designer is not running. Please run the main program.", _TITLE$, MsgBox_Critical
-        END IF
-        IF _FILEEXISTS("InForm/UiEditorPreview.frmbin") THEN KILL "InForm/UiEditorPreview.frmbin"
-        SYSTEM
+            'Editor was closed.
+            IF EditorWasActive = False THEN
+                'Preview was launched by user
+                _SCREENHIDE
+                MessageBox "__UI_BeforeUpdateDisplay: InForm Designer is not running. Please run the main program.", _TITLE$, MsgBox_Critical
+            END IF
+            IF _FILEEXISTS("InForm/UiEditorPreview.frmbin") THEN KILL "InForm/UiEditorPreview.frmbin"
+            SYSTEM
         END IF
         b& = CloseHandle(hnd&)
     $ELSE
@@ -639,7 +639,7 @@ SUB __UI_BeforeUpdateDisplay
         ELSEIF TempValue = -5 THEN
             'Reset request (new form)
             IsCreating = True
-            a$ = Base64_Decode(EMPTY_FORM)
+            a$ = _BASE64DECODE$(EMPTY_FORM)
 
             FileToLoad = FREEFILE
             OPEN "InForm/UiEditorPreview.frmbin" FOR BINARY AS #FileToLoad
@@ -2396,7 +2396,7 @@ SUB LoadPreview (Destination AS _BYTE)
 
         b$ = ReadSequential$(Clip$, VAL("&H" + ClipLen$))
         b$ = Replace$(b$, CHR$(10), "", False, 0)
-        Clip$ = Base64_Decode(b$)
+        Clip$ = _BASE64DECODE$(b$)
     END IF
 
     IF NOT Disk THEN b$ = ReadSequential$(Clip$, 2) ELSE b$ = SPACE$(2): GET #BinaryFileNum, , b$
@@ -3592,7 +3592,7 @@ SUB SavePreview (Destination AS _BYTE)
         END IF
     ELSE
         Clip$ = Clip$ + b$
-        b$ = Base64_Encode(Clip$)
+        b$ = _BASE64ENCODE$(Clip$)
 
         IF LEN(b$) > 60 THEN
             a$ = ""

@@ -1,6 +1,6 @@
 '-----------------------------------------------------------------------------------------------------------------------
 ' Cross-platform truetype / opentype font helper library
-' Copyright (c) 2024 Samuel Gomes
+' Copyright (c) 2025 Samuel Gomes
 '-----------------------------------------------------------------------------------------------------------------------
 
 $INCLUDEONCE
@@ -69,7 +69,7 @@ FUNCTION FontMgr_BuildList~& (fontList() AS STRING)
     ' Add a placeholder for the internal VGA font
     fontCount = 1
     REDIM FontFile(1 TO 1) AS STRING
-    FontFile(1) = ""
+    FontFile(1) = _STR_EMPTY
 
     ' Keep reading the directories unless we have exhausted everything in the stack
     WHILE LEN(dirStack(UBOUND(dirStack))) > 0
@@ -80,14 +80,14 @@ FUNCTION FontMgr_BuildList~& (fontList() AS STRING)
         IF UBOUND(dirStack) > 0 THEN
             REDIM _PRESERVE dirStack(0 TO UBOUND(dirStack) - 1) AS STRING
         ELSE
-            dirStack(0) = "" ' clear the last directory
+            dirStack(0) = _STR_EMPTY ' clear the last directory
         END IF
 
         ' Start getting the entries from the directory
         DIM entry AS STRING: entry = _FILES$(directory)
 
         DO
-            IF entry <> PATHNAME_DIR_CURRENT AND entry <> PATHNAME_DIR_PARENT AND RIGHT$(entry, 1) = PATHNAME_DIR_SEPARATOR THEN
+            IF entry <> PATHNAME_DIR_CURRENT _ANDALSO entry <> PATHNAME_DIR_PARENT _ANDALSO RIGHT$(entry, 1) = PATHNAME_DIR_SEPARATOR THEN
                 ' If the entry is a legit directory, then push it to the stack
                 IF LEN(dirStack(0)) > 0 THEN
                     REDIM _PRESERVE dirStack(0 TO UBOUND(dirStack) + 1) AS STRING
@@ -96,9 +96,7 @@ FUNCTION FontMgr_BuildList~& (fontList() AS STRING)
                     dirStack(0) = directory + entry ' this then becomes the only directory in the stack
                 END IF
             ELSE
-                DIM extension AS STRING: extension = LCASE$(RIGHT$(entry, 4)) ' we can get away with this because all our font file extensions are 3 characters in length
-
-                SELECT CASE extension
+                SELECT CASE LCASE$(Pathname_GetFileExtension(entry))
                     ' Add the entry to the fontList() array if it is a legit font file name
                     ' TODO: .fon support is not implemented. See comments in other functions
                     CASE ".ttf", ".ttc", ".otf", ".fnt", ".pcf", ".bdf" ' , ".fon"
@@ -129,7 +127,7 @@ END FUNCTION
 ''' @param nameId The component needed from the font's name table
 ''' @return The name of the font. Invalid filePath or fontIndex will return an empty string.
 FUNCTION FontMgr_GetName$ (filePath AS STRING, fontIndex AS _UNSIGNED LONG, nameId AS _UNSIGNED _BYTE)
-    IF LEN(filePath) = 0 AND fontIndex = 0 THEN
+    IF LEN(filePath) = 0 _ANDALSO fontIndex = 0 THEN
         ' VGA font special-case
         FontMgr_GetName = "Built-in VGA font"
     ELSEIF _FILEEXISTS(filePath) THEN
@@ -137,8 +135,7 @@ FUNCTION FontMgr_GetName$ (filePath AS STRING, fontIndex AS _UNSIGNED LONG, name
 
         ' Check for non-ttf fonts and simply return the file name without the extension
         ' TODO: This is a ugly and needs a proper implementation (possibly a QB64-PE internal one ;)
-        DIM extension AS STRING: extension = LCASE$(RIGHT$(filePath, 4))
-        SELECT CASE extension
+        SELECT CASE LCASE$(Pathname_GetFileExtension(filePath))
             ' TODO: .fon support is not implemented. See comments in other functions
             CASE ".fnt", ".pcf", ".bdf" ', ".fon"
                 IF fontIndex = 0 THEN
@@ -183,7 +180,7 @@ FUNCTION FontMgr_GetName$ (filePath AS STRING, fontIndex AS _UNSIGNED LONG, name
         ttOffsetTable.uMinorVersion = __FontMgr_BSwap16(ttOffsetTable.uMinorVersion)
 
         ' Check is this is a true type font and the version is 1.0
-        IF ttOffsetTable.uMajorVersion <> 1 OR ttOffsetTable.uMinorVersion <> 0 THEN EXIT FUNCTION
+        IF ttOffsetTable.uMajorVersion <> 1 _ORELSE ttOffsetTable.uMinorVersion <> 0 THEN EXIT FUNCTION
 
         ttOffsetTable.uNumOfTables = __FontMgr_BSwap16(ttOffsetTable.uNumOfTables)
 
@@ -213,7 +210,7 @@ FUNCTION FontMgr_GetName$ (filePath AS STRING, fontIndex AS _UNSIGNED LONG, name
                     ' 1 specifies font name, this could be modified to get other info
                     ' mac and unicode platform id should be 0 for english
                     IF ttRecord.uNameID = nameId THEN
-                        IF (ttRecord.uPlatformID = __FONTMGR_PLATFORM_ID_UNI AND ttRecord.uLanguageID = __FONTMGR_LANGUAGE_ID_UNI) OR (ttRecord.uPlatformID = __FONTMGR_PLATFORM_ID_MAC AND ttRecord.uLanguageID = __FONTMGR_LANGUAGE_ID_MAC) OR (ttRecord.uPlatformID = __FONTMGR_PLATFORM_ID_WIN AND ttRecord.uLanguageID = __FONTMGR_LANGUAGE_ID_WIN) THEN
+                        IF (ttRecord.uPlatformID = __FONTMGR_PLATFORM_ID_UNI _ANDALSO ttRecord.uLanguageID = __FONTMGR_LANGUAGE_ID_UNI) _ORELSE (ttRecord.uPlatformID = __FONTMGR_PLATFORM_ID_MAC _ANDALSO ttRecord.uLanguageID = __FONTMGR_LANGUAGE_ID_MAC) _ORELSE (ttRecord.uPlatformID = __FONTMGR_PLATFORM_ID_WIN _ANDALSO ttRecord.uLanguageID = __FONTMGR_LANGUAGE_ID_WIN) THEN
                             ttRecord.uStringLength = __FontMgr_BSwap16(ttRecord.uStringLength)
                             ttRecord.uStringOffset = __FontMgr_BSwap16(ttRecord.uStringOffset)
 
@@ -261,10 +258,11 @@ FUNCTION FontMgr_GetCount~& (filePath AS STRING)
     ELSEIF _FILEEXISTS(filePath) THEN
         ' Check for non-ttf fonts and simply return 1
         ' TODO: This is a ugly and needs a proper implementation (possibly a QB64-PE internal one ;)
-        DIM extension AS STRING: extension = LCASE$(RIGHT$(filePath, 4))
+        DIM extension AS STRING: extension = LCASE$(Pathname_GetFileExtension(filePath))
         SELECT CASE extension
             ' TODO: .fon files are muti-font resource files and should be handled correctly
-            CASE ".fnt", ".pcf", ".bdf" ', ".fon"
+            ' NOTE: Some .otf font have a ttc header but contains bogus
+            CASE ".fnt", ".pcf", ".bdf", ".otf" ', ".fon"
                 FontMgr_GetCount = 1
                 EXIT FUNCTION
         END SELECT
@@ -288,11 +286,8 @@ FUNCTION FontMgr_GetCount~& (filePath AS STRING)
         ttOffsetTable.uMajorVersion = __FontMgr_BSwap16(ttOffsetTable.uMajorVersion)
         ttOffsetTable.uMinorVersion = __FontMgr_BSwap16(ttOffsetTable.uMinorVersion)
 
-        IF ttOffsetTable.uMajorVersion = 1 AND ttOffsetTable.uMinorVersion = 0 THEN
-            SELECT CASE LCASE$(RIGHT$(filePath, 4))
-                CASE ".ttf", ".otf" ' also do a file extension check
-                    FontMgr_GetCount = 1 ' regular TTF / OTF
-            END SELECT
+        IF ttOffsetTable.uMajorVersion = 1 _ANDALSO ttOffsetTable.uMinorVersion = 0 _ANDALSO extension = ".ttf" THEN ' also do a file extension check (.otf checked above)
+            FontMgr_GetCount = 1 ' regular TTF
         END IF
 
         CLOSE f
@@ -307,23 +302,22 @@ END FUNCTION
 ''' @param outMaxSize [OUT] The maximum size supported by the font
 ''' @return True if a valid size range was probed
 FUNCTION FontMgr_GetSizeRange%% (filePath AS STRING, fontIndex AS _UNSIGNED LONG, outMinSize AS _UNSIGNED _BYTE, outMaxSize AS _UNSIGNED _BYTE)
-    IF LEN(filePath) = 0 AND fontIndex = 0 THEN
+    IF LEN(filePath) = 0 _ANDALSO fontIndex = 0 THEN
         ' VGA font special-case
         ' This is not really a range and the caller is expected to do special handling for the internal VGA font
         outMinSize = __FONTMGR_PROBE_SIZE_MIN
         outMaxSize = 16
 
-        FontMgr_GetSizeRange = __FONTMGR_TRUE
+        FontMgr_GetSizeRange = _TRUE
     ELSEIF _FILEEXISTS(filePath) THEN
         ' There is no point doing this for scalable fonts
         ' Just set the min and max and exit
-        DIM extension AS STRING: extension = LCASE$(RIGHT$(filePath, 4))
-        SELECT CASE extension
+        SELECT CASE LCASE$(Pathname_GetFileExtension(filePath))
             CASE ".ttf", ".ttc", ".otf"
                 outMinSize = __FONTMGR_PROBE_SIZE_MIN
                 outMaxSize = __FONTMGR_PROBE_SIZE_MAX
 
-                FontMgr_GetSizeRange = __FONTMGR_TRUE
+                FontMgr_GetSizeRange = _TRUE
                 EXIT FUNCTION
         END SELECT
 
@@ -350,7 +344,7 @@ FUNCTION FontMgr_GetSizeRange%% (filePath AS STRING, fontIndex AS _UNSIGNED LONG
             outMinSize = minSize
             outMaxSize = maxSize
 
-            FontMgr_GetSizeRange = __FONTMGR_TRUE
+            FontMgr_GetSizeRange = _TRUE
         END IF
     END IF
 END FUNCTION

@@ -1,14 +1,12 @@
 '-----------------------------------------------------------------------------------------------------------------------
 ' Animated GIF Player library
-' Copyright (c) 2024 Samuel Gomes
+' Copyright (c) 2025 Samuel Gomes
 '-----------------------------------------------------------------------------------------------------------------------
 
 $INCLUDEONCE
 
 '$INCLUDE:'HashTable.bi'
 '$INCLUDE:'StringFile.bi'
-
-CONST __GIF_FALSE%% = 0%%, __GIF_TRUE%% = NOT __GIF_FALSE
 
 ' This is the master animation type that holds info about a complete animation
 TYPE __GIFPlayType

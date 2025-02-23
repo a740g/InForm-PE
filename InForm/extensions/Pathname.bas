@@ -1,6 +1,6 @@
 '-----------------------------------------------------------------------------------------------------------------------
 ' Pathname utility library
-' Copyright (c) 2024 Samuel Gomes
+' Copyright (c) 2025 Samuel Gomes
 '-----------------------------------------------------------------------------------------------------------------------
 
 $INCLUDEONCE
@@ -10,6 +10,7 @@ $INCLUDEONCE
 '-----------------------------------------------------------------------------------------------------------------------
 ' Test code for debugging the library
 '-----------------------------------------------------------------------------------------------------------------------
+'$CONSOLE:ONLY
 '_DEFINE A-Z AS LONG
 'OPTION _EXPLICIT
 
@@ -170,7 +171,7 @@ FUNCTION Pathname_HasFileExtension%% (pathOrURL AS STRING)
                     EXIT FOR
 
                 CASE PATHNAME_EXT_SEPARATOR_CODE
-                    Pathname_HasFileExtension = __PATHNAME_TRUE
+                    Pathname_HasFileExtension = _TRUE
                     EXIT FOR
             END SELECT
         $ELSE
@@ -179,7 +180,7 @@ FUNCTION Pathname_HasFileExtension%% (pathOrURL AS STRING)
                     EXIT FOR
 
                 CASE PATHNAME_EXT_SEPARATOR_CODE
-                    Pathname_HasFileExtension = __PATHNAME_TRUE
+                    Pathname_HasFileExtension = _TRUE
                     EXIT FOR
             END SELECT
         $END IF
@@ -262,7 +263,7 @@ FUNCTION Pathname_MakeLegalFileName$ (fileName AS STRING)
     FOR i = 1 TO LEN(fileName)
         c = ASC(fileName, i)
         SELECT CASE c
-            CASE IS < 32, PATHNAME_DIR_SEPARATOR_CODE_WIN, PATHNAME_DIR_SEPARATOR_CODE_NIX, PATHNAME_SCHEME_TERMINATOR_CODE, 34, 42, 60, 62, 63, 124
+            CASE IS < _ASC_SPACE, PATHNAME_DIR_SEPARATOR_CODE_WIN, PATHNAME_DIR_SEPARATOR_CODE_NIX, PATHNAME_SCHEME_TERMINATOR_CODE, _ASC_QUOTE, _ASC_ASTERISK, _ASC_LESSTHAN, _ASC_GREATERTHAN, _ASC_QUESTION, _ASC_VERTICALBAR
                 s = s + "_"
             CASE ELSE
                 s = s + CHR$(c)

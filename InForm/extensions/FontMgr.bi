@@ -1,13 +1,12 @@
 '-----------------------------------------------------------------------------------------------------------------------
 ' Cross-platform truetype / opentype font helper library
-' Copyright (c) 2024 Samuel Gomes
+' Copyright (c) 2025 Samuel Gomes
 '-----------------------------------------------------------------------------------------------------------------------
 
 $INCLUDEONCE
 
 '$INCLUDE:'Pathname.bi'
 
-CONST __FONTMGR_FALSE~%% = 0~%%, __FONTMGR_TRUE~%% = NOT __FONTMGR_FALSE
 CONST __FONTMGR_PROBE_SIZE_MIN~%% = 8~% ' minimum font height that can be reported
 CONST __FONTMGR_PROBE_SIZE_MAX~%% = 120~%% ' maximum font height that can be reported
 CONST __FONTMGR_PLATFORM_ID_UNI~% = 0~%
