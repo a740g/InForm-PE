@@ -1,5 +1,5 @@
 '-----------------------------------------------------------------------------------------------------------------------
-' A simple hash table for integers and QB64-PE handles
+' A simple hash table library
 ' Copyright (c) 2025 Samuel Gomes
 '-----------------------------------------------------------------------------------------------------------------------
 
@@ -99,17 +99,34 @@ $INCLUDEONCE
 
 'PRINT HashTable_IsKeyPresent(MyHashTable(), 100)
 
+'HashTable_Insert MyHashTable(), 43, "grape"
+'HashTable_Insert MyHashTable(), 8, "carrot"
+'HashTable_Insert MyHashTable(), 22, "apple"
+
+'PRINT "Value for key 22: "; HashTable_Lookup(MyHashTable(), 22)
+'PRINT "Value for key 8: "; HashTable_Lookup(MyHashTable(), 8)
+'PRINT "Value for key 43: "; HashTable_Lookup(MyHashTable(), 43)
+
+'IF HashTable_IsKeyPresent(MyHashTable(), 43) THEN
+'    PRINT "key for grape is in the table."
+'END IF
+
+'HashTable_Remove MyHashTable(), 8
+'IF NOT HashTable_IsKeyPresent(MyHashTable(), 8) THEN
+'    PRINT "key for carrot has been removed."
+'END IF
+
 'END
 '-------------------------------------------------------------------------------------------------------------------
 
 ' Simple hash function: k is the 32-bit key and l is the upper bound of the array
-FUNCTION __HashTable_GetHash~& (k AS _UNSIGNED LONG, l AS _UNSIGNED LONG)
+FUNCTION __HashTable_Hash~& (k AS _UNSIGNED LONG, l AS _UNSIGNED LONG)
     $CHECKING:OFF
     ' Actually this should be k MOD (l + 1)
     ' However, we can get away using AND because our arrays size always doubles in multiples of 2
     ' So, if l = 255, then (k MOD (l + 1)) = (k AND l)
     ' Another nice thing here is that we do not need to do the addition :)
-    __HashTable_GetHash = k AND l
+    __HashTable_Hash = k AND l
     $CHECKING:ON
 END FUNCTION
 
@@ -123,97 +140,327 @@ SUB __HashTable_ResizeAndRehash (hashTable() AS HashTableType)
     REDIM _PRESERVE hashTable(0 TO newUB) AS HashTableType
 
     ' Rehash and swap all the elements
-    DIM i AS _UNSIGNED LONG: FOR i = 0 TO uB
-        IF hashTable(i).U THEN SWAP hashTable(i), hashTable(__HashTable_GetHash(hashTable(i).K, newUB))
+    DIM i AS _UNSIGNED LONG
+    FOR i = 0 TO uB
+        IF hashTable(i).U THEN SWAP hashTable(i), hashTable(__HashTable_Hash(hashTable(i).K, newUB))
     NEXT i
 END SUB
 
 
-' This returns an array index in hashTable where k can be inserted
-' If there is a collision it will grow the array, re-hash and copy all elements
-FUNCTION __HashTable_GetInsertIndex& (hashTable() AS HashTableType, k AS _UNSIGNED LONG)
-    DIM uB AS _UNSIGNED LONG: uB = UBOUND(hashTable)
-    DIM idx AS _UNSIGNED LONG: idx = __HashTable_GetHash(k, uB)
-
-    IF hashTable(idx).U THEN
-        ' Used slot
-        IF hashTable(idx).K = k THEN
-            ' Duplicate key
-            __HashTable_GetInsertIndex = __HASHTABLE_KEY_EXISTS
-        ELSE
-            ' Collision
-            __HashTable_ResizeAndRehash hashTable()
-            __HashTable_GetInsertIndex = __HashTable_GetInsertIndex(hashTable(), k)
-        END IF
-    ELSE
-        ' Empty slot
-        __HashTable_GetInsertIndex = idx
-    END IF
-END FUNCTION
-
-
-' This function returns the index from hashTable for the key k if k is in use
-FUNCTION __HashTable_GetLookupIndex& (hashTable() AS HashTableType, k AS _UNSIGNED LONG)
-    DIM uB AS _UNSIGNED LONG: uB = UBOUND(hashTable)
-    DIM idx AS _UNSIGNED LONG: idx = __HashTable_GetHash(k, uB)
-
-    IF hashTable(idx).U THEN
-        ' Used slot
-        IF hashTable(idx).K = k THEN
-            ' Key found
-            __HashTable_GetLookupIndex = idx
-        ELSE
-            ' Unknown key
-            __HashTable_GetLookupIndex = __HASHTABLE_KEY_UNAVAILABLE
-        END IF
-    ELSE
-        ' Unknown key
-        __HashTable_GetLookupIndex = __HASHTABLE_KEY_UNAVAILABLE
-    END IF
-END FUNCTION
+' Resets and sets up the hash table to a default state
+SUB HashTable_Initialize (hashTable() AS HashTableType)
+    REDIM hashTable(0 TO 0) AS HashTableType
+END SUB
 
 
 ' Return TRUE if k is available in the hash table
 FUNCTION HashTable_IsKeyPresent%% (hashTable() AS HashTableType, k AS _UNSIGNED LONG)
-    $CHECKING:OFF
-    HashTable_IsKeyPresent = (__HashTable_GetLookupIndex(hashTable(), k) >= 0)
-    $CHECKING:ON
+    DIM idx AS _UNSIGNED LONG: idx = __HashTable_Hash(k, UBOUND(hashTable))
+
+    HashTable_IsKeyPresent = (hashTable(idx).U _ANDALSO hashTable(idx).K = k)
 END FUNCTION
 
 
 ' Remove an element from the hash table
 SUB HashTable_Remove (hashTable() AS HashTableType, k AS _UNSIGNED LONG)
-    DIM idx AS LONG: idx = __HashTable_GetLookupIndex(hashTable(), k)
+    DIM idx AS _UNSIGNED LONG: idx = __HashTable_Hash(k, UBOUND(hashTable))
 
-    IF idx >= 0 THEN
-        hashTable(idx).U = _FALSE
-    ELSE
-        ERROR 9
-    END IF
+    IF hashTable(idx).U _ANDALSO hashTable(idx).K = k THEN hashTable(idx).U = _FALSE
 END SUB
 
 
-' Inserts a long value in the table using a key
-SUB HashTable_InsertLong (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS LONG)
-    DIM idx AS LONG: idx = __HashTable_GetInsertIndex(hashTable(), k)
+' Remove an element from the hash table
+' Returns true if successful
+FUNCTION HashTable_Remove%% (hashTable() AS HashTableType, k AS _UNSIGNED LONG)
+    DIM idx AS _UNSIGNED LONG: idx = __HashTable_Hash(k, UBOUND(hashTable))
 
-    IF idx >= 0 THEN
+    IF hashTable(idx).U _ANDALSO hashTable(idx).K = k THEN
+        hashTable(idx).U = _FALSE
+        HashTable_Remove = _TRUE
+    ELSE
+        HashTable_Remove = _FALSE
+    END IF
+END FUNCTION
+
+
+' Returns the value from the table using a key
+' If the key is not valid, it return an empty string
+FUNCTION HashTable_Lookup$ (hashTable() AS HashTableType, k AS _UNSIGNED LONG)
+    DIM idx AS _UNSIGNED LONG: idx = __HashTable_Hash(k, UBOUND(hashTable))
+
+    IF hashTable(idx).U _ANDALSO hashTable(idx).K = k THEN HashTable_Lookup = hashTable(idx).V
+END FUNCTION
+
+
+' Returns a _BYTE value from the table using a key
+FUNCTION HashTable_LookupByte%% (hashTable() AS HashTableType, k AS _UNSIGNED LONG)
+    HashTable_LookupByte = _CV(_BYTE, HashTable_Lookup(hashTable(), k))
+END FUNCTION
+
+
+' Returns an INTEGER value from the table using a key
+FUNCTION HashTable_LookupInteger% (hashTable() AS HashTableType, k AS _UNSIGNED LONG)
+    HashTable_LookupInteger = CVI(HashTable_Lookup(hashTable(), k))
+END FUNCTION
+
+' Returns a LONG value from the table using a key
+FUNCTION HashTable_LookupLong& (hashTable() AS HashTableType, k AS _UNSIGNED LONG)
+    HashTable_LookupLong = CVL(HashTable_Lookup(hashTable(), k))
+END FUNCTION
+
+
+' Returns a SINGLE value from the table using a key
+FUNCTION HashTable_LookupSingle! (hashTable() AS HashTableType, k AS _UNSIGNED LONG)
+    HashTable_LookupSingle = CVS(HashTable_Lookup(hashTable(), k))
+END FUNCTION
+
+
+' Returns a DOUBLE value from the table using a key
+FUNCTION HashTable_LookupDouble# (hashTable() AS HashTableType, k AS _UNSIGNED LONG)
+    HashTable_LookupDouble = CVD(HashTable_Lookup(hashTable(), k))
+END FUNCTION
+
+
+' Returns an INTEGER64 value from the table using a key
+FUNCTION HashTable_LookupInteger64&& (hashTable() AS HashTableType, k AS _UNSIGNED LONG)
+    HashTable_LookupInteger64 = _CV(_INTEGER64, HashTable_Lookup(hashTable(), k))
+END FUNCTION
+
+
+' Inserts a value in the table using a key
+SUB HashTable_Insert (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS STRING)
+    DIM idx AS _UNSIGNED LONG: idx = __HashTable_Hash(k, UBOUND(hashTable))
+
+    IF hashTable(idx).U THEN
+        IF hashTable(idx).K = k THEN
+            ' Key already exists
+            EXIT SUB
+        ELSE
+            __HashTable_ResizeAndRehash hashTable()
+            HashTable_Insert hashTable(), k, v
+            EXIT SUB
+        END IF
+    ELSE
         hashTable(idx).U = _TRUE
         hashTable(idx).K = k
         hashTable(idx).V = v
-    ELSE
-        ERROR 9
     END IF
 END SUB
 
 
-' Returns the long value from the table using a key
-FUNCTION HashTable_LookupLong& (hashTable() AS HashTableType, k AS _UNSIGNED LONG)
-    DIM idx AS LONG: idx = __HashTable_GetLookupIndex(hashTable(), k)
+' Inserts a value in the table using a key
+' Returns true if key is unique and insert was successful
+FUNCTION HashTable_Insert%% (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS STRING)
+    DIM idx AS _UNSIGNED LONG: idx = __HashTable_Hash(k, UBOUND(hashTable))
 
-    IF idx >= 0 THEN
-        HashTable_LookupLong = hashTable(idx).V
+    IF hashTable(idx).U THEN
+        IF hashTable(idx).K = k THEN
+            ' Key already exists
+            HashTable_Insert = _FALSE
+            EXIT FUNCTION
+        ELSE
+            __HashTable_ResizeAndRehash hashTable()
+            HashTable_Insert = HashTable_Insert(hashTable(), k, v)
+            EXIT FUNCTION
+        END IF
     ELSE
-        ERROR 9
+        hashTable(idx).U = _TRUE
+        hashTable(idx).K = k
+        hashTable(idx).V = v
     END IF
+
+    HashTable_Insert = _TRUE
+END FUNCTION
+
+
+' Inserts a BYTE value in the table using a key
+SUB HashTable_InsertByte (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS _BYTE)
+    HashTable_Insert hashTable(), k, _MK$(_BYTE, v)
+END SUB
+
+
+' Inserts an INTEGER value in the table using a key
+SUB HashTable_InsertInteger (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS INTEGER)
+    HashTable_Insert hashTable(), k, MKI$(v)
+END SUB
+
+
+' Inserts a LONG value in the table using a key
+SUB HashTable_InsertLong (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS LONG)
+    HashTable_Insert hashTable(), k, MKL$(v)
+END SUB
+
+
+' Inserts a SINGLE value in the table using a key
+SUB HashTable_InsertSingle (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS SINGLE)
+    HashTable_Insert hashTable(), k, MKS$(v)
+END SUB
+
+
+' Inserts a DOUBLE value in the table using a key
+SUB HashTable_InsertDouble (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS DOUBLE)
+    HashTable_Insert hashTable(), k, MKD$(v)
+END SUB
+
+
+' Inserts an INTEGER64 value in the table using a key
+SUB HashTable_InsertInteger64 (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS _INTEGER64)
+    HashTable_Insert hashTable(), k, _MK$(_INTEGER64, v)
+END SUB
+
+
+' Inserts a BYTE value in the table using a key
+FUNCTION HashTable_InsertByte%% (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS _BYTE)
+    HashTable_InsertByte = HashTable_Insert(hashTable(), k, _MK$(_BYTE, v))
+END FUNCTION
+
+
+' Inserts an INTEGER value in the table using a key
+FUNCTION HashTable_InsertInteger%% (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS INTEGER)
+    HashTable_InsertInteger = HashTable_Insert(hashTable(), k, MKI$(v))
+END FUNCTION
+
+
+' Inserts a LONG value in the table using a key
+FUNCTION HashTable_InsertLong%% (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS LONG)
+    HashTable_InsertLong = HashTable_Insert(hashTable(), k, MKL$(v))
+END FUNCTION
+
+
+' Inserts a SINGLE value in the table using a key
+FUNCTION HashTable_InsertSingle%% (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS SINGLE)
+    HashTable_InsertSingle = HashTable_Insert(hashTable(), k, MKS$(v))
+END FUNCTION
+
+
+' Inserts a DOUBLE value in the table using a key
+FUNCTION HashTable_InsertDouble%% (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS DOUBLE)
+    HashTable_InsertDouble = HashTable_Insert(hashTable(), k, MKD$(v))
+END FUNCTION
+
+
+' Inserts an INTEGER64 value in the table using a key
+FUNCTION HashTable_InsertInteger64%% (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS _INTEGER64)
+    HashTable_InsertInteger64 = HashTable_Insert(hashTable(), k, _MK$(_INTEGER64, v))
+END FUNCTION
+
+
+' Updates or inserts a value in the table using a key
+' Returns true if operation was succesful
+SUB HashTable_Update (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS STRING)
+    DIM idx AS _UNSIGNED LONG: idx = __HashTable_Hash(k, UBOUND(hashTable))
+
+    IF hashTable(idx).U THEN
+        IF hashTable(idx).K = k THEN
+            ' Key already exists
+            hashTable(idx).V = v ' allow overwrite
+            EXIT SUB
+        ELSE
+            __HashTable_ResizeAndRehash hashTable()
+            HashTable_Update hashTable(), k, v
+            EXIT SUB
+        END IF
+    ELSE
+        hashTable(idx).U = _TRUE
+        hashTable(idx).K = k
+        hashTable(idx).V = v
+    END IF
+END SUB
+
+
+' Updates or inserts a value in the table using a key
+' Returns true if operation was succesful
+FUNCTION HashTable_Update%% (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS STRING)
+    DIM idx AS _UNSIGNED LONG: idx = __HashTable_Hash(k, UBOUND(hashTable))
+
+    IF hashTable(idx).U THEN
+        IF hashTable(idx).K = k THEN
+            ' Key already exists
+            hashTable(idx).V = v ' allow overwrite
+            HashTable_Update = _TRUE
+            EXIT FUNCTION
+        ELSE
+            __HashTable_ResizeAndRehash hashTable()
+            HashTable_Update = HashTable_Update(hashTable(), k, v)
+            EXIT FUNCTION
+        END IF
+    ELSE
+        hashTable(idx).U = _TRUE
+        hashTable(idx).K = k
+        hashTable(idx).V = v
+    END IF
+
+    HashTable_Update = _TRUE
+END FUNCTION
+
+
+' Updates or inserts a BYTE value in the table using a key
+SUB HashTable_UpdateByte (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS _BYTE)
+    HashTable_Update hashTable(), k, _MK$(_BYTE, v)
+END SUB
+
+
+' Updates or inserts an INTEGER value in the table using a key
+SUB HashTable_UpdateInteger (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS INTEGER)
+    HashTable_Update hashTable(), k, MKI$(v)
+END SUB
+
+
+' Updates or inserts a LONG value in the table using a key
+SUB HashTable_UpdateLong (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS LONG)
+    HashTable_Update hashTable(), k, MKL$(v)
+END SUB
+
+
+' Updates or inserts a SINGLE value in the table using a key
+SUB HashTable_UpdateSingle (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS SINGLE)
+    HashTable_Update hashTable(), k, MKS$(v)
+END SUB
+
+
+' Updates or inserts a DOUBLE value in the table using a key
+SUB HashTable_UpdateDouble (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS DOUBLE)
+    HashTable_Update hashTable(), k, MKD$(v)
+END SUB
+
+
+' Updates or inserts an INTEGER64 value in the table using a key
+SUB HashTable_UpdateInteger64 (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS _INTEGER64)
+    HashTable_Update hashTable(), k, _MK$(_INTEGER64, v)
+END SUB
+
+
+' Updates or inserts a BYTE value in the table using a key
+FUNCTION HashTable_UpdateByte%% (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS _BYTE)
+    HashTable_UpdateByte = HashTable_Update(hashTable(), k, _MK$(_BYTE, v))
+END FUNCTION
+
+
+' Updates or inserts an INTEGER value in the table using a key
+FUNCTION HashTable_UpdateInteger%% (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS INTEGER)
+    HashTable_UpdateInteger = HashTable_Update(hashTable(), k, MKI$(v))
+END FUNCTION
+
+
+' Updates or inserts a LONG value in the table using a key
+FUNCTION HashTable_UpdateLong%% (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS LONG)
+    HashTable_UpdateLong = HashTable_Update(hashTable(), k, MKL$(v))
+END FUNCTION
+
+
+' Updates or inserts a SINGLE value in the table using a key
+FUNCTION HashTable_UpdateSingle%% (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS SINGLE)
+    HashTable_UpdateSingle = HashTable_Update(hashTable(), k, MKS$(v))
+END FUNCTION
+
+
+' Updates or inserts a DOUBLE value in the table using a key
+FUNCTION HashTable_UpdateDouble%% (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS DOUBLE)
+    HashTable_UpdateDouble = HashTable_Update(hashTable(), k, MKD$(v))
+END FUNCTION
+
+
+' Updates or inserts an INTEGER64 value in the table using a key
+FUNCTION HashTable_UpdateInteger64%% (hashTable() AS HashTableType, k AS _UNSIGNED LONG, v AS _INTEGER64)
+    HashTable_UpdateInteger64 = HashTable_Update(hashTable(), k, _MK$(_INTEGER64, v))
 END FUNCTION
