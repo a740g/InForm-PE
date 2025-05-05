@@ -30,7 +30,7 @@ SUB Ini_SortSection (file$, __section$)
     LOOP
 
     REDIM _PRESERVE keys(1 TO totalKeys) AS STRING
-    IF __Ini_SortArray(keys()) = 0 THEN __ini.code = 23: EXIT SUB
+    IF NOT Algo_SortStringArray(keys()) THEN __ini.code = 23: EXIT SUB
 
     commitBackup = __ini.disableAutoCommit
     __ini.disableAutoCommit = -1 'Prevent every minor change from being written to disk
@@ -757,24 +757,4 @@ FUNCTION Ini_GetInfo$
     END SELECT
 END FUNCTION
 
-' Written in BASIC by Luke Ceddia for ide_methods.bas (QB64)
-' After Cormen, Leiserson, Rivest & Stein "Introduction To Algoritms" via Wikipedia
-' Adapted for use in .INI Manager
-FUNCTION __Ini_SortArray%% (arr() AS STRING)
-    DIM i&, x$, j&, moves&
-
-    FOR i& = LBOUND(arr) + 1 TO UBOUND(arr)
-        x$ = arr(i&)
-        j& = i& - 1
-        WHILE j& >= LBOUND(arr)
-            IF arr(j&) <= x$ THEN EXIT WHILE
-            moves& = moves& + 1
-            arr$(j& + 1) = arr$(j&)
-            j& = j& - 1
-        WEND
-        arr$(j& + 1) = x$
-    NEXT i&
-
-    ' Returns -1 (true) if any changes were made
-    __Ini_SortArray = (moves& > 0)
-END FUNCTION
+'$INCLUDE:'Algo.bas'

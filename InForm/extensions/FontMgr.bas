@@ -1,5 +1,5 @@
 '-----------------------------------------------------------------------------------------------------------------------
-' Cross-platform truetype / opentype font helper library
+' Cross-platform TrueType / OpenType font helper library
 ' Copyright (c) 2025 Samuel Gomes
 '-----------------------------------------------------------------------------------------------------------------------
 
@@ -44,7 +44,7 @@ $INCLUDEONCE
 '-----------------------------------------------------------------------------------------------------------------------
 
 ''' @brief Builds an array of fonts from that are available in the host OS (user installed + system installed).
-''' @param fontList This a dynamic string array. The function will redimension fontList starting from 1.
+''' @param fontList This a dynamic string array. The function will re-dimension fontList starting from 1.
 ''' @return The count of fonts found.
 FUNCTION FontMgr_BuildList~& (fontList() AS STRING)
     ' dirStack is a stack of directories that we'll need to traverse
@@ -112,19 +112,18 @@ FUNCTION FontMgr_BuildList~& (fontList() AS STRING)
     WEND
 
     ' Sort the array (else it looks really ugly)
-    IF fontCount > 1 THEN FontMgr_SortStringArray fontList(), 1, fontCount
+    IF fontCount > 1 THEN Algo_SortStringArray fontList()
 
     FontMgr_BuildList = fontCount
 END FUNCTION
 
-
 ''' @brief Returns the font name by directly probing a true-type font file.
-' Adapted from https://www.codeproject.com/articles/2293/retrieving-font-name-from-ttf-file.
-' QB64-PE port and TTC support by a740g.
-' Note that this has just enough code to fetch the font name and is by no means a complete TTF / TTC parser.
+''' Adapted from https://www.codeproject.com/articles/2293/retrieving-font-name-from-ttf-file.
+''' QB64-PE port and TTC support by a740g.
+''' Note that this has just enough code to fetch the font name and is by no means a complete TTF / TTC parser.
 ''' @param filePath This the font file path name.
 ''' @param fontIndex This is the font index inside a TTC and it is always zero based. Must be 0 for TTF & OTF.
-''' @param nameId The component needed from the font's name table
+''' @param nameId The component needed from the font's name table.
 ''' @return The name of the font. Invalid filePath or fontIndex will return an empty string.
 FUNCTION FontMgr_GetName$ (filePath AS STRING, fontIndex AS _UNSIGNED LONG, nameId AS _UNSIGNED _BYTE)
     IF LEN(filePath) = 0 _ANDALSO fontIndex = 0 THEN
@@ -247,7 +246,6 @@ FUNCTION FontMgr_GetName$ (filePath AS STRING, fontIndex AS _UNSIGNED LONG, name
     END IF
 END FUNCTION
 
-
 ''' @brief Returns the number of fonts in a collection (TTC).
 ''' @param filePath This the font file path name.
 ''' @return 1 or more for valid font files. 0 for invalid font files.
@@ -294,13 +292,12 @@ FUNCTION FontMgr_GetCount~& (filePath AS STRING)
     END IF
 END FUNCTION
 
-
 ''' @brief Probes and returns the supported font size range (useful for bitmap fonts).
 ''' @param filePath This the font file path name.
 ''' @param fontIndex This is the font index inside a TTC and it is always zero based. Must be 0 for TTF & OTF.
-''' @param outMinSize [OUT] The minimum size supported by the font
-''' @param outMaxSize [OUT] The maximum size supported by the font
-''' @return True if a valid size range was probed
+''' @param outMinSize [OUT] The minimum size supported by the font.
+''' @param outMaxSize [OUT] The maximum size supported by the font.
+''' @return True if a valid size range was probed.
 FUNCTION FontMgr_GetSizeRange%% (filePath AS STRING, fontIndex AS _UNSIGNED LONG, outMinSize AS _UNSIGNED _BYTE, outMaxSize AS _UNSIGNED _BYTE)
     IF LEN(filePath) = 0 _ANDALSO fontIndex = 0 THEN
         ' VGA font special-case
@@ -349,35 +346,5 @@ FUNCTION FontMgr_GetSizeRange%% (filePath AS STRING, fontIndex AS _UNSIGNED LONG
     END IF
 END FUNCTION
 
-
-''' @brief Sorts a string array
-''' @param strArr The string array to sort
-''' @param l The lower index
-''' @param u The upper index
-SUB FontMgr_SortStringArray (strArr() AS STRING, l AS _UNSIGNED LONG, u AS _UNSIGNED LONG)
-    DIM i AS _UNSIGNED LONG: i = l
-    DIM j AS _UNSIGNED LONG: j = u
-    DIM pivot AS STRING: pivot = strArr((l + u) \ 2)
-
-    WHILE i <= j
-        WHILE _STRCMP(strArr(i), pivot) < 0
-            i = i + 1
-        WEND
-
-        WHILE _STRCMP(strArr(j), pivot) > 0
-            j = j - 1
-        WEND
-
-        IF i <= j THEN
-            SWAP strArr(i), strArr(j)
-            i = i + 1
-            j = j - 1
-        END IF
-    WEND
-
-    ' Recursively sort the partitions
-    IF l < j THEN FontMgr_SortStringArray strArr(), l, j
-    IF i < u THEN FontMgr_SortStringArray strArr(), i, u
-END SUB
-
 '$INCLUDE:'Pathname.bas'
+'$INCLUDE:'Algo.bas'
