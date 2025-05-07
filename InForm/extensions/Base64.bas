@@ -20,7 +20,6 @@ FUNCTION Base64_LoadResourceString$ (src AS STRING, ogSize AS _UNSIGNED LONG, is
     Base64_LoadResourceString = buffer
 END FUNCTION
 
-
 ''' @brief Loads a binary file encoded with Bin2Data (DATA).
 ''' Usage:
 '''   1. Encode the binary file with Bin2Data.
