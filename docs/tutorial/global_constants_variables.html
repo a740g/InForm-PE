@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Global constants and variables</title>
+  <meta name="Description" content="InForm sets global constants and variables that are user-accessible." />
+  <meta name="Keywords" content="Events,Inform,QB64,QB64PE, Phoenix, Background,Installation,Fellippe Heitor,MPGCAN" />
+  <link href="common/css/main.css" rel="stylesheet" type="text/css">
+  <link href="common/css/menu.css" rel="stylesheet" type="text/css">
+  <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+
+  <script src="common/navigation-js.js"></script> 
+</head>
+<body>
+
+  
+  <script language="javascript" src="common/side-menu.js"></script> <!-- Side menu -->
+ 
+  <div id="content"> <!-- Start content -->
+  <!-- ################ Start Content ################ -->
+   <script language="javascript" src="common/header.js"></script>      <!-- Banner -->
+
+  <div  class="flex-page-title">
+    <div>
+                <img src="common/images/inf_logo.png"  alt="logo" />
+    </div>
+    <div>
+       <h1>Global constants and variables</h1>
+     </div>
+  </div>
+
+<p>The following page is split into two sections: global constants and global variables.</p>
+
+
+ <div id="page_links_menu" >
+  <ul>
+  <li><a href="#Global constants" >Global constants</a></li>
+   <li><a href="#Boolean" >&nbsp;&nbsp;&nbsp;-Boolean</a></li>
+   <li><a href="#Back style" >&nbsp;&nbsp;&nbsp;-Back style</a></li>
+   <li><a href="#Text align" >&nbsp;&nbsp;&nbsp;-Text align</a></li>
+   <li><a href="#MessageBox" >&nbsp;&nbsp;&nbsp;-MessageBox</a></li>
+   <li><a href="#Global Variables" >Global Variables</a></li>
+   <li><a href="#__UI_ContextMenuSourceID" >&nbsp;&nbsp;&nbsp;__UI_ContextMenuSourceID</a></li>
+
+   <li><a href="#__UI_ForceRedraw" >&nbsp;&nbsp;&nbsp;__UI_ForceRedraw</a></li>
+   <li><a href="#__UI_KeyHit" >&nbsp;&nbsp;&nbsp;__UI_KeyHit</a></li>
+   <li><a href="#__CtrlIsDown, __UI_ShiftIsDown, __UI_AltIsDown" >&nbsp;&nbsp;&nbsp; __CtrlIsDown, __UI_ShiftIsDown, __UI_AltIsDown</a></li>
+   <li><a href="#__UI_UnloadSignal" >&nbsp;&nbsp;&nbsp;__UI_UnloadSignal</a></li>
+   <li><a href="#__UI_KeepScreenHidden" >&nbsp;&nbsp;&nbsp;__UI_KeepScreenHidden</a></li>
+   <li><a href="#__UI_EventsTimer __UI_RefreshTimer" >&nbsp;&nbsp;&nbsp;__UI_EventsTimer __UI_RefreshTimer</a> Time critical</li>
+
+   </ul>
+ </div>
+
+<a name="Global constants"></a>
+<h1>Global constants</h1>
+
+<ul>
+   <li>  __UI_VersionNumber contains the build number.  </li>
+   <li>  __UI_Version contains the user-friendly version string for example, “v1.1” </li>
+</ul>
+
+<p>The following are global constants groupted by function.</p>
+
+<a name="Boolean"></a>
+<h2>Boolean</h2>
+
+<ul>
+<li>True</li>
+<li>False</li>
+</ul>
+<p>The traditional way of having boolean variables in QB64 is by setting True = -1, as it allows bit manipulation with operators like NOT, AND, OR, etc (False = NOT True).</p>
+
+<a name="Back style"></a>
+<h2>Back style</h2>
+<p>Used for setting a control's background to opaque or transparent.</p>
+<ul>
+<li>__UI_Opaque</li>
+<li>__UI_Transparent</li>
+</ul>
+
+<a name="Text align"></a>
+<h2>Text align</h2>
+
+<ul>
+<li>__UI_Left</li>
+<li>__UI_Center</li>
+<li>__UI_Right</li>
+<li>__UI_Top</li>
+<li>__UI_Middle</li>
+<li>__UI_Bottom</li>
+</ul>
+
+<a name="MessageBox"></a>
+<h2>MessageBox</h2>
+
+<p>For a detailed explanation of using the message box global constants, please refer to the <a href="methods.html#MessageBox" target="_blank")> MessageBox method.</a></p>
+
+
+<style>
+.msgbox {
+  margin-left: 25px;
+}
+</style>
+<div class="flex-container-text-img" >
+<div>
+<b class="msgbox" >Buttons</b>
+<ul>
+<li>MsgBox_OkOnly</li>
+<li>MsgBox_OkCancel</li>
+<li>MsgBox_AbortRetryIgnore</li>
+<li>MsgBox_YesNoCancel</li>
+<li>MsgBox_YesNo</li>
+<li>MsgBox_RetryCancel</li>
+<li>MsgBox_CancelTryagainContinue</li>
+</ul>
+
+<b class="msgbox" >Modal</b>
+<ul>
+<li>MsgBox_AppModal</li>
+<li>MsgBox_SystemModal</li>
+<li>MsgBox_SetForeground</li>
+</ul>
+
+</div>
+
+<div>
+<b class="msgbox" >Default button</b>
+<ul>
+<li>MsgBox_DefaultButton1</li>
+<li>MsgBox_DefaultButton2</li>
+<li>MsgBox_DefaultButton3</li>
+<li>MsgBox_Defaultbutton4</li>
+</ul>
+
+<b class="msgbox" >Icons</b>
+<ul>
+<li>MsgBox_Critical</li>
+<li>MsgBox_Question</li>
+<li>MsgBox_Exclamation</li>
+<li>MsgBox_Information</li>
+</ul>
+
+</div>
+
+<div>
+<b class="msgbox" >Results</b>
+<ul>
+<li>MsgBox_Ok</li>
+<li>MsgBox_Cancel</li>
+<li>MsgBox_Abort</li>
+<li>MsgBox_Retry</li>
+<li>MsgBox_Ignore</li>
+<li>MsgBox_Yes</li>
+<li>MsgBox_No</li>
+<li>MsgBox_Tryagain</li>
+<li>MsgBox_Continue</li>
+</ul>
+
+</div>
+</div>
+
+<a name="Global Variables"></a>
+<h2>Global Variables</h2>
+
+<p><b>Global variables</b> affect the drawing, input, or event dispatcher routines. Their names always start with the UI prefix.</p>
+
+<ul>
+<li><a href="#">__UI_ContextMenuSourceID</a></li>
+<li><a href="#">__UI_ForceRedraw</a></li>
+<li><a href="#">__UI_KeyHit</a></li>
+<li><a href="#">__CtrlIsDown</a>, <a class="internal present" href="/FellippeHeitor/InForm/wiki/Keyboard-modifiers">__UI_ShiftIsDown</a>, <a class="internal present" href="/FellippeHeitor/InForm/wiki/Keyboard-modifiers">__UI_AltIsDown</a>
+</li>
+<li><a href="#">__UI_UnloadSignal</a></li>
+<li><a href="#">__UI_KeepScreenHidden</a></li>
+</ul>
+
+<a name="__UI_ContextMenuSourceID"></a>
+<h2>__UI_ContextMenuSourceID</h2>
+ 
+<p>Global variable __UI_ContextMenuSourceID holds the ID of the control associated to a ContextMenu control that triggered the event.</p>
+
+<p>For example, if you have three picture box controls, each associated with the same context menu, let the context menu have an item labeled change-color. When clicked, it will change the associated picture box background to a random color.</p>
+
+<pre><code tabindex="0">Sub __UI_Click (id As Long)
+    Select Case id
+        Case Form1
+        Case PictureBox1
+        Case PictureBox2
+        Case PictureBox3
+        Case MenuItem1
+            Control(__UI_ContextMenuSourceID).BackColor = _RGB(Rnd * 255, Rnd * 255, Rnd * 255)
+    End Select
+End Sub</code></pre>
+
+
+
+<a name="__UI_ForceRedraw"></a>
+<h2>__UI_ForceRedraw</h2>
+
+<p>__UI_ForceRedraw is a global variable that triggers a redraw for all form controls when it's set to <b>True</b>. When it's not set to True, controls are redrawn only when changes in their properties or state are detected.</p>
+
+<pre ><code tabindex="0">__UI_ForceRedraw = True</code></pre>
+
+<p>It's automatically set back to <b>False</b> after the next form repaint is executed.<br>
+If you want to trigger a redraw for only a specific control, use the Redraw property:</p>
+
+<pre ><code tabindex="0">Control(myControl).Redraw = True</code></pre>
+
+
+<a name="__UI_KeyHit"></a>
+<h2>__UI_KeyHit</h2>
+
+<p>__UI_KeyHit is a <b>global variable</b> of type LONG INTEGER. It holds the scan code of the last key pressed by the user. Positive values mean a key was pressed, while negative values indicate a key was released.</p>
+
+<p>This variable can be accessed anywhere, but it's usually manipulated in <b>KeyPress</b> event handlers, especially for <b>Textbox</b> controls, as it can be used to change the key presses that actually get sent to the control.</p>
+
+
+<a name="__CtrlIsDown, __UI_ShiftIsDown, __UI_AltIsDown"></a>
+<h2> __CtrlIsDown, __UI_ShiftIsDown, __UI_AltIsDown </h2>
+
+<p>Keyboard modifiers are global variables that hold <b>True</b> when the key they represent is being held down.</p>
+
+<ul>
+<li>__UI_CtrlIsDown</li>
+<li>__UI_ShiftIsDown</li>
+<li>__UI_AltIsDown</li>
+</ul>
+
+
+<script language="javascript" src="common/top.js"></script>
+<a name="__UI_UnloadSignal"></a>
+<h2>__UI_UnloadSignal</h2>
+
+<p>The global variable __UI_UnloadSignal will be set to True if the user requests that the program be closed, either by clicking the X button on the title bar or by hitting Alt+F4 (Windows only).</p>
+
+<p>In an <b>BeforeUnload</b> event, set this variable to False to cancel the quit request.</p>
+
+
+<script language="javascript" src="common/top.js"></script>
+<a name="__UI_KeepScreenHidden"></a>
+<h2>__UI_KeepScreenHidden</h2>
+
+<p>The global variable __UI_KeepScreenHidden can be set to True if you don't want InForm to show the main form immediately, which is useful when your program needs to perform any startup routines before the main form can be displayed.</p>
+
+<p>In the <b>BeforeInit</b> event, set this variable to True to avoid showing the form immediately.</p>
+
+
+<p><b>Caution:</b></p>
+
+<p>If you do set __UI_KeepScreenHidden to True, don't forget to use _SCREENSHOW somewhere later in your program, or your main form will never be displayed and your program will keep running as a hidden window.</p>
+
+
+<script language="javascript" src="common/top.js"></script>
+<a name="__UI_EventsTimer __UI_RefreshTimer"></a>
+<h2>__UI_EventsTimer __UI_RefreshTimer</h2>
+
+<p>For timer critical issues:</p>
+
+<pre style="width:60%">
+<code tabindex="0">
+'Try adding this before your search routine:
+
+Code: QB64: [Select]
+        TIMER(__UI_EventsTimer) OFF
+        TIMER(__UI_RefreshTimer) OFF
+
+'Just don't forget to turn those timers back on after you're done:
+
+Code: QB64: [Select]
+        TIMER(__UI_EventsTimer) ON
+        TIMER(__UI_RefreshTimer) ON
+</code>
+</pre>
+
+<p>InForm's events and repaint routines are timer-based, and that surely takes up some cycles.
+ The trade-off of the above method is that your interface will remain unresponsive while the
+ calculations take place. You must judge if the speed gain is considerable enough to justify the tweak.</p>
+
+
+
+   <!-- ################ End Content ################ -->
+  <script language="javascript" src="common/footer.js"></script> <!-- Footer -->
+   </div> <!-- End content -->
+
+</body>
+</html>

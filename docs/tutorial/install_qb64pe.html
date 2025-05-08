@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Install QB64pe</title>
+  <meta name="Description" content="This tutorial will focus InForm for the Phoenix Edition of QB64." />
+  <meta name="Keywords" content="InForm, QB64, QB64PE, Phoenix, Installation, MPGCAN" />
+
+  <link href="common/css/main.css" rel="stylesheet" type="text/css">
+  <link href="common/css/menu.css" rel="stylesheet" type="text/css">
+  <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+
+  <script src="common/navigation-js.js"></script> 
+</head>
+<body>
+
+  
+  <script language="javascript" src="common/side-menu.js"></script> <!-- Side menu -->
+ 
+  <div id="content"> <!-- Start content -->
+  <!-- ################ Start Content ################ -->
+   <script language="javascript" src="common/header.js"></script>      <!-- Banner -->
+
+  <div  class="flex-page-title">
+    <div>
+          <img src="common/images/inf_logo.png"  alt="logo" />
+    </div>
+    <div>
+       <h1>Install QB64pe</h1>
+     </div>
+  </div>
+
+<p>QB64 is a modern self-hosting BASIC compiler that is compatible with Microsoft QBasic and QuickBASIC, enabling you to compile native code for newer Windows operating systems from Windows XP up to Windows 11. Additionally, it allows you to compile native code for most distributions of Linux.</p>
+
+<p>The QB64 BASIC compiler does not require installation; you simply need to download and extract the executable files.<br>
+Note: QB64 is inherently portable, allowing it to run on any similar system.</p>
+
+ <div id="page_links_menu" >
+  <ul>
+   <li><a href="#Quick install Windows" >Quick install Windows</a></li>
+    <li><a href="#Quick install Linux" >Quick install Linux</a></li>
+    <li><a href="#Detailed install for Windows" >Detailed install for Windows</a></li>
+    <li><a href="#Portable 7-Zip" >Portable 7-Zip</a></li>
+    <li><a href="#Test installation" >Test installation</a></li>
+    <li><a href="#Compile" >Compile</a></li>
+    <li><a href="#Compile_method1" >&nbsp;&nbsp;Compile method 1 - Full source compile</a></li>
+    <li><a href="#Compile_method2" >&nbsp;&nbsp;Compile method 2 - Compile existing installation</a></li>
+   </ul>
+ </div>
+
+<a name="Quick install Windows"></a>
+<h2>Quick install Windows Vista and newer</h2>
+
+<ol>
+   <li>Download the appropriate package for your system from the QB64pe <a href="https://github.com/QB64-Phoenix-Edition/QB64pe/releases/latest" target="_blank">GitHub repository</a>.</li>
+    <li>Unpack the contents to any location on your computer. Avoid unpacking to Program Files or other system folders that may require administrative privileges. QB64 needs to have full write permissions to its own folder.</li>
+</ol>
+
+
+<a name="Quick install Linux"></a>
+<h2>Quick install Most distributions of Linux, both 32 and 64 bit</h2>
+
+<ol>
+   <li> Download the appropriate package for your system from the QB64pe <a href="https://github.com/QB64-Phoenix-Edition/QB64pe/releases/latest" target="_blank">GitHub repository</a>.   </li>
+
+    <li>After extracting the downloaded package, run the installation batch or script called <b>./setup_lnx.sh</b> in the main QB64 folder to set up QB64.</li>
+    <li>Most dependencies should be automatically downloaded by the setup script. However, these are the ones you should look for if compilation fails: OpenGL development libraries, ALSA development libraries, and the GNU C++ Compiler (g++).</li>
+</ol>
+
+<a name="Detailed install for Windows"></a>
+<h2>Detailed install for Windows</h2>
+
+<p>Detailed installation example:</p>
+
+<ol>
+    <li>Create a new folder to contain the QB64 files. For example, create a folder named <b>qb64-inform</b>.</li>
+    <li>Download the latest version (currently v3.12.0) from the QB64pe <a href="https://github.com/QB64-Phoenix-Edition/QB64pe/releases/latest" target="_blank">GitHub repository</a>. For this example, let's say you downloaded the file <b>qb64pe_win-x64-3.12.0.7z</b>.</li>
+    <li>Save the downloaded file to the folder you created in step 1.</li>
+    <li>Assuming you have 7-Zip installed, right-click on the file <b>qb64pe_win-x64-3.12.0.7z</b>, hover over <b>7-Zip</b>," and select <b>Extract Here</b> from the side menu.</li>
+    <li>This action creates a new folder named <b>qb64pe</b>, which contains all the QB64 files.</li>
+    <li>If you want to save space, you can delete the file qb64pe_win-x64-3.12.0.7z as it is no longer needed.</li>
+    <li>To run QB64, navigate into the qb64pe folder and double-click on the file qb64pe.exe.</li>
+</ol>
+
+<p>Note 1:<br>
+If you do not have 7-Zip installed on your computer, visit the 7-Zip web site at <a href="https://www.7-zip.org/" target="_blank">https://www.7-zip.org/</a> to download and install the appropriate version for your system. Alternatively, use a portable 7-Zip; see below for details.
+</p>
+
+<a name="Portable 7-Zip"></a>
+<h2>Portable 7-Zip</h2>
+
+<p>Instead of installing 7-Zip, you can use the portable version available from Portable Apps: <a href="https://portableapps.com/apps/utilities/7-zip_portable" target="_blank">https://portableapps.com/apps/utilities/7-zip_portable</a></p>
+
+<p>7-Zip Portable details:</p>
+<ol>
+    <li>Download the file 7-ZipPortable_23.01.paf.exe and save it to any folder, for example, 7Z-portable.</li>
+    <li>Run the extraction process by double-clicking on the file 7-ZipPortable_23.01.paf.exe.</li>
+    <li>During the process, when prompted, click on Run, OK, Next, Install, and finally Finish.</li>
+    <li>Navigate into the extracted folder 7-ZipPortable and run 7-ZipPortable.exe by double-clicking on the file.</li>
+
+    <li>The 7-Zip window will open. Under the name, double-click on "computer" to expand the folder and file structure.</li>
+    <li>Navigate into the folder <b>qb64-inform</b> and highlight (click) the file qb64pe_win-x64-3.12.0.7z.</li>
+    <li>Click on <b>File</b> at the top left, then hover over the item 7-Zip, and from the side menu, select Extract Here.</li>
+    <li>A new folder named qb64pe will be created, containing all the QB64 files.</li>
+</ol>
+
+
+<a name="Test installation"></a>
+<h2>Test installation</h2>
+
+<div  class="flex-container-text-img"  >
+
+<div>
+<p>To test the installation, navigate into your qb64pe folder and double-click on the file qb64pe.exe. This will run the QB64 application, and the image on the right shows the expected results.</p>
+
+<p>At the time of writing, the latest version of QB64pe is v3.12.0.</p>
+
+
+</div>
+
+<div style="margin-left:15px;">
+<img src="images/install-ide-example.png" alt="ide example"   width="500" height="371"   />
+</div>
+</div>
+
+<a name="Compile"></a>
+<h2>Compile</h2>
+
+<p>The above demonstrates how easy it is to install QB64pe. The installation uses pre-compiled binaries that only require extraction. However, there may be occasions when you want to tweak an existing installation or download and run the latest source code before it is officially released. In either case, you will have to compile and create new binaries.
+Below are the two compilation methods:</p>
+
+<a name="Compile_method1"></a>
+<p><b>Method 1:</b> Full Source Compilation:</p>
+
+
+
+
+<ol>
+ <li>   Get a copy of the repository using this direct link: <a href="https://github.com/QB64-Phoenix-Edition/QB64pe/archive/refs/heads/main.zip">QB64-Phoenix-Edition Repo </a>. Save <b>main.zip</b> to a new folder named <b>qb64-new</b><br>.
+        If the above link does not work, follow these steps:</li>
+    <ol>
+            <li>Go to the Github repository folder: <a href="https://github.com/QB64-Phoenix-Edition/QB64pe"> https://github.com/QB64-Phoenix-Edition/QB64pe</a>. </li>
+            <li>Click on the green button labeled <b>Code</b> at the top right.</li>
+            <li>Select the last item <b>Download ZIP</b> to download the file <b>main.zip</b>.</li>
+            <li>Copy this file to a new folder named <b>qb64-new</b>.</li>
+    </ol>
+
+  <li>  Extract the contents of <b>main.zip</b> to the root folder, <b>qb64-new</b>.</li>
+   <li> Make any necessary changes to the source files as required.</li>
+    <li>Build <b>qb64pe.exe</b> from scratch by running the appropriate install script for your operating system: <b>setup_win.cmd</b> for Windows (or setup_lnx for Linux, setup_mac for macOS).</li>
+</ol>
+
+
+
+<a name="Compile_method2"></a>
+<p><b>Method 2:</b> Compiling an Existing Installation:</p>
+
+<ol>
+  <li> Rename your <b>qb64pe.exe</b> file to <b>org-qb64.exe</b>.  </li>
+  <li> Run <b>org-qb64.exe</b> </li>
+  <li> Load the file <b>source\qb64pe.bas</b> </li>
+  <li> Make any necessary changes to the source files. </li>
+  <li> Press <b>F11</b> (Run  &gt; Make EXE only) to rebuild <b>qb64pe.exe</b> with the new changes. </li>
+  <li> Quit the IDE and delete the <b>org-qb64.exe</b> </li>
+</ol>
+
+
+   <!-- ################ End Content ################ -->
+  <script language="javascript" src="common/footer.js"></script> <!-- Footer -->
+   </div> <!-- End content -->
+
+</body>
+</html>

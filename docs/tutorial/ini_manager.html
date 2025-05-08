@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>INI-Manager</title>
+  <meta name="Description" content="This tutorial will focus InForm for the Phoenix Edition of QB64." />
+  <meta name="Keywords" content="InForm, QB64, QB64PE, Phoenix, Installation, MPGCAN" />
+
+  <link href="common/css/main.css" rel="stylesheet" type="text/css">
+  <link href="common/css/menu.css" rel="stylesheet" type="text/css">
+  <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+
+  <script src="common/navigation-js.js"></script> 
+</head>
+<body>
+
+  
+  <script language="javascript" src="common/side-menu.js"></script> <!-- Side menu -->
+ 
+  <div id="content"> <!-- Start content -->
+  <!-- ################ Start Content ################ -->
+   <script language="javascript" src="common/header.js"></script>      <!-- Banner -->
+
+  <div  class="flex-page-title">
+    <div>
+                <img src="common/images/inf_logo.png"  alt="logo" />
+    </div>
+    <div>
+       <h1>INI-Manager</h1>
+     </div>
+  </div>
+
+<p>QB64-PE INI-Manager Library by <a href="https://github.com/FellippeHeitor" target="_new">FellippeHeitor</a> for reading and writing to <a href="https://en.wikipedia.org/wiki/INI_file"  target="_new">INI</a> configuration files.</p>
+
+<p>An initialization file INI, for short, is a configuration file consisting of key-value pairs organized in sections.<br>
+Although the format is an informal standard, QB64-PE INI-Manager follows the accepted format covered in the <a href="https://en.wikipedia.org/wiki/INI_file"  target="_new">Wikipedia INI file</a>.</p>
+
+
+ <div id="page_links_menu" >
+  <ul>
+   <li><a href="#.ini format" >.ini format</a></li>
+   <li><a href="#Library methods" >Library methods</a></li>
+   <li><a href="#Writing" >&nbsp;&nbsp;Writing</a></li>
+   <li><a href="#Reading" >&nbsp;&nbsp;Reading</a></li>
+   <li><a href="#Deleting" >&nbsp;&nbsp;Deleting</a></li>
+   <li><a href="#Other methods" >&nbsp;&nbsp;Other methods</a></li>
+   <li><a href="#Variables" >Variables</a></li>
+   <li><a href="#Status Information" >Status Information - IniCODE</a></li>
+   <li><a href="#Ini Demos" >Ini Demos</a></li>
+   <li><a href="#Preperation" >&nbsp;&nbsp;Preperation copy Ini.bas Ini.bi</a></li>
+   <li><a href="#Ini demonstration 1" >&nbsp;&nbsp;Ini demonstration 1</a></li>
+   <li><a href="#Ini demonstration 2" >&nbsp;&nbsp;Ini demonstration 2</a></li>
+   <li><a href="#Ini demonstration 3" >&nbsp;&nbsp;Ini demonstration 3</a></li>
+   </ul>
+ </div>
+
+<a name=".ini format"></a>
+<h2>.ini format</h2>
+
+<p>INI files are used to store data required for a program's operation. Modern Windows apps use the Registry to store and retrieve information. However, the INI file method has the following advantages: it works across platforms, is easy to maintain, and makes the application portable besides being human-readable.</p>
+
+<p><b>Sample file:</b></p>
+
+<p>Sections are defined by enclosing the section title in [brackets]. Keys are assigned values using the equal sign (Key1=Value1). Quotation marks are allowed to delimit text but are not required. Comments can be added at the beginning of lines or after values and are started by a semicolon.</p>
+
+<pre><code tabindex="0">; last modified 1 April 2001 by John Doe
+[owner]
+name="John Doe"
+organization=Acme Widgets Inc. 'we may need to change this later
+
+[database]
+; use IP address in case network name resolution is not working
+server=192.0.2.62     
+port=143 ; change responsibly, be careful with conflicts
+file="payroll.dat"</code>
+</pre>
+
+<p>See  <a href="https://en.wikipedia.org/wiki/INI_file"  target="_new">https://en.wikipedia.org/wiki/INI_file</a> for more infotmation.</p>
+
+<a name="Library methods"></a>
+<h2>Library methods</h2>
+
+<a name="Writing"></a>
+<h3>Writing</h3>
+
+<pre><code tabindex="0">Ini_WriteSetting file$, section$, key$, value$</code>
+</pre>
+
+<p>Writes a new setting to a file or updates an existing one.</p>
+
+<ul>
+    <li>file$ = the file name to write to. Can handle multiple .ini files at once. To work with a single file, you only need to pass file$ in the first write operation.</li>
+    <li>section$ = the [section] in the ini file where the new key$ will be added.</li>
+    <li>key$ = the unique identifier of the value you wish to store (multiple identical keys can exist across different sections).</li>
+    <li>value$ = the value to be stored. Numeric values must be converted to strings with STR$() first.</li>
+</ul>
+
+<a name="Reading"></a>
+<h3>Reading</h3>
+
+<pre><code tabindex="0">result$ = Ini_ReadSetting(file$, section$, key$)</code>
+</pre>
+
+<p>Reads settings from a file.</p>
+
+ <ul>
+   <li>result$ = the variable where the value$ obtained from the file$ will be stored.</li>
+    <li>file$ = the file name to be parsed. To work with a single file, you only need to pass file$ in the first read operation.</li>
+    <li>section$ = the [section] in the ini file where the key$ will be read from.</li>
+    <li>key$ = the key in the file whose value you want to read.</li>
+</ul>
+
+<p>By passing an empty section$ and an empty key$ ("") you can fetch all keys in the file sequentially. To fetch all keys in a given section, leave only the key$ parameter empty.</p>
+
+<a name="Deleting"></a>
+<h3>Deleting</h3>
+
+<pre><code tabindex="0">Ini_DeleteSection file$, section$</code>
+</pre>
+
+<p>Deletes a whole section from a file.</p>
+
+<pre><code tabindex="0">Ini_DeleteKey file$, section$, key$</code>
+</pre>
+
+<p>Deletes a key from the specified section in a file.</p>
+
+
+<a name="Other methods"></a>
+<h3>Other methods</h3>
+
+<pre><code tabindex="0">Ini_SortSection file$, section$</code>
+</pre>
+
+<p>Sorts keys alphabetically in the specified section.</p>
+
+<pre><code tabindex="0">Ini_MoveKey file$, section$, key$, newSection$</code>
+</pre>
+
+<p>Moves key$ from section$ to newSection$.</p>
+
+
+<pre><code tabindex="0">result$ = Ini_GetInfo</code>
+</pre>
+
+
+<p>Returns the description of the __Ini.code from the last operation. After a read or write operation,__Ini.code will be 0 if the operation is successful. When not 0, Ini_GetInfo returns a human-readable description of the error.</p>
+
+
+<a name="Variables"></a>
+<h2>Variables</h2>
+
+<p> The following global variables are available:</p>
+
+<ul>
+ <li><b>IniLastSection$</b> This variable contains the name enclosed in square brackets of the last section created.</li>
+ <li><b>IniLastKey$</b>  This variable contains the name of the last key created.</li>
+</ul>
+
+<a name="Status Information"></a>
+<h2>Status Information - IniCODE</h2>
+
+<p>Status information is contained in the byte variable IniCODE.<br>
+IniCODE return values and their meanings are as follows:</p>
+
+<ol start="0">
+  <li>Operation successful</li>
+  <li>ERROR: File not found</li>
+  <li>Empty value</li>
+  <li>ERROR: Key not found</li>
+  <li>Key updated</li>
+  <li>Global key created</li>
+  <li>Key created in existing section</li>
+  <li>No changes applied (same value)</li>
+  <li>New section created; key created</li>
+  <li>No more keys</li>
+  <li>File created; new key added</li>
+  <li>ERROR: Invalid key</li>
+  <li>Section deleted</li>
+  <li>ERROR: Section not found</li>
+  <li>ERROR: Invalid section</li>
+  <li>New section created; existing key moved</li>
+  <li>ERROR: Empty file</li>
+  <li>ERROR: No file open</li>
+  <li>Key deleted</li>
+  <li>Key moved</li>
+  <li>ERROR: Invalid file name/path</li>
+  <li>Section sorted</li>
+  <li>No changes applied; section already sorted</li>
+  <li>No more sections</li>
+  <li>And above ERROR: invalid error code></li>
+</ol>
+
+<a name="Ini Demos"></a>
+<h2>Ini Demos</h2>
+
+<p>The following examples show how to use the Ini-manager in Inform projects.</p>
+
+<a name="Preperation"></a>
+<p><b>Preperation</b></p>
+
+<ul>
+   <li> Create a project folder named projects at the same level as qb64pe. In this folder, create a folder named <b>INI_TEST</b>.   </li>
+   <li>From folder InForm\<b>extensions</b>, copy files <b>Ini.bas</b> and <b>Ini.bi</b> to folder <b>INI_TEST</b>.  </li>
+   <li>Edit file <b>Ini.bi</b> and make the three variables <b>IniLastSection$</b>, <b>IniLastKey$</b>, and <b>IniCODE</b> SHARED as shown:  </li>
+</ul>
+
+<pre><code tabindex="0">    DIM SHARED IniLastSection$
+    DIM SHARED IniLastKey$
+    DIM SHARED IniCODE ' _BYTE?</code>
+</pre>
+
+
+<a name="Ini demonstration 1"></a>
+<h2>Ini demonstration 1</h2>
+
+<p>This demonstration shows how to write a new key/value pair to an .ini file or update an existing one using "WriteSetting". If the file doesn't exist, it'll be created.</p>
+
+<pre><code tabindex="0"> 'syntax: WriteSetting file$, section$, key$, value$</code>
+</pre>
+
+
+<a name="Form file ini-demo1.frm"></a>
+<h3>Form file ini-demo1.frm</h3>
+
+<pre class="precode" >
+<code  tabindex="0" >
+': This form was generated by
+': InForm - GUI library for QB64 - v1.5
+': Fellippe Heitor, 2016-2024 - fellippe@qb64.org - @fellippeheitor
+': https://github.com/FellippeHeitor/InForm
+'-----------------------------------------------------------
+SUB __UI_LoadForm
+
+    DIM __UI_NewID AS LONG, __UI_RegisterResult AS LONG
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Form, "IniDemo1", 548, 300, 0, 0, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Ini-Demo1"
+    Control(__UI_NewID).Font = SetFont("segoeui.ttf", 12)
+    Control(__UI_NewID).HasBorder = False
+
+    __UI_NewID = __UI_NewControl(__UI_Type_ListBox, "ListBox1", 521, 214, 14, 21, 0)
+    __UI_RegisterResult = 0
+    Control(__UI_NewID).HasBorder = True
+    Control(__UI_NewID).CanHaveFocus = True
+    Control(__UI_NewID).BorderSize = 1
+    Control(__UI_NewID).AutoScroll = True
+
+END SUB
+
+SUB __UI_AssignIDs
+    IniDemo1 = __UI_GetID("IniDemo1")
+    ListBox1 = __UI_GetID("ListBox1")
+END SUB
+
+</code>
+</pre>
+
+
+<a name="Basic file ini-demo1.bas"></a>
+<h3>Basic file ini-demo1.bas</h3>
+
+<pre class="precode" >
+<code  tabindex="0" >
+': This program uses
+': InForm - GUI library for QB64 - v1.5
+': Fellippe Heitor, 2016-2024 - fellippe@qb64.org - @fellippeheitor
+': https://github.com/FellippeHeitor/InForm
+'-----------------------------------------------------------
+
+': Controls' IDs: ------------------------------------------------------------------
+Dim Shared IniDemo1 As Long
+Dim Shared ListBox1 As Long
+
+': External modules: ---------------------------------------------------------------
+'------INI-TEST added ini.bi
+'$include:'ini.bi'
+
+'$INCLUDE:'InForm\InForm.bi'
+'$INCLUDE:'InForm\xp.uitheme'
+'$INCLUDE:'ini-demo1.frm'
+
+': Event procedures: ---------------------------------------------------------------
+Sub __UI_BeforeInit
+
+End Sub
+
+Sub __UI_OnLoad
+    '#######  ini-test ########
+    AddItem ListBox1, "INI Manager - demo 1"
+    AddItem ListBox1, "syntax: WriteSetting file$, section$, key$, value$"
+    AddItem ListBox1, "write a new key/value pair to an .ini file or update an existing"
+    AddItem ListBox1, "if the file doesn't exist, it'll be created."
+    AddItem ListBox1, "(brackets in section names are optional; will be added automatically anyway) "
+    AddItem ListBox1, "----------------------------------------------------------------"
+    AddItem ListBox1, " "
+
+    WriteSetting "test.ini", "[general]", "version", "Beta 4"
+    Status
+
+    'subsequent calls don't need to mention the file again
+    WriteSetting "", "general", "date", Date$
+    Status
+
+    WriteSetting "", "general", "time", Time$
+    Status
+
+    WriteSetting "", "credits", "author", "Fellippe Heitor"
+    Status
+
+    WriteSetting "", "contact", "email", "fellippe@qb64.org"
+    Status
+
+    WriteSetting "", "contact", "twitter", "@FellippeHeitor"
+    Status
+
+    _MessageBox "Check File test.ini", "File created/updated. I'll wait for you to check it with your editor of choice. Then click OK."
+
+    '----Update test
+    AddItem ListBox1, "-----------------------"
+    WriteSetting "", "general", "version", "Beta 4 - check the repo"
+    Status
+
+    AddItem ListBox1, "The file was updated again. Go check it out."
+
+    '#######  ini-test ########
+End Sub
+
+Sub Status
+    '--- added for ini-test
+    AddItem ListBox1, IniINFO
+    AddItem ListBox1, IniLastSection$ + "  " + IniLastKey$
+End Sub
+
+
+
+Sub __UI_BeforeUpdateDisplay
+    'This event occurs at approximately 60 frames per second.
+    'You can change the update frequency by calling SetFrameRate DesiredRate%
+
+End Sub
+
+Sub __UI_BeforeUnload
+    'If you set __UI_UnloadSignal = False here you can
+    'cancel the user's request to close.
+
+End Sub
+
+Sub __UI_Click (id As Long)
+    Select Case id
+        Case IniDemo1
+
+        Case ListBox1
+
+    End Select
+End Sub
+
+Sub __UI_MouseEnter (id As Long)
+    Select Case id
+        Case IniDemo1
+
+        Case ListBox1
+
+    End Select
+End Sub
+
+Sub __UI_MouseLeave (id As Long)
+    Select Case id
+        Case IniDemo1
+
+        Case ListBox1
+
+    End Select
+End Sub
+
+Sub __UI_FocusIn (id As Long)
+    Select Case id
+        Case ListBox1
+
+    End Select
+End Sub
+
+Sub __UI_FocusOut (id As Long)
+    'This event occurs right before a control loses focus.
+    'To prevent a control from losing focus, set __UI_KeepFocus = True below.
+    Select Case id
+        Case ListBox1
+
+    End Select
+End Sub
+
+Sub __UI_MouseDown (id As Long)
+    Select Case id
+        Case IniDemo1
+
+        Case ListBox1
+
+    End Select
+End Sub
+
+Sub __UI_MouseUp (id As Long)
+    Select Case id
+        Case IniDemo1
+
+        Case ListBox1
+
+    End Select
+End Sub
+
+Sub __UI_KeyPress (id As Long)
+    'When this event is fired, __UI_KeyHit will contain the code of the key hit.
+    'You can change it and even cancel it by making it = 0
+    Select Case id
+        Case ListBox1
+
+    End Select
+End Sub
+
+Sub __UI_TextChanged (id As Long)
+    Select Case id
+    End Select
+End Sub
+
+Sub __UI_ValueChanged (id As Long)
+    Select Case id
+        Case ListBox1
+
+    End Select
+End Sub
+
+Sub __UI_FormResized
+
+End Sub
+
+'$INCLUDE:'InForm/InForm.ui'
+'---INI-TEST added ini.bas
+'$include:'ini.bas'
+</code>
+</pre>
+
+
+<a name="Ini demonstration 2"></a>
+<h2>Ini demonstration 2</h2>
+
+<p>This demonstration shows you can read all keys/values from an .ini file by calling "ReadSetting" with both section$ and key$ values empty.</p>
+
+<pre><code tabindex="0">'syntax: var$ = ReadSetting(file$, "", "")</code></pre>
+
+<p>This demonstration also shows you can read all keys/values from a specific section by calling "ReadSetting" with an empty key$ value.</p>
+
+<pre><code tabindex="0">'syntax: var$ = ReadSetting(file$, "[section]", "")</code></pre>
+
+<a name="Form file ini-demo2.frm"></a>
+<h3>Form file ini-demo2.frm</h3>
+
+<pre class="precode" >
+<code  tabindex="0" >
+': This form was generated by
+': InForm - GUI library for QB64 - v1.5
+': Fellippe Heitor, 2016-2024 - fellippe@qb64.org - @fellippeheitor
+': https://github.com/FellippeHeitor/InForm
+'-----------------------------------------------------------
+SUB __UI_LoadForm
+
+    DIM __UI_NewID AS LONG, __UI_RegisterResult AS LONG
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Form, "IniDemo2", 548, 300, 0, 0, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Ini-Demo2"
+    Control(__UI_NewID).Font = SetFont("segoeui.ttf", 12)
+    Control(__UI_NewID).HasBorder = False
+
+    __UI_NewID = __UI_NewControl(__UI_Type_ListBox, "ListBox1", 521, 214, 14, 21, 0)
+    __UI_RegisterResult = 0
+    Control(__UI_NewID).HasBorder = True
+    Control(__UI_NewID).CanHaveFocus = True
+    Control(__UI_NewID).BorderSize = 1
+    Control(__UI_NewID).AutoScroll = True
+
+END SUB
+
+SUB __UI_AssignIDs
+    IniDemo2 = __UI_GetID("IniDemo2")
+    ListBox1 = __UI_GetID("ListBox1")
+END SUB
+
+</code>
+</pre>
+
+
+<a name="Basic file ini-demo2.bas"></a>
+<h3>Basic file ini-demo2.bas</h3>
+
+<pre class="precode" >
+<code  tabindex="0" >
+Option _Explicit
+': This program uses
+': InForm - GUI library for QB64 - v1.5
+': Fellippe Heitor, 2016-2024 - fellippe@qb64.org - @fellippeheitor
+': https://github.com/FellippeHeitor/InForm
+'-----------------------------------------------------------
+
+': Controls' IDs: ------------------------------------------------------------------
+Dim Shared IniDemo2 As Long
+Dim Shared ListBox1 As Long
+
+': External modules: ---------------------------------------------------------------
+'------INI-TEST added ini.bi
+'$include:'ini.bi'
+
+'$INCLUDE:'InForm\InForm.bi'
+'$INCLUDE:'InForm\xp.uitheme'
+'$INCLUDE:'ini-demo2.frm'
+
+': Event procedures: ---------------------------------------------------------------
+Sub __UI_BeforeInit
+
+End Sub
+
+Sub __UI_OnLoad
+    '#######  ini-test ########
+    Dim a$
+    AddItem ListBox1, "INI Manager - demo 2"
+    'syntax: var$ = ReadSetting(file$, "", "")
+    AddItem ListBox1, "syntax: var$ = ReadSetting(file$," + Chr$(34) + Chr$(34) + " ," + Chr$(34) + Chr$(34) + " )"
+    AddItem ListBox1, "You can read all keys/values from an .ini file by calling "
+    AddItem ListBox1, "ReadSetting with empty section$ and key$ values."
+    AddItem ListBox1, "----------------------------------------------------------------"
+    AddItem ListBox1, " "
+
+    AddItem ListBox1, "Fetch every key/value pair in the file:"
+    Do
+        a$ = ReadSetting$("test.ini", "", "")
+
+        If IniCODE = 1 Then AddItem ListBox1, IniINFO$: End 'IniCODE = 1 -&gt; File not found
+        If IniCODE = 10 Then Exit Do 'IniCODE = 10 -&gt; No more keys found
+
+        AddItem ListBox1, IniLastSection$ + " " + IniLastKey$ + "= " + a$
+    Loop
+    AddItem ListBox1, "End of file."
+
+
+    AddItem ListBox1, "----------------------------------------------------------------"
+    'syntax: var$ = ReadSetting(file$, "[section]", "")
+    AddItem ListBox1, "syntax: var$ = ReadSetting(file$," + Chr$(34) + "[section]" + Chr$(34) + " ," + Chr$(34) + Chr$(34) + " )"
+    AddItem ListBox1, "You can read all keys/values from a specific section by calling"
+    AddItem ListBox1, "ReadSetting with an empty key$ value.  "
+    AddItem ListBox1, "----------------------------------------------------------------"
+
+    AddItem ListBox1, "Fetch only section [contact]:"
+    Do
+        a$ = ReadSetting$("test.ini", "contact", "")
+
+        If IniCODE = 1 Then AddItem ListBox1, IniINFO$: End 'IniCODE = 1 -&gt; File not found
+        If IniCODE = 10 Then Exit Do 'IniCODE = 10 -&gt; No more keys found
+        If IniCODE = 14 Then AddItem ListBox1, IniINFO$: End 'IniCODE = 14 -&gt; Section not found
+
+        Color 7
+        AddItem ListBox1, IniLastSection$ +" " + IniLastKey$ + "= " + a$
+    Loop
+
+    AddItem ListBox1, "End of section."
+
+    '#######  ini-test ########
+End Sub
+
+
+Sub __UI_BeforeUpdateDisplay
+    'This event occurs at approximately 60 frames per second.
+    'You can change the update frequency by calling SetFrameRate DesiredRate%
+
+End Sub
+
+Sub __UI_BeforeUnload
+    'If you set __UI_UnloadSignal = False here you can
+    'cancel the user's request to close.
+
+End Sub
+
+Sub __UI_Click (id As Long)
+    Select Case id
+        Case IniDemo2
+
+        Case ListBox1
+
+    End Select
+End Sub
+
+Sub __UI_MouseEnter (id As Long)
+    Select Case id
+        Case IniDemo2
+
+        Case ListBox1
+
+    End Select
+End Sub
+
+Sub __UI_MouseLeave (id As Long)
+    Select Case id
+        Case IniDemo2
+
+        Case ListBox1
+
+    End Select
+End Sub
+
+Sub __UI_FocusIn (id As Long)
+    Select Case id
+        Case ListBox1
+
+    End Select
+End Sub
+
+Sub __UI_FocusOut (id As Long)
+    'This event occurs right before a control loses focus.
+    'To prevent a control from losing focus, set __UI_KeepFocus = True below.
+    Select Case id
+        Case ListBox1
+
+    End Select
+End Sub
+
+Sub __UI_MouseDown (id As Long)
+    Select Case id
+        Case IniDemo2
+
+        Case ListBox1
+
+    End Select
+End Sub
+
+Sub __UI_MouseUp (id As Long)
+    Select Case id
+        Case IniDemo2
+
+        Case ListBox1
+
+    End Select
+End Sub
+
+Sub __UI_KeyPress (id As Long)
+    'When this event is fired, __UI_KeyHit will contain the code of the key hit.
+    'You can change it and even cancel it by making it = 0
+    Select Case id
+        Case ListBox1
+
+    End Select
+End Sub
+
+Sub __UI_TextChanged (id As Long)
+    Select Case id
+    End Select
+End Sub
+
+Sub __UI_ValueChanged (id As Long)
+    Select Case id
+        Case ListBox1
+
+    End Select
+End Sub
+
+Sub __UI_FormResized
+
+End Sub
+
+'$INCLUDE:'InForm/InForm.ui'
+'---INI-TEST added ini.bas
+'$include:'ini.bas'
+</code>
+</pre>
+
+
+<a name="Ini demonstration 3"></a>
+<h2>Ini demonstration 3</h2>
+
+<p>This demonstration shows that each operation is monitored, and the resulting status is saved in the global variable IniCODE. Use this to get a description of the status code contained in IniINFO$.</p>
+
+<a name="Form file ini-demo3.frm"></a>
+<h3>Form file ini-demo3.frm</h3>
+
+<pre class="precode" >
+<code tabindex="0"  >
+': This form was generated by
+': InForm - GUI library for QB64 - v1.5
+': Fellippe Heitor, 2016-2024 - fellippe@qb64.org - @fellippeheitor
+': https://github.com/FellippeHeitor/InForm
+'-----------------------------------------------------------
+SUB __UI_LoadForm
+
+    DIM __UI_NewID AS LONG, __UI_RegisterResult AS LONG
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Form, "IniDemo3", 548, 328, 0, 0, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Ini-Demo3"
+    Control(__UI_NewID).Font = SetFont("segoeui.ttf", 12)
+    Control(__UI_NewID).HasBorder = False
+
+    __UI_NewID = __UI_NewControl(__UI_Type_ListBox, "ListBox1", 521, 219, 14, 21, 0)
+    __UI_RegisterResult = 0
+    Control(__UI_NewID).HasBorder = True
+    Control(__UI_NewID).CanHaveFocus = True
+    Control(__UI_NewID).BorderSize = 1
+    Control(__UI_NewID).AutoScroll = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_TextBox, "SectionKeyTB1", 190, 23, 14, 295, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "section/key"
+    Control(__UI_NewID).HasBorder = True
+    Control(__UI_NewID).CanHaveFocus = True
+    Control(__UI_NewID).BorderSize = 1
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Button, "resetBtn", 80, 23, 455, 295, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Reset"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Button, "runBtn", 80, 23, 242, 295, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Run"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "Label2", 190, 23, 14, 267, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "=               list all key/value pairs"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).VAlign = __UI_Middle
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "Label3", 260, 23, 14, 245, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "section/  list all key/value pairs in section"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).VAlign = __UI_Middle
+
+END SUB
+
+SUB __UI_AssignIDs
+    IniDemo3 = __UI_GetID("IniDemo3")
+    ListBox1 = __UI_GetID("ListBox1")
+    SectionKeyTB1 = __UI_GetID("SectionKeyTB1")
+    resetBtn = __UI_GetID("resetBtn")
+    runBtn = __UI_GetID("runBtn")
+    Label2 = __UI_GetID("Label2")
+    Label3 = __UI_GetID("Label3")
+END SUB
+</code>
+</pre>
+
+
+<a name="Basic file ini-demo3.bas"></a>
+<h3>Basic file ini-demo3.bas</h3>
+
+<pre class="precode" >
+<code  tabindex="0" >
+': This program uses
+': InForm - GUI library for QB64 - v1.5
+': Fellippe Heitor, 2016-2024 - fellippe@qb64.org - @fellippeheitor
+': https://github.com/FellippeHeitor/InForm
+'-----------------------------------------------------------
+Option _Explicit
+
+': Controls' IDs: ------------------------------------------------------------------
+Dim Shared IniDemo3 As Long
+Dim Shared ListBox1 As Long
+Dim Shared SectionKeyTB1 As Long
+Dim Shared resetBtn As Long
+Dim Shared runBtn As Long
+Dim Shared Label2 As Long
+Dim Shared Label3 As Long
+
+': External modules: ---------------------------------------------------------------
+'------INI-TEST added ini.bi
+'$include:'ini.bi'
+
+'$INCLUDE:'InForm\InForm.bi'
+'$INCLUDE:'InForm\xp.uitheme'
+'$INCLUDE:'ini-demo3.frm'
+
+'#### Start of demo3 ############
+Sub demo3
+
+    Dim file$
+    Dim key$
+    Dim section$
+    Dim a$
+
+    file$ = "test.ini"
+    If _FileExists(Command$) Then file$ = Command$ 'passing an .ini will load it instead of test.ini
+
+    AddItem ListBox1, "Analyzing file " + file$
+
+    'get user input
+    key$ = Text(SectionKeyTB1)
+
+    If InStr(key$, "/") Then
+        section$ = Left$(key$, InStr(key$, "/") - 1)
+        key$ = Mid$(key$, InStr(key$, "/") + 1)
+    Else
+        section$ = ""
+    End If
+
+    If key$ = "=" Or (section$ &gt; "" And key$ = "") Then
+        'list all key/value pairs
+
+        Do
+            a$ = ReadSetting$(file$, section$, "")
+            If IniCODE = 1 Or IniCODE = 17 Then AddItem ListBox1, IniINFO$: Exit Do 'IniCODE = 1 -&gt; File not found, 17 = empty file
+            If IniCODE = 14 Or IniCODE = 10 Then AddItem ListBox1, IniINFO$: Exit Do 'IniCODE = 10 -&gt; No more keys found
+
+            AddItem ListBox1, IniLastSection$ + IniLastKey$ + " = " + a$
+        Loop
+
+        AddItem ListBox1, "End of file."
+        '    _MessageBox key$
+    ElseIf Len(LTrim$(RTrim$(key$))) &gt; 0 Then
+        'read the key from the file
+        a$ = ReadSetting$(file$, section$, key$)
+        If IniCODE Then
+            AddItem ListBox1, "RETURN CODE: " + Str$(IniCODE) + " " + IniINFO$
+
+        Else AddItem ListBox1, IniLastSection$ + IniLastKey$ + " = " + a$ 'AddItem ListBox1, " = " + a$
+        End If
+    Else
+        AddItem ListBox1, "No input! Enter a value for section/key"
+        '     End
+    End If
+
+End Sub
+'#### End of demo3 ############
+
+': Event procedures: ---------------------------------------------------------------
+Sub __UI_BeforeInit
+
+End Sub
+
+Sub __UI_OnLoad
+    AddItem ListBox1, "INI Manager - demo 3"
+    AddItem ListBox1, "syntax: var$ = ReadSetting(file$, key$)"
+    AddItem ListBox1, "An empty result can mean that the key wasn't found"
+    AddItem ListBox1, "or that it was empty, as in the example:"
+    AddItem ListBox1, "    [section]"
+    AddItem ListBox1, "    key1=value1"
+    AddItem ListBox1, "    key2="
+    AddItem ListBox1, "To know what exactly happened, read the global variable IniCODE."
+    AddItem ListBox1, "For a description of the status code, call IniINFO$"
+    AddItem ListBox1, "---------------------------------------------------------------- "
+
+End Sub
+
+Sub __UI_BeforeUpdateDisplay
+    'This event occurs at approximately 60 frames per second.
+    'You can change the update frequency by calling SetFrameRate DesiredRate%
+
+End Sub
+
+Sub __UI_BeforeUnload
+    'If you set __UI_UnloadSignal = False here you can
+    'cancel the user's request to close.
+
+End Sub
+
+Sub __UI_Click (id As Long)
+    Select Case id
+        Case IniDemo3
+
+        Case ListBox1
+
+        Case SectionKeyTB1
+
+        Case resetBtn
+            ResetList ListBox1
+            Text(SectionKeyTB1) = ""
+            Caption(SectionKeyTB1) = "section/key"
+        Case runBtn
+            demo3
+        Case Label2
+
+        Case Label3
+
+    End Select
+End Sub
+
+Sub __UI_MouseEnter (id As Long)
+    Select Case id
+        Case IniDemo3
+
+        Case ListBox1
+
+        Case SectionKeyTB1
+
+        Case resetBtn
+
+        Case runBtn
+
+        Case Label2
+
+        Case Label3
+
+    End Select
+End Sub
+
+Sub __UI_MouseLeave (id As Long)
+    Select Case id
+        Case IniDemo3
+
+        Case ListBox1
+
+        Case SectionKeyTB1
+
+        Case resetBtn
+
+        Case runBtn
+
+        Case Label2
+
+        Case Label3
+
+    End Select
+End Sub
+
+Sub __UI_FocusIn (id As Long)
+    Select Case id
+        Case ListBox1
+
+        Case SectionKeyTB1
+
+        Case resetBtn
+
+        Case runBtn
+
+    End Select
+End Sub
+
+Sub __UI_FocusOut (id As Long)
+    'This event occurs right before a control loses focus.
+    'To prevent a control from losing focus, set __UI_KeepFocus = True below.
+    Select Case id
+        Case ListBox1
+
+        Case SectionKeyTB1
+
+        Case resetBtn
+
+        Case runBtn
+
+    End Select
+End Sub
+
+Sub __UI_MouseDown (id As Long)
+    Select Case id
+        Case IniDemo3
+
+        Case ListBox1
+
+        Case SectionKeyTB1
+
+        Case resetBtn
+
+        Case runBtn
+
+        Case Label2
+
+        Case Label3
+
+    End Select
+End Sub
+
+Sub __UI_MouseUp (id As Long)
+    Select Case id
+        Case IniDemo3
+
+        Case ListBox1
+
+        Case SectionKeyTB1
+
+        Case resetBtn
+
+        Case runBtn
+
+        Case Label2
+
+        Case Label3
+
+    End Select
+End Sub
+
+Sub __UI_KeyPress (id As Long)
+    'When this event is fired, __UI_KeyHit will contain the code of the key hit.
+    'You can change it and even cancel it by making it = 0
+    Select Case id
+        Case ListBox1
+
+        Case SectionKeyTB1
+
+        Case resetBtn
+
+        Case runBtn
+
+    End Select
+End Sub
+
+Sub __UI_TextChanged (id As Long)
+    Select Case id
+        Case SectionKeyTB1
+
+    End Select
+End Sub
+
+Sub __UI_ValueChanged (id As Long)
+    Select Case id
+        Case ListBox1
+
+    End Select
+End Sub
+
+Sub __UI_FormResized
+
+End Sub
+
+'$INCLUDE:'InForm/InForm.ui'
+'---INI-TEST added ini.bas
+'$include:'ini.bas'
+
+</code>
+</pre>
+
+
+
+
+
+
+
+
+<p>#########################################</p>
+
+<a name="Inos"></a>
+<h2>Inos</h2>
+
+
+<p>Variables are containers used in programming to hold values. The values can be numerical, character-based, such as letters, or a combination of both.</p>
+
+<p>Once a variable has been set with a value, that value can be called upon later on in the program. To see an example of this, start a new program in the IDE and type the following program in:</p>
+
+======
+
+<pre><code tabindex="0">
+
+</code>
+</pre>
+
+======
+
+<pre class="precode" >
+<code  tabindex="0" >
+</code>
+</pre>
+
+======
+
+<div class="flex-container-text-img" >
+<div>
+</div>
+
+<div>
+</div>
+</div>
+
+=======
+<pre>
+<code tabindex="0">PRINT "Enter your name:"
+INPUT user$
+PRINT "Hello " + user$</code>
+</pre>
+
+<p>Go ahead and run the code now (remember, you can use <b>F5</b> as a shortcut to execute your code). When the "?" question mark appears on the output screen, type in your first name and then press the <b>ENTER</b> key. The output of your program should be similar to <b>Figure 1</b> below.</p>
+
+<figure>
+     <img src="images/lesson2_files/Lesson2_figure1.png" alt="lesson 2" />
+    <figcaption>Figure 1: The program's output screen</figcaption>
+</figure>
+
+<a name="Variable Types"></a>
+<h2>Variable Types</h2>
+
+
+<pre>
+<code tabindex="0">
+
+</code>
+</pre>
+
+<pre class="precode" >
+<code  tabindex="0" >score% = 0
+
+</code>
+</pre>
+
+
+
+<pre>
+<code tabindex="0">IF score% = 0 THEN PRINT "pond scum"</code>
+</pre>
+
+
+<ul>
+<li>  <a href=" https://qb64phoenix.com/qb64wiki/index.php/CONST"  target=”_blank”>CONST</a></li>
+
+</ul>
+
+<p>New concepts introduced in this lesson:</p>
+
+
+   <!-- ################ End Content ################ -->
+  <script language="javascript" src="common/footer.js"></script> <!-- Footer -->
+   </div> <!-- End content -->
+
+</body>
+</html>

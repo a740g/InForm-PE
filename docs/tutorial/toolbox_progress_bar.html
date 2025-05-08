@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Toolbox Progress-bar</title>
+  <meta name="Description" content="This tutorial will focus InForm for the Phoenix Edition of QB64." />
+  <meta name="Keywords" content="InForm, QB64, QB64PE, Phoenix, Installation, MPGCAN" />
+
+  <link href="common/css/main.css" rel="stylesheet" type="text/css">
+  <link href="common/css/menu.css" rel="stylesheet" type="text/css">
+  <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+
+  <script src="common/navigation-js.js"></script> 
+</head>
+<body>
+
+  
+  <script language="javascript" src="common/side-menu.js"></script> <!-- Side menu -->
+ 
+  <div id="content"> <!-- Start content -->
+  <!-- ################ Start Content ################ -->
+   <script language="javascript" src="common/header.js"></script>      <!-- Banner -->
+
+  <div  class="flex-page-title">
+    <div>
+                <img src="common/images/inf_logo.png"  alt="logo" />
+    </div>
+    <div>
+       <h1>Toolbox Progress-bar</h1>
+     </div>
+  </div>
+
+<p>A Progress-bar control in an InForm application presents the user with a visual indication of the progress of an on-going task. This page provides more detailed information about Progress-bar controls.</p>
+
+
+ <div id="page_links_menu" >
+  <ul>
+    <li><a href="#Progress-bar control" >Progress-bar control</a></li>
+   <li><a href="#Progress-bar example" >Progress-bar example</a></li>
+   <li><a href="#Form file Progress_Tracker_example.frm" >&nbsp;&nbsp;Form file Progress_Tracker_example.frm</a></li>
+   <li><a href="#Basic file Progress_Tracker_example.bas" >&nbsp;&nbsp;Basic file Progress_Tracker_example.bas</a></li>
+   <li><a href="#Properties editable at runtime" >Properties editable at runtime</a></li>
+   </ul>
+ </div>
+
+<a name="Progress-bar control"></a>
+<h2>Progress-bar control</h2>
+
+
+<p>Create a new Progress-bar control by clicking the Progress-bar icon <img src="images/toolbox/inf_tb10_progress_bar.png" alt="ToolBox progress bar"> in the Toolbox. The newly created control will be displayed in the preview window; allowing you to move it around to meet your design requirements. Edit the Progress-bar properties as necessary.</p>
+
+
+<div class="flex-container-text-img" >
+<div>
+   <p><b>10) Progress-bar Properties:</b></p>
+   <img src="images/toolbox/toolbox_progressbar1.png" alt="Progress-bar img">
+</div>
+
+<div  style="margin-left: 15px;">
+   <p><b>Progress-bar example:</b> Preview window.</p>
+    <img src="images/toolbox/toolbox_progressbar2.png" alt="Progress-bar img">
+</div>
+</div>
+
+   <p><b>Note:</b>Progress-bar properties will reflect the highlighted control selected in the preview window, enabling you to customize it as needed.</p>
+
+<p>A ProgressBar control presents the user with a visual indication of the progress of an ongoing task.</p>
+
+<p>Set its <a href="properties.html#Min and Max" target="_blank">Min</a> and <a  href="properties.html#Min and Max" target="_blank">Max</a> properties at design time. Update the ProgressBar Value property at runtime.</p>
+
+<p>If you set its ShowPercentage property to True, you can have the control's Caption property show in the bar's area.</p>
+
+<p>You embed the actual percentage by using the placeholder <b>\#</b>.</p>
+
+
+<a name="Progress-bar example"></a>
+<h2>Progress-bar example</h2>
+
+<div class="flex-container-text-img" >
+<div>
+
+<p><b>Specification:</b> Let the progress-bar example have the following design specification:</p>
+
+<ol>
+   <li> Let the progress have a range of 0-10.</li>
+   <li> Add two buttons to increment and decrement  the progress bar.</li>
+   <li> A <b>set</b> button forces the progress bar to 50%.</li>
+   <li> Add a Track/Bar slider  to increment and decrement  the progress bar.</li>
+</ol>
+
+<p><b>Implimenation:</b> The following provide solutions for the above:</p>
+
+<ul>
+    <li> Set the MIN and MAX properties to 0 and 10, respectively.</li>
+    <li> Button hover uses the subroutine <b>__UI_MouseEnter</b>.</li>
+    <li> Up, Down, Set, TrackBar, and ProgressBar use the subroutine <b>__UI_Click</b>.</li>
+    <li> For additional details, check out <b>Progress_Tracker_example.bas</b>.</li>
+    <li> At the layout stage, save the project using <b>File</b> -&gt; <b>Save project as</b> and enter the name <b>Progress_Tracker_example</b>.</li>
+</ul>
+
+</div>
+
+<div>
+    <img src="images/toolbox/toolbox_progressbar3.png" alt="ToolBox Progress bar">
+</div>
+</div>
+
+
+
+<a name="Basic file Progress_Tracker_example.bas"></a>
+<h3>Basic file Progress_Tracker_example.bas</h3>
+
+<pre class="precode" >
+<code  tabindex="0" >
+': This program uses
+': InForm - GUI library for QB64 - v1.5
+': Fellippe Heitor, 2016-2024 - fellippe@qb64.org - @fellippeheitor
+': https://github.com/FellippeHeitor/InForm
+'-----------------------------------------------------------
+
+': Controls' IDs: ------------------------------------------------------------------
+Dim Shared ProgressTrackerExample As Long
+Dim Shared TrackBar1 As Long
+Dim Shared DownloadedPB1 As Long
+Dim Shared upBtn As Long
+Dim Shared downBtn As Long
+Dim Shared setBtn As Long
+
+': External modules: ---------------------------------------------------------------
+'$INCLUDE:'InForm\InForm.bi'
+'$INCLUDE:'InForm\xp.uitheme'
+'$INCLUDE:'Progress_Tracker_example.frm'
+
+': Event procedures: ---------------------------------------------------------------
+Sub __UI_BeforeInit
+
+End Sub
+
+Sub __UI_OnLoad
+
+End Sub
+
+Sub __UI_BeforeUpdateDisplay
+    'This event occurs at approximately 60 frames per second.
+    'You can change the update frequency by calling SetFrameRate DesiredRate%
+
+End Sub
+
+Sub __UI_BeforeUnload
+    'If you set __UI_UnloadSignal = False here you can
+    'cancel the user's request to close.
+
+End Sub
+
+Sub __UI_Click (id As Long)
+    Select Case id
+        Case ProgressTrackerExample
+
+        Case TrackBar1
+
+        Case DownloadedPB1
+
+        Case upBtn
+            If Not (Control(TrackBar1).Value = 10) Then                            '&lt;---
+                Control(TrackBar1).Value = Control(TrackBar1).Value + 1            '&lt;---
+                Control(DownloadedPB1).Value = Control(DownloadedPB1).Value + 1    '&lt;---
+            End If                                                                 '&lt;---
+
+        Case downBtn
+            If Not (Control(TrackBar1).Value = 0) Then                             '&lt;---
+                Control(TrackBar1).Value = Control(TrackBar1).Value - 1            '&lt;---
+                Control(DownloadedPB1).Value = Control(DownloadedPB1).Value - 1    '&lt;---
+            End If                                                                 '&lt;---
+
+        Case setBtn
+            Control(TrackBar1).Value = 5                                           '&lt;---
+            Control(DownloadedPB1).Value = 5                                       '&lt;---
+
+    End Select
+End Sub
+
+Sub __UI_MouseEnter (id As Long)
+    Select Case id
+        Case ProgressTrackerExample
+
+        Case TrackBar1
+
+        Case DownloadedPB1
+
+        Case upBtn
+
+        Case downBtn
+
+        Case setBtn
+
+    End Select
+End Sub
+
+Sub __UI_MouseLeave (id As Long)
+    Select Case id
+        Case ProgressTrackerExample
+
+        Case TrackBar1
+
+        Case DownloadedPB1
+
+        Case upBtn
+
+        Case downBtn
+
+        Case setBtn
+
+    End Select
+End Sub
+
+Sub __UI_FocusIn (id As Long)
+    Select Case id
+        Case TrackBar1
+
+        Case upBtn
+
+        Case downBtn
+
+        Case setBtn
+
+    End Select
+End Sub
+
+Sub __UI_FocusOut (id As Long)
+    'This event occurs right before a control loses focus.
+    'To prevent a control from losing focus, set __UI_KeepFocus = True below.
+    Select Case id
+        Case TrackBar1
+
+        Case upBtn
+
+        Case downBtn
+
+        Case setBtn
+
+    End Select
+End Sub
+
+Sub __UI_MouseDown (id As Long)
+    Select Case id
+        Case ProgressTrackerExample
+
+        Case TrackBar1
+
+        Case DownloadedPB1
+
+        Case upBtn
+
+        Case downBtn
+
+        Case setBtn
+
+    End Select
+End Sub
+
+Sub __UI_MouseUp (id As Long)
+    Select Case id
+        Case ProgressTrackerExample
+
+        Case TrackBar1
+            Control(DownloadedPB1).Value = Control(TrackBar1).Value
+        Case DownloadedPB1
+
+        Case upBtn
+
+        Case downBtn
+
+        Case setBtn
+
+    End Select
+End Sub
+
+Sub __UI_KeyPress (id As Long)
+    'When this event is fired, __UI_KeyHit will contain the code of the key hit.
+    'You can change it and even cancel it by making it = 0
+    Select Case id
+        Case TrackBar1
+
+        Case upBtn
+
+        Case downBtn
+
+        Case setBtn
+
+    End Select
+End Sub
+
+Sub __UI_TextChanged (id As Long)
+    Select Case id
+    End Select
+End Sub
+
+Sub __UI_ValueChanged (id As Long)
+    Select Case id
+        Case TrackBar1
+
+    End Select
+End Sub
+
+Sub __UI_FormResized
+
+End Sub
+
+'$INCLUDE:'InForm/InForm.ui'
+</code>
+</pre>
+
+
+
+<a name="Form file Progress_Tracker_example.frm"></a>
+<h3>Form file Progress_Tracker_example.frm</h3>
+
+<pre class="precode" >
+<code  tabindex="0" >
+': This form was generated by
+': InForm - GUI library for QB64 - v1.5
+': Fellippe Heitor, 2016-2024 - fellippe@qb64.org - @fellippeheitor
+': https://github.com/FellippeHeitor/InForm
+'-----------------------------------------------------------
+SUB __UI_LoadForm
+
+    DIM __UI_NewID AS LONG, __UI_RegisterResult AS LONG
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Form, "ProgressTrackerExample", 313, 192, 0, 0, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Progress Tracker example"
+    Control(__UI_NewID).Font = SetFont("segoeui.ttf", 12)
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CenteredWindow = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_TrackBar, "TrackBar1", 266, 40, 15, 62, 0)
+    __UI_RegisterResult = 0
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).Max = 10
+    Control(__UI_NewID).CanHaveFocus = True
+    Control(__UI_NewID).Interval = 1
+
+    __UI_NewID = __UI_NewControl(__UI_Type_ProgressBar, "DownloadedPB1", 266, 23, 15, 21, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Downloaded\92;#"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).Max = 10
+    Control(__UI_NewID).ShowPercentage = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Button, "upBtn", 31, 23, 49, 121, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "^"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Button, "downBtn", 31, 23, 93, 121, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "v"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Button, "setBtn", 80, 23, 154, 121, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Set"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+END SUB
+
+SUB __UI_AssignIDs
+    ProgressTrackerExample = __UI_GetID("ProgressTrackerExample")
+    TrackBar1 = __UI_GetID("TrackBar1")
+    DownloadedPB1 = __UI_GetID("DownloadedPB1")
+    upBtn = __UI_GetID("upBtn")
+    downBtn = __UI_GetID("downBtn")
+    setBtn = __UI_GetID("setBtn")
+END SUB
+
+</code>
+</pre>
+
+
+
+<a name="Properties editable at runtime"></a>
+<h2>Properties editable at runtime</h2>
+
+<ul>
+<li><a  href="properties.html#Caption" target="_blank">Caption</a></li>
+<li><a  href="properties.html#Position-and-size" target="_blank">Top/Left/Width/Height</a></li>
+<li><a  href="properties.html#Font" target="_blank">Font</a></li>
+<li><a  href="properties.html#Tool tip" target="_blank">Tool tip</a></li>
+<li><a  href="properties.html#Disabled" target="_blank">Disabled</a></li>
+<li><a  href="properties.html#Hidden" target="_blank">Hidden</a></li>
+<li><a  href="properties.html#Value" target="_blank">Value</a></li>
+<li><a  href="properties.html#Min and Max" target="_blank">Min</a></li>
+<li><a  href="properties.html#Min and Max" target="_blank">Max</a></li>
+</ul>
+
+   <!-- ################ End Content ################ -->
+  <script language="javascript" src="common/footer.js"></script> <!-- Footer -->
+   </div> <!-- End content -->
+
+</body>
+</html>

@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Toolbox Frame</title>
+  <meta name="Description" content="This tutorial will focus InForm for the Phoenix Edition of QB64." />
+  <meta name="Keywords" content="InForm, QB64, QB64PE, Phoenix, Installation, MPGCAN" />
+
+  <link href="common/css/main.css" rel="stylesheet" type="text/css">
+  <link href="common/css/menu.css" rel="stylesheet" type="text/css">
+  <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+
+  <script src="common/navigation-js.js"></script> 
+</head>
+<body>
+
+  
+  <script language="javascript" src="common/side-menu.js"></script> <!-- Side menu -->
+ 
+  <div id="content"> <!-- Start content -->
+  <!-- ################ Start Content ################ -->
+   <script language="javascript" src="common/header.js"></script>      <!-- Banner -->
+
+  <div  class="flex-page-title">
+    <div>
+                <img src="common/images/inf_logo.png"  alt="logo" />
+    </div>
+    <div>
+       <h1>Toolbox Frame</h1>
+     </div>
+  </div>
+
+
+<p>A Frame control in an InForm application serves as a container for other controls. This page provides more detailed information about Frame controls</p>
+
+
+ <div id="page_links_menu" >
+  <ul>
+   <li><a href="#Frame control" >Frame control</a></li>
+   <li><a href="#Frame examples" >Frame examples</a></li>
+   <li><a href="#Form file FrameExample.frm" >&nbsp;&nbsp;Form file FrameExample.frm</a></li>
+   <li><a href="#Basic file FrameExample.bas" >&nbsp;&nbsp;Basic file FrameExample.bas</a></li>
+   <li><a href="#Events" >Events</a></li>
+   <li><a href="#Methods" >Methods</a></li>
+   <li><a href="#Properties editable at runtime" >Properties editable at runtime</a></li>
+   </ul>
+ </div>
+
+<a name="Frame control"></a>
+<h2>Frame control</h2>
+
+
+<p>Create a new Frame control by clicking the Frame icon <img src="images/toolbox/inf_tb12_frame.png" alt="ToolBox frame"> in the Toolbox. The newly created control will be displayed in the preview window; allowing you to move it around to meet your design requirements. Edit the Frame properties as necessary.</p>
+
+
+
+<div class="flex-container-text-img" >
+<div >
+<p><b>12) Frame Properties:</b></p>
+<img src="images/toolbox/toolbox_frame1.png" alt="Frame">
+</div>
+
+<div style="margin-left: 20px;">
+<p><b>Frame example:</b> Preview window.</p>
+<img src="images/toolbox/toolbox_frame2.png" alt="Frame">
+</div>
+</div>
+
+<p><b>Note:</b> Frame box  properties will reflect the highlighted control selected in the preview window, enabling you to customize it as needed.</p>
+
+<p>A Frame control serves as a container for other controls. </p>
+<p><b>Design time:</b><br>
+At design time, drag controls into a frame, and they will be automatically grouped. You can select a frame and insert a control from the Toolbox. Additionally, you can use cut, copy, and paste controls into a selected frame.</p>
+
+
+<a name="Frame examples"></a>
+<h2>Frame examples - refer to the above image.</h2>
+
+<p><b>Specification:</b> Let the frame examples have the following design specification:</p>
+
+<ol>
+   <li>  Add two groups, one containing four radio buttons and the other three radio buttons.</li>
+    <li> Label the groups and radio buttons as shown.</li>
+    <li> The start button displays a pop-up displaying radio buttons selected.</li>
+    <li> At start-up, select the first radio button in each group (you could have done this at design time).</li>
+</ol>
+
+<p><b>Implimenation: </b>The following provide solutions for the above:</p>
+
+<ul>
+ <li>  At runtime, use the subroutine <b>__UI_OnLoad</b> and the method <b>SetRadioButtonValue</b> to set selections.</li>
+ <li>  Button click: use the subroutine <b>__UI_Click</b>.</li>
+ <li>  For additional details, check out the file <b>FrameExample.bas</b></li>
+ <li>  At the layout stage, save the project using <b>File</b> -&gt; <b>Save project as</b> and enter the name <b>FrameExample</b>.</li>
+ <li> Use the function _MessageBox to display the buttons selected.</li>
+</ul>
+
+<pre ><code tabindex="0">SetRadioButtonValue ControlID</code></pre>
+
+
+<a name="Basic file FrameExample.bas"></a>
+<h3>Basic file FrameExample.bas</h3>
+
+<pre class="precode" >
+<code  tabindex="0" >
+': This program uses
+': InForm - GUI library for QB64 - v1.5
+': Fellippe Heitor, 2016-2024 - fellippe@qb64.org - @fellippeheitor
+': https://github.com/FellippeHeitor/InForm
+'-----------------------------------------------------------
+
+Option _Explicit '                         &lt;---
+Dim Shared weatherSelected As String '     &lt;---
+Dim Shared difficultySelected As String '  &lt;---
+Dim Shared resultStr As String '           &lt;---
+
+': Controls' IDs: ------------------------------------------------------------------
+Dim Shared Form1 As Long
+Dim Shared sunnyRB As Long
+Dim Shared cloudyRB As Long
+Dim Shared foggyRB As Long
+Dim Shared rainyRB As Long
+Dim Shared easyRB As Long
+Dim Shared IcanHandleRB As Long
+Dim Shared struggleRB As Long
+Dim Shared Frame1 As Long
+Dim Shared Frame2 As Long
+Dim Shared startBT As Long
+Dim Shared Label1 As Long
+
+': External modules: ---------------------------------------------------------------
+'$INCLUDE:'InForm\InForm.bi'
+'$INCLUDE:'InForm\xp.uitheme'
+'$INCLUDE:'FrameExample.frm'
+
+': Event procedures: ---------------------------------------------------------------
+Sub __UI_BeforeInit
+
+End Sub
+
+Sub __UI_OnLoad
+    SetRadioButtonValue sunnyRB ' &lt;---
+    SetRadioButtonValue easyRB '  &lt;---
+
+End Sub
+
+Sub __UI_BeforeUpdateDisplay
+    'This event occurs at approximately 60 frames per second.
+    'You can change the update frequency by calling SetFrameRate DesiredRate%
+
+End Sub
+
+Sub __UI_BeforeUnload
+    'If you set __UI_UnloadSignal = False here you can
+    'cancel the user's request to close.
+
+End Sub
+
+Sub __UI_Click (id As Long)
+    Select Case id
+        Case Form1
+
+        Case sunnyRB
+
+        Case cloudyRB
+
+        Case foggyRB
+
+        Case rainyRB
+
+        Case easyRB
+
+        Case IcanHandleRB
+
+        Case struggleRB
+
+        Case Frame1
+
+        Case Frame2
+
+        Case startBT
+            resultStr = "Weather selected    = " + weatherSelected + Chr$(10) '       &lt;---
+            resultStr = resultStr + "Difficulty selected   = " + difficultySelected ' &lt;---
+            _MessageBox "Frame test", resultStr '                                     &lt;---
+
+        Case Label1
+
+    End Select
+End Sub
+
+Sub __UI_MouseEnter (id As Long)
+    Select Case id
+        Case Form1
+
+        Case sunnyRB
+
+        Case cloudyRB
+
+        Case foggyRB
+
+        Case rainyRB
+
+        Case easyRB
+
+        Case IcanHandleRB
+
+        Case struggleRB
+
+        Case Frame1
+
+        Case Frame2
+
+        Case startBT
+
+        Case Label1
+
+    End Select
+End Sub
+
+Sub __UI_MouseLeave (id As Long)
+    Select Case id
+        Case Form1
+
+        Case sunnyRB
+
+        Case cloudyRB
+
+        Case foggyRB
+
+        Case rainyRB
+
+        Case easyRB
+
+        Case IcanHandleRB
+
+        Case struggleRB
+
+        Case Frame1
+
+        Case Frame2
+
+        Case startBT
+
+        Case Label1
+
+    End Select
+End Sub
+
+Sub __UI_FocusIn (id As Long)
+    Select Case id
+        Case sunnyRB
+
+        Case cloudyRB
+
+        Case foggyRB
+
+        Case rainyRB
+
+        Case easyRB
+
+        Case IcanHandleRB
+
+        Case struggleRB
+
+        Case startBT
+
+    End Select
+End Sub
+
+Sub __UI_FocusOut (id As Long)
+    'This event occurs right before a control loses focus.
+    'To prevent a control from losing focus, set __UI_KeepFocus = True below.
+    Select Case id
+        Case sunnyRB
+
+        Case cloudyRB
+
+        Case foggyRB
+
+        Case rainyRB
+
+        Case easyRB
+
+        Case IcanHandleRB
+
+        Case struggleRB
+
+        Case startBT
+
+    End Select
+End Sub
+
+Sub __UI_MouseDown (id As Long)
+    Select Case id
+        Case Form1
+
+        Case sunnyRB
+
+        Case cloudyRB
+
+        Case foggyRB
+
+        Case rainyRB
+
+        Case easyRB
+
+        Case IcanHandleRB
+
+        Case struggleRB
+
+        Case Frame1
+
+        Case Frame2
+
+        Case startBT
+
+        Case Label1
+
+    End Select
+End Sub
+
+Sub __UI_MouseUp (id As Long)
+    Select Case id
+        Case Form1
+
+        Case sunnyRB
+
+        Case cloudyRB
+
+        Case foggyRB
+
+        Case rainyRB
+
+        Case easyRB
+
+        Case IcanHandleRB
+
+        Case struggleRB
+
+        Case Frame1
+
+        Case Frame2
+
+        Case startBT
+
+        Case Label1
+
+    End Select
+End Sub
+
+Sub __UI_KeyPress (id As Long)
+    'When this event is fired, __UI_KeyHit will contain the code of the key hit.
+    'You can change it and even cancel it by making it = 0
+    Select Case id
+        Case sunnyRB
+
+        Case cloudyRB
+
+        Case foggyRB
+
+        Case rainyRB
+
+        Case easyRB
+
+        Case IcanHandleRB
+
+        Case struggleRB
+
+        Case startBT
+
+    End Select
+End Sub
+
+Sub __UI_TextChanged (id As Long)
+    Select Case id
+    End Select
+End Sub
+
+
+
+Sub __UI_ValueChanged (id As Long)
+    Select Case id
+        Case sunnyRB
+            weatherSelected = "Sunny" ' &lt;---
+        Case cloudyRB
+            weatherSelected = "Cloudy"
+        Case foggyRB
+            weatherSelected = "Foggy"
+        Case rainyRB
+            weatherSelected = "Rainy"
+        Case easyRB
+            difficultySelected = "Easy"
+        Case IcanHandleRB
+            difficultySelected = "I can handle this"
+        Case struggleRB
+            difficultySelected = "Make me struggle"
+    End Select
+End Sub
+
+Sub __UI_FormResized
+
+End Sub
+
+'$INCLUDE:'InForm/InForm.ui'
+
+</code>
+</pre>
+
+
+
+<a name="Form file FrameExample.frm"></a>
+<h3>Form file FrameExample.frm</h3>
+
+<pre class="precode" >
+<code  tabindex="0" >
+': This form was generated by
+': InForm - GUI library for QB64 - v1.5
+': Fellippe Heitor, 2016-2024 - fellippe@qb64.org - @fellippeheitor
+': https://github.com/FellippeHeitor/InForm
+'-----------------------------------------------------------
+SUB __UI_LoadForm
+
+    DIM __UI_NewID AS LONG, __UI_RegisterResult AS LONG
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Form, "Form1", 300, 300, 0, 0, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Frame Example"
+    Control(__UI_NewID).Font = SetFont("segoeui.ttf", 12)
+    Control(__UI_NewID).HasBorder = False
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Frame, "Frame1", 104, 176, 18, 85, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Weather"
+    Control(__UI_NewID).HasBorder = True
+    Control(__UI_NewID).BorderSize = 1
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Frame, "Frame2", 154, 122, 136, 85, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Difficulty level"
+    Control(__UI_NewID).HasBorder = True
+    Control(__UI_NewID).BorderSize = 1
+
+    __UI_NewID = __UI_NewControl(__UI_Type_RadioButton, "sunnyRB", 77, 23, 20, 15, __UI_GetID("Frame1"))
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Sunny"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_RadioButton, "cloudyRB", 77, 23, 20, 56, __UI_GetID("Frame1"))
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Cloudy"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_RadioButton, "foggyRB", 77, 23, 20, 97, __UI_GetID("Frame1"))
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Foggy"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_RadioButton, "rainyRB", 77, 23, 20, 138, __UI_GetID("Frame1"))
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Rainy"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_RadioButton, "easyRB", 124, 23, 9, 15, __UI_GetID("Frame2"))
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Easy"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_RadioButton, "IcanHandleRB", 125, 23, 9, 49, __UI_GetID("Frame2"))
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "I can handle this"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_RadioButton, "struggleRB", 125, 23, 9, 83, __UI_GetID("Frame2"))
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Make me struggle"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Button, "startBT", 80, 23, 136, 232, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Start"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "Label1", 150, 36, 18, 24, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Game settings"
+    Control(__UI_NewID).Font = SetFont("segoeui.ttf", 23)
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).VAlign = __UI_Middle
+
+END SUB
+
+SUB __UI_AssignIDs
+    Form1 = __UI_GetID("Form1")
+    sunnyRB = __UI_GetID("sunnyRB")
+    cloudyRB = __UI_GetID("cloudyRB")
+    foggyRB = __UI_GetID("foggyRB")
+    rainyRB = __UI_GetID("rainyRB")
+    easyRB = __UI_GetID("easyRB")
+    IcanHandleRB = __UI_GetID("IcanHandleRB")
+    struggleRB = __UI_GetID("struggleRB")
+    Frame1 = __UI_GetID("Frame1")
+    Frame2 = __UI_GetID("Frame2")
+    startBT = __UI_GetID("startBT")
+    Label1 = __UI_GetID("Label1")
+END SUB
+
+</code>
+</pre>
+
+
+<a name="Events"></a>
+<h2>Events</h2>
+
+<ul>
+<li><a  href="events.html#Mouse Click"  target="_blank">Click</a></li>
+<li><a  href="events.html#MouseDown/MouseUp"  target="_blank">MouseDown/MouseUp</a></li>
+<li><a  href="events.html#MouseEnter/MouseLeave"  target="_blank">MouseEnter/MouseLeave</a></li>
+<li><a  href="events.html#KeyPress"  target="_blank">KeyPress</a></li>
+</ul>
+
+<a name="Methods"></a>
+<h2>Methods</h2>
+
+<ul>
+<li><a  href="methods.html#SetCaption"  target="_blank">SetCaption</a></li>
+</ul>
+
+
+<a name="Properties editable at runtime"></a>
+<h2>Properties editable at runtime</h2>
+
+<ul>
+<li><a  href="properties.html#HasBorder"  target="_blank">HasBorder</a></li>
+<li><a  href="properties.html#Caption"  target="_blank">Caption</a></li>
+<li><a  href="properties.html#Position-and-size"  target="_blank">Top/Left</a></li>
+<li><a  href="properties.html#Font"  target="_blank">Font</a></li>
+<li><a  href="properties.html#Tool tip"  target="_blank">Tool tip</a></li>
+<li><a  href="properties.html#Color-properties"  target="_blank">Color properties</a></li>
+<li><a  href="properties.html#Disabled"  target="_blank">Disabled</a></li>
+<li><a  href="properties.html#Hidden"  target="_blank">Hidden</a></li>
+</ul>
+
+
+<h3>See also:</h3>
+
+<ul>
+<li><a href="methods.html#MessageBox"  target="_blank">MessageBox Function</a></li>
+</ul>
+
+
+   <!-- ################ End Content ################ -->
+  <script language="javascript" src="common/footer.js"></script> <!-- Footer -->
+   </div> <!-- End content -->
+
+</body>
+</html>

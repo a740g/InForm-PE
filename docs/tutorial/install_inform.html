@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Installing InForm</title>
+  <meta name="Description" content="This tutorial will focus InForm for the Phoenix Edition of QB64." />
+  <meta name="Keywords" content="InForm, QB64, QB64PE, Phoenix, Installation, MPGCAN" />
+
+  <link href="common/css/main.css" rel="stylesheet" type="text/css">
+  <link href="common/css/menu.css" rel="stylesheet" type="text/css">
+  <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+
+  <script src="common/navigation-js.js"></script> 
+</head>
+<body>
+
+  
+  <script language="javascript" src="common/side-menu.js"></script> <!-- Side menu -->
+ 
+  <div id="content"> <!-- Start content -->
+  <!-- ################ Start Content ################ -->
+   <script language="javascript" src="common/header.js"></script>      <!-- Banner -->
+
+  <div  class="flex-page-title">
+    <div>
+                <img src="common/images/inf_logo.png"  alt="logo" />
+    </div>
+    <div>
+       <h1>Installing InForm-PE</h1>
+     </div>
+  </div>
+
+
+<p>InForm-PE serves as a graphical user interface (GUI) engine and WYSIWYG interface designer specifically tailored for QB64-PE. It is a modified version of InForm, designed to operate independently without relying on falcon.h dependencies. Therefore, using InForm-PE requires QB64-PE version 3.8.0 or newer. This modification also ensures that the entire InForm-PE library is now written in pure QB64-PE code.</p>
+
+ <div id="page_links_menu" >
+  <ul>
+      <li><a href="#Prelimanary" >Prelimanary</a></li>
+      <li><a href="#Download source files" >Download source files</a></li>
+      <li><a href="#Extract files" >Extract files</a></li>
+      <li><a href="#Portable 7-Zip" >&nbsp;&nbsp;Portable 7-Zip</a></li>
+      <li><a href="#Compile InForm-PE" >Compile InForm-PE</a></li>
+      <li><a href="#Install InForm-PE">Install InForm-PE</a></li>
+      <li><a href="#Test installation">&nbsp;&nbsp;Test installation</a></li>
+   </ul>
+ </div>
+
+<a name="Prelimanary"></a>
+<h2>Prelimanary</h2>
+
+<p>The following uses the top-level folder <b>qb64-inform</b> created when you followed the <a href="install_qb64pe.html#Detailed install for Windows" target="_blank"> QB64pe installation</a>. <br>Alternativly, you can substitute this for your top-level folder name.</p>
+
+<p>Note: At the time of writing, the latest version of  InForm-PE is v3.1.5.4</p>
+
+<a name="Download source files"></a>
+<h2>Download source files</h2>
+
+<p><b>Option 1:</b></p>
+
+<p>Use the direct link to <a href="https://github.com/a740g/InForm-PE/archive/refs/heads/master.zip" target="_blank">download </a> the file.
+ Save the downloaded file <b>InForm-PE-master.zip</b> to the folder <b>qb64-inform</b>.</p>
+
+<p><b>Option 2:</b></p>
+
+<p>If the above link does not work, follow these steps:</p>
+
+<ol>
+   <li> Go to the Github folder: <a href="https://github.com/a740g/InForm-PE" target="_blank">https://github.com/a740g/InForm-PE.</a></li>
+  <li>  Click on the green button labeled "Code" at the top right.</li>
+  <li> Select the last option <b>Download ZIP</b> to download the file <b>InForm-PE-master.zip</b>.</li>
+  <li> Copy this downloaded file to the folder named <b>qb64-inform</b> that you created during the <a href="install_qb64pe.html#Detailed install for Windows" target="_blank">QB64pe installation</a>.</li>
+ </ol>
+
+<a name="Extract files"></a>
+<h2>Extract files</h2>
+
+<p>To extract the source files from the downloaded file, follow these steps:</p>
+ 
+   <ol>
+       <li> Assuming you have 7-Zip installed, right-click on the file <b>InForm-PE-master.zip</b>.</li>
+        <li>Mouse over the menu item <b>7-Zip</b>, and from the side menu, click on <b>Extract Here</b>.</li>
+        <li>A new folder named <b>InForm-PE-master</b> will be created, containing all the InForm-PE files.</li>
+        <li>Optionally, to save space, you can delete the file "InForm-PE-master.zip" as it is no longer needed.</li>
+   </ol>
+ 
+<p>Note 1:<br>
+If you do not have 7-Zip installed on your computer, you can download and install it from the  <a href="https://www.7-zip.org/" target="_blank">7-Zip website </a> select the appropriate version for your system. Alternatively, you can use a portable version of 7-Zip.</p>
+
+<a name="Portable 7-Zip"></a>
+<h3>Portable 7-Zip</h3>
+
+<p>Instead of installing 7-Zip, you can use the portable version available from Portable Apps: <a href="https://portableapps.com/apps/utilities/7-zip_portable" target="_blank">https://portableapps.com/apps/utilities/7-zip_portable</a></p>
+
+<p>7-Zip Portable details:</p>
+<ol>
+    <li>Download the file 7-ZipPortable_23.01.paf.exe and save it to any folder, for example, 7Z-portable.</li>
+    <li>Run the extraction process by double-clicking on the file 7-ZipPortable_23.01.paf.exe.</li>
+    <li>During the process, when prompted, click on Run, OK, Next, Install, and finally Finish.</li>
+    <li>Navigate into the extracted folder 7-ZipPortable and run 7-ZipPortable.exe by double-clicking on the file.</li>
+
+    <li>The 7-Zip window will open. Under the name, double-click on "computer" to expand the folder and file structure.</li>
+    <li>Navigate into folder <b>qb64-inform</b> and highlight (click) file <b>InForm-PE-master.zip</b></li>
+    <li>Click on <b>File</b> at the top left, then hover over the item 7-Zip, and from the side menu, select Extract Here.</li>
+    <li>A new folder named InForm-PE-master will be created, containing all the InForm-PE files.</li>
+    <li>"If you wish to save space, feel free to delete the file 'InForm-PE-master.zip' as it is no longer needed.</li>
+</ol>
+
+
+<a name="Compile InForm-PE"></a>
+<h2>Compile InForm-PE</h2>
+
+<div class="flex-container-text-img" >
+<div>
+<p>Before installing InForm-PE, you'll need to compile the source code following the detailed steps below.</p>
+
+  <ol>
+       <li>Navigate into the <b>InForm-PE-master</b> folder and execute one of the following scripts based on your operating system:</li>
+          <ul>
+                <li>For Linux: run <b>setup_inform_lnx.sh</b></li>
+                <li>For macOS: run <b>setup_inform_osx.command</b></li>
+                <li>For Windows: double click on <b>setup_inform_win.cmd</b></li>
+          </ul>
+       
+        <li>After running the script, the compiler will execute, and after a short time, two files will be created:</li>
+          <ul>
+             <li>InForm-PE-master\<b>UiEditor.exe</b></li>
+             <li>InForm-PE-master\InForm\<b>UiEditorPreview.exe</b></li>
+          </ul>
+</ol>
+
+<p>Note 1: Expect the following compilation time warnings: inability to find the aforementioned two files and warnings related to unused variables. Refer to the image on the right for more details.</p>
+
+<p>Note 2:  Warnings concerning unused variables may occur due to the use of <b>id& AS LONG</b> as a parameter in most event-handling routines, which may not always be utilized. It is generally safe to ignore these warnings.</p>
+
+</div>
+
+<div style="margin-left:15px;">
+<img src="images/compile_inform_pe.png" alt="compile_inform_pe.png">
+</div>
+</div>
+
+<a name="Install InForm-PE"></a>
+<h2>Install InForm-PE</h2>
+
+
+<div class="flex-container-text-img" >
+<div>
+<p>The final step involves installing InForm-PE, or more precisely, copying and moving the necessary folders and files as outlined below:</p>
+ 
+  <ol>
+        <li>Navigate into the <b>InForm-PE-master</b> folder.</li>
+       <li>Copy the <b>Inform</b> folder and the file <b>UiEditor.exe</b> into the <b>qb64pe</b> folder.</li>
+       <li>Optionally, to save space, you can delete the <b>InForm-PE-master</b> folder as it is no longer needed. However, it contains some examples, so you may want to keep these!</li>
+   </ol>
+    
+ 
+   <a name="Test installation"></a>
+  <h3>Test installation</h3>
+          <p>To test the installation, navigate into your QB64 folder (<b>qb64pe</b>) and double-click the <b>UiEditor.exe.</b> file. This action will launch the InForm application, and you can expect to see the desired result as shown in the image on the right.</p>
+</div>
+
+<div>
+<img src="images/inform/inf_main.png" alt="InForm Editor">
+</div>
+</div>
+
+<p><b>Please take note:</b>  Windows Firewall has detected that some features of this application have been blocked. To address this, follow the steps below:<p>
+<ul>
+    <li><b>Check</b> the option labeled 'Private network' to allow the application access on private networks.</li>
+    <li><b>Uncheck</b> the option labeled 'Public network' if it's checked, as it restricts access on public networks.</li>
+    <li><b>Finally</b>, click on <b>Allow access</b> to grant the necessary permissions to the application.</li>
+</ul>
+
+
+   <!-- ################ End Content ################ -->
+  <script language="javascript" src="common/footer.js"></script> <!-- Footer -->
+   </div> <!-- End content -->
+
+</body>
+</html>

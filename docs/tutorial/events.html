@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Events</title>
+  <meta name="Description" content="Events are SUBs triggered after controls in your form are manipulated at runtime." />
+  <meta name="Keywords" content="Events,Inform,QB64,Phoenix Edition,Background,Installation,Fellippe Heitor,MPGCAN" />
+
+
+  <link href="common/css/main.css" rel="stylesheet" type="text/css">
+  <link href="common/css/menu.css" rel="stylesheet" type="text/css">
+  <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+
+  <script src="common/navigation-js.js"></script> 
+</head>
+<body>
+
+  
+  <script language="javascript" src="common/side-menu.js"></script> <!-- Side menu -->
+ 
+  <div id="content"> <!-- Start content -->
+  <!-- ################ Start Content ################ -->
+   <script language="javascript" src="common/header.js"></script>      <!-- Banner -->
+
+  <div  class="flex-page-title">
+    <div>
+                <img src="common/images/inf_logo.png"  alt="logo" />
+    </div>
+    <div>
+       <h1>Events</h1>
+     </div>
+  </div>
+
+<p>Events are SUBSS (subroutines) that are triggered after the controls in your form are manipulated at runtime. This is a central part of InForm's functionality because it is where you write the code to respond to the controls.</p>
+
+ <div id="page_links_menu" >
+  <ul>
+   <li><a href="#Simulate a click" >Simulate a click</a></li>
+   <li><a href="#Control-specific events" >Control-specific events</a></li>
+   <li><a href="#FocusIn/FocusOut" >&nbsp;&nbsp;FocusIn/FocusOut</a></li>
+   <li><a href="#KeyPress" >&nbsp;&nbsp;KeyPress</a></li>
+   <li><a href="#Mouse Click" >&nbsp;&nbsp;Mouse Click</a></li>
+   <li><a href="#MouseDown/MouseUp" >&nbsp;&nbsp;MouseDown/MouseUp</a></li>
+   <li><a href="#MouseEnter/MouseLeave" >&nbsp;&nbsp;MouseEnter/MouseLeave</a></li>
+   <li><a href="#TextChanged" >&nbsp;&nbsp;TextChanged</a></li>
+   <li><a href="#ValueChanged" >&nbsp;&nbsp;ValueChanged</a></li>
+   <li><a href="#Other events" >Other events</a></li>
+   <li><a href="#BeforeInit" >&nbsp;&nbsp;BeforeInit</a></li>
+   <li><a href="#BeforeUnload" >&nbsp;&nbsp;BeforeUnload</a></li>
+   <li><a href="#BeforeUpdateDisplay" >&nbsp;&nbsp;BeforeUpdateDisplay</a></li>
+   <li><a href="#FormResized" >&nbsp;&nbsp;FormResized</a></li>
+   <li><a href="#OnLoad" >&nbsp;&nbsp;OnLoad</a></li>
+    </ul>
+ </div>
+
+<a name="Simulate a click"></a>
+<h2>Simulate a click</h2>
+<p>Simulating a click can be useful during testing of your application. To generate a click programmatically, you can call the __UI_Click sub directly, passing the name (ID) of the control you want to "click." For example:</p>
+<pre><code tabindex="0">__UI_Click Button1</code></pre>
+
+<a name="Control-specific events"></a>
+<h1>Control-specific events</h1>
+
+<p>The following events are specific to toolbox controls:</p>
+
+<a name="FocusIn/FocusOut"></a>
+<h2>FocusIn/FocusOut</h2>
+
+<p><b>FocusIn:</b><br>
+The FocusIn event occurs when a control gains focus.</p>
+
+<p><b>FocusOut:</b><br>
+The FocusOut event is triggered when a control loses focus. <br>
+If another control has focus when a FocusIn event is triggered, a FocusOut event occurs first for such a control.</p>
+
+<p><b>SetFocust:</b><br>
+You can set focus to a control programmatically with the SetFocus method.</p>
+
+<p><b>Syntax:</b></p>
+
+<pre><code tabindex="0">SetFocus ControlID</code></pre>
+
+<p><b>Example: </b></p>
+
+<pre><code tabindex="0">SetFocus Button1</code></pre>
+
+
+<a name="KeyPress"></a>
+<h2>KeyPress</h2>
+
+<p>The KeyPress event occurs when a control has focus and the user presses any key on the keyboard. The following variables are made available:</p>
+
+<ul>
+<li>__UI_CtrlIsDown</li>
+<li>__UI_AltIsDown</li>
+<li>__UI_ShiftIsDown</li>
+<li>__UI_KeyHit</li>
+</ul>
+
+<p>Variables __UI_CtrlIsDown, __UI_AltIsDown, and __UI_ShiftIsDown are global variables that hold true when the key they represent is being held down. Global variables affect the drawing, input, or event dispatcher routines, and their names always start with the UI prefix.</p>
+
+<p>The __UI_KeyHit variable can be modified to pass different values to the control that has focus, as the KeyPress event is triggered before the keypress is actually processed.</p>
+
+<p>__UI_KeyHit is a global variable of type LONG INTEGER that holds the scan code of the last key pressed by the user. Positive values indicate a key was pressed, and negative values indicate a key was released.</p>
+
+<p>This variable can be accessed anywhere, but it is usually manipulated in KeyPress event handlers, especially for Textbox controls, as it can be used to change the key presses that actually get sent to the control.</p>
+
+<a name="Mouse Click"></a>
+<h2>Mouse Click</h2>
+
+<p>Click events are triggered when a control is active and visible, and the user presses the left mouse button while hovering over the control, and releases the button while still hovering over the same control.</p>
+
+<a name="MouseDown/MouseUp"></a>
+<h2>MouseDown/MouseUp</h2>
+
+<p>The MouseDown event occurs when the left mouse button is first pressed on a control. The MouseUp event is triggered when the left mouse button is released on a control. Immediately after a MouseUp event is fired, a Click event is also triggered.</p>
+
+<a name="MouseEnter/MouseLeave"></a>
+<h2>MouseEnter/MouseLeave</h2>
+
+<p>The MouseEnter event occurs when the mouse pointer enters a control's rectangular area. The MouseLeave event is triggered when the cursor leaves the rectangular area of a control.</p>
+
+<p>By adding code to these two events, you can, for example, emulate a hovering effect such as changing a control's background color when MouseEnter is triggered and restoring it when MouseLeave is executed.</p>
+
+<a name="TextChanged"></a>
+<h2>TextChanged</h2>
+
+<p>The TextChanged event is triggered whenever a textbox control is edited by the user. It occurs after the text is changed, allowing you to access it using the Text property.</p>
+
+<p>Text values are accessible via an array of variable-width STRINGS, using the control's ID: <b>Text(ControlID) = "Your text"</b></p>
+
+<a name="ValueChanged"></a>
+<h2>ValueChanged</h2>
+
+<p>The ValueChanged event is triggered whenever a List, Dropdown list, Track bar, CheckBox, or Toggle switch control is manipulated by the user. It occurs after an item is selected, after the TrackBar value is changed, or after the control is clicked. You can access the Value property in this event handler.</p>
+
+<a name="Other events"></a>
+<h1>Other events</h1>
+
+<a name="BeforeInit"></a>
+<h2>BeforeInit</h2>
+
+<p>The BeforeInit event is fired just before your form is displayed to the user. Any code placed in this event handler will run once at startup.</p>
+
+<p>The global variable __UI_KeepScreenHidden can be set to True if you do not want InForm to show the main form immediately. This is useful when your program needs to perform any startup routines before displaying the main form.</p>
+
+<p>In the BeforeInit event, set this variable to True to avoid showing the form immediately.</p>
+
+<p><b>Caution:</b> If you do set __UI_KeepScreenHidden to True, remember to use _SCREENSHOW somewhere later in your program. Otherwise, your main form will never be displayed, and your program will continue running as a hidden window.</p>
+
+<a name="BeforeUnload"></a>
+<h2>BeforeUnload</h2>
+
+<p>The BeforeUnload event is triggered right before your form is closed, providing an opportunity to perform cleanup routines or save data before exiting the program.</p>
+
+<p>If you want to cancel the close request, set the __UI_UnloadSignal variable to False.</p>
+
+<p>The global variable __UI_UnloadSignal is automatically set to True when the user requests to close the program, either by clicking the X button on the title bar or by using Alt+F4 (Windows only).</p>
+
+<p>In a BeforeUnload event, set this variable to False to cancel the quit request and prevent the program from closing.</p>
+
+
+<a name="BeforeUpdateDisplay"></a>
+<h2>BeforeUpdateDisplay</h2>
+
+<p>The BeforeUpdateDisplay event is triggered at approximately 30 frames per second (fps), just before your form is repainted.</p>
+
+<p>You can adjust the refresh rate to a higher number (but not lower than 30) by using the SetFrameRate method:</p>
+
+<pre><code tabindex="0">SUB __UI_OnLoad
+    SetFrameRate 60
+END SUB</code></pre>
+
+<p>For most programs treat SUB __UI_BeforeUpdateDisplay as if it was your main program loop.</p>
+
+
+<a name="FormResized"></a>
+<h2>FormResized</h2>
+
+<p>This event is triggered when a form with the CanResize property is resized at runtime.</p>
+
+
+<a name="OnLoad"></a>
+<h2>OnLoad</h2>
+
+<p>The OnLoad event is triggered immediately after your form has been created in memory and displayed to the user. Any code added here will only run at startup.</p>
+
+
+   <!-- ################ End Content ################ -->
+  <script language="javascript" src="common/footer.js"></script> <!-- Footer -->
+   </div> <!-- End content -->
+
+</body>
+</html>

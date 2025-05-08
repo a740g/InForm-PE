@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Toolbox Label</title>
+  <meta name="Description" content="This tutorial will focus InForm for the Phoenix Edition of QB64." />
+  <meta name="Keywords" content="InForm, QB64, QB64PE, Phoenix, Installation, MPGCAN" />
+
+  <link href="common/css/main.css" rel="stylesheet" type="text/css">
+  <link href="common/css/menu.css" rel="stylesheet" type="text/css">
+  <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+
+  <script src="common/navigation-js.js"></script> 
+</head>
+<body>
+
+  
+  <script language="javascript" src="common/side-menu.js"></script> <!-- Side menu -->
+ 
+  <div id="content"> <!-- Start content -->
+  <!-- ################ Start Content ################ -->
+   <script language="javascript" src="common/header.js"></script>      <!-- Banner -->
+
+  <div  class="flex-page-title">
+    <div>
+                <img src="common/images/inf_logo.png"  alt="logo" />
+    </div>
+    <div>
+       <h1>Toolbox Label</h1>
+     </div>
+  </div>
+
+<p>Labels  in an InForm application are used for displaying information to the user.</p>
+
+
+ <div id="page_links_menu" >
+  <ul>
+   <li><a href="#Label control" >Label control</a></li>
+   <li><a href="#Label example" >Label example</a></li>
+
+   <li><a href="#Basic file LabelExample.bas" >&nbsp;&nbsp;Basic file LabelExample.bas</a></li>
+   <li><a href="#Form file LabelExample.frm" >&nbsp;&nbsp;Form file LabelExample.frm</a></li>
+
+   <li><a href="#Events" >Events</a></li>
+   <li><a href="#Methods" >Methods</a></li>
+   <li><a href="#Properties editable at runtime" >Properties editable at runtime</a></li>
+    </ul>
+ </div>
+
+<a name="Label control"></a>
+<h2>Label control</h2>
+
+<p>Create a new Label control by clicking the Label icon <img src="images/toolbox/inf_tb2_label.png" alt="ToolBox label"> in the Toolbox. The newly created control will be displayed in the preview window; allowing you to move it around to meet your design requirements. Edit the Label properties as necessary.</p>
+
+
+<div class="flex-container-text-img" >
+<div>
+<p><b>2) Label Properties:</b></p>
+<img src="images/toolbox/toolbox_label1.png" alt="Label ToolBox">
+
+</div>
+
+
+<div style="margin-left: 15px;">
+<p><b>Label example: </b>Preview window.</p>
+<img src="images/toolbox/toolbox_label2.png" alt="Label ToolBox">
+</div>
+</div>
+
+<p><b>Note:</b>  Label properties will reflect the highlighted control selected in the preview window, enabling you to customize it as needed.</p>
+
+<p><b>Design time:</b><br>
+At design time, labels are automatically resized when you change their captions or fonts.</p>
+
+<p>If you set the WordWrap property to  <a href="global_constants_variables.html#Boolean" target="_blank">True</a>, you can enter multiple lines by adding a line break with the escape code <b>\n</b> in the Editor.</p>
+
+<p><b>Runtime:</b><br>
+At runtime, you can use <b>CHR$(10)</b> as a line break character, or even <b>\n</b> if you use the <a href="methods.html#SetCaption" target="_blank">SetCaption</a> method. Here's an example of runtime code:</p>
+
+<pre><code tabindex="0">  Control(Label1).Height = 80
+  Control(Label1).AutoSize = TRUE
+  Control(Label1).WordWrap = TRUE
+  SetCaption Label1, "Line example" + Chr$(10) + "Next line.\n Another line!"
+  SetCaption Label1, "" 'clear label</code></pre>
+
+<a name="Label example"></a>
+<h2>Label example</h2>
+
+<p><b>Specification:</b> Specification for the label example:</p>
+<ol>
+    <li> Colors-label hover (ColorsLB): Change the background to black and the foreground to white when hovered over; restore the original colors when the mouse exits.</li> 
+    <li> Change the fancy label (FancyLB) text when hovered, demonstrating the use of CHR$(10) and \n for line breaks.</li> 
+</ol>
+
+
+<p><b>Implimenation:</b> The following provide solutions for the specifications outlined above:</p>
+
+<ul>  <li> For the hover effect, utilize the subroutines __UI_MouseEnter and __UI_MouseLeave.</li>
+  <li> To change colors, use Control(ID).ForeColor and Control(ID).BackColor.</li>
+  <li> For additional details, refer to LabelExample.bas.</li>
+  <li> At the layout stage, save the project using <b>File</b> -&gt; <b>Save Project As</b> and enter the name <b>LabelExample</b>.</li>
+</ul>
+
+
+<a name="Basic file LabelExample.bas"></a>
+<h3>Basic file LabelExample.bas</h3>
+
+<pre class="precode" >
+<code  tabindex="0" >
+Option _Explicit
+': This program uses
+': InForm - GUI library for QB64 - v1.5
+': Fellippe Heitor, 2016-2024 - fellippe@qb64.org - @fellippeheitor
+': https://github.com/FellippeHeitor/InForm
+'-----------------------------------------------------------
+
+': User variables
+Dim Shared original_ForeColor As _Unsigned Long '&lt;---
+Dim Shared original_BackColor As _Unsigned Long '&lt;---
+
+
+': Controls' IDs: ------------------------------------------------------------------
+Dim Shared Label1 As Long
+Dim Shared Label2 As Long
+Dim Shared ColorsLB As Long
+Dim Shared FancyLB As Long
+Dim Shared LabelExample As Long
+
+': External modules: ---------------------------------------------------------------
+'$INCLUDE:'InForm\InForm.bi'
+'$INCLUDE:'InForm\xp.uitheme'
+'$INCLUDE:'LabelExample.frm'
+
+': Event procedures: ---------------------------------------------------------------
+Sub __UI_BeforeInit
+
+End Sub
+
+Sub __UI_OnLoad
+
+End Sub
+
+Sub __UI_BeforeUpdateDisplay
+    'This event occurs at approximately 60 frames per second.
+    'You can change the update frequency by calling SetFrameRate DesiredRate%
+
+End Sub
+
+Sub __UI_BeforeUnload
+    'If you set __UI_UnloadSignal = False here you can
+    'cancel the user's request to close.
+
+End Sub
+
+Sub __UI_Click (id As Long)
+    Select Case id
+        Case Label1
+
+        Case Label2
+
+        Case ColorsLB
+
+        Case FancyLB
+
+        Case LabelExample
+
+    End Select
+End Sub
+
+Sub __UI_MouseEnter (id As Long)
+    Select Case id
+        Case Label1
+
+        Case Label2
+
+        Case ColorsLB
+            original_ForeColor = Control(id).ForeColor '   &lt;---
+            original_BackColor = Control(id).BackColor '   &lt;---
+            Control(id).ForeColor = _RGB32(255, 255, 255) '&lt;---
+            Control(id).BackColor = _RGB32(0, 0, 0) '      &lt;---
+        Case FancyLB
+            SetCaption FancyLB, "That has removed" + Chr$(10) + " the fancy label! \n Well fancy that!" '&lt;---
+        Case LabelExample
+
+    End Select
+End Sub
+
+Sub __UI_MouseLeave (id As Long)
+    Select Case id
+        Case Label1
+
+        Case Label2
+
+        Case ColorsLB
+            Control(id).ForeColor = original_ForeColor '&lt;---
+            Control(id).BackColor = original_BackColor '&lt;---
+
+        Case FancyLB
+
+        Case LabelExample
+
+    End Select
+End Sub
+
+Sub __UI_FocusIn (id As Long)
+    Select Case id
+    End Select
+End Sub
+
+Sub __UI_FocusOut (id As Long)
+    'This event occurs right before a control loses focus.
+    'To prevent a control from losing focus, set __UI_KeepFocus = True below.
+    Select Case id
+    End Select
+End Sub
+
+Sub __UI_MouseDown (id As Long)
+    Select Case id
+        Case Label1
+
+        Case Label2
+
+        Case ColorsLB
+
+        Case FancyLB
+
+        Case LabelExample
+
+    End Select
+End Sub
+
+Sub __UI_MouseUp (id As Long)
+    Select Case id
+        Case Label1
+
+        Case Label2
+
+        Case ColorsLB
+
+        Case FancyLB
+
+        Case LabelExample
+
+    End Select
+End Sub
+
+Sub __UI_KeyPress (id As Long)
+    'When this event is fired, __UI_KeyHit will contain the code of the key hit.
+    'You can change it and even cancel it by making it = 0
+    Select Case id
+    End Select
+End Sub
+
+Sub __UI_TextChanged (id As Long)
+    Select Case id
+    End Select
+End Sub
+
+Sub __UI_ValueChanged (id As Long)
+    Select Case id
+    End Select
+End Sub
+
+Sub __UI_FormResized
+
+End Sub
+
+'$INCLUDE:'InForm/InForm.ui'
+
+</code>
+</pre>
+
+<a name="Form file LabelExample.frm"></a>
+<h3>Form file LabelExample.frm</h3>
+
+<pre class="precode" >
+<code  tabindex="0" >
+': This form was generated by
+': InForm - GUI library for QB64 - v1.5
+': Fellippe Heitor, 2016-2024 - fellippe@qb64.org - @fellippeheitor
+': https://github.com/FellippeHeitor/InForm
+'-----------------------------------------------------------
+SUB __UI_LoadForm
+
+    DIM __UI_NewID AS LONG, __UI_RegisterResult AS LONG
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Form, "LabelExample", 300, 300, 0, 0, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Label Example"
+    Control(__UI_NewID).Font = SetFont("segoeui.ttf", 12)
+    Control(__UI_NewID).HasBorder = False
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "Label1", 150, 23, 11, 19, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Label1"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).VAlign = __UI_Middle
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "Label2", 150, 45, 90, 47, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Label2"
+    Control(__UI_NewID).Font = SetFont("segoeui.ttf", 30)
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).VAlign = __UI_Middle
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "ColorsLB", 150, 45, 90, 118, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Colors"
+    Control(__UI_NewID).Font = SetFont("segoeui.ttf", 30)
+    Control(__UI_NewID).ForeColor = _RGB32(104, 255, 100)
+    Control(__UI_NewID).BackColor = _RGB32(39, 189, 36)
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).Align = __UI_Center
+    Control(__UI_NewID).VAlign = __UI_Middle
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "FancyLB", 251, 72, 25, 186, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "A fancy label With. WordWrap enabled. And centered, too!"
+    Control(__UI_NewID).Font = SetFont("arialbd.ttf", 18)
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).Align = __UI_Center
+    Control(__UI_NewID).VAlign = __UI_Middle
+    Control(__UI_NewID).WordWrap = True
+
+END SUB
+
+SUB __UI_AssignIDs
+    LabelExample = __UI_GetID("LabelExample")
+    Label1 = __UI_GetID("Label1")
+    Label2 = __UI_GetID("Label2")
+    ColorsLB = __UI_GetID("ColorsLB")
+    FancyLB = __UI_GetID("FancyLB")
+END SUB
+
+</code>
+</pre>
+
+
+
+<a name="Events"></a>
+<h2>Events</h2>
+
+<ul>
+<li><a  href="events.html#Mouse Click" target="_blank">Click</a></li>
+<li><a  href="events.html#MouseDown/MouseUp" target="_blank">MouseDown/MouseUp</a></li>
+<li><a  href="events.html#MouseEnter/MouseLeave" target="_blank">MouseEnter/MouseLeave</a></li>
+</ul>
+
+
+<a name="Methods"></a>
+<h2>Methods</h2>
+
+<ul>
+<li><a  href="methods.html#SetCaption" target="_blank">SetCaption</a></li>
+</ul>
+
+
+<a name="Properties editable at runtime"></a>
+<h2>Properties editable at runtime</h2>
+
+<ul>
+<li><a href="properties.html#Align"  target="_blank">Align</a></li>
+<li><a href="properties.html#Align"  target="_blank">VAlign</a></li>
+<li><a href="properties.html#HasBorder"  target="_blank">HasBorder</a></li>
+<li><a href="properties.html#Caption"  target="_blank">Caption</a></li>
+<li><a href="properties.html#Position-and-size"  target="_blank">Top/Left/Width/Height</a></li>
+<li><a href="properties.html#Font"  target="_blank">Font</a></li>
+<li><a href="properties.html#WordWrap"  target="_blank">WordWrap</a></li>
+<li><a href="properties.html#Tool tip"  target="_blank">Tool tip</a></li>
+<li><a href="properties.html#Color-properties"  target="_blank">Color properties</a></li>
+<li><a href="properties.html#Disabled"  target="_blank">Disabled</a></li>
+<li><a href="properties.html#BackStyle"  target="_blank">BackStyle</a></li>
+<li><a href="properties.html#Hidden"  target="_blank">Hidden</a></li>
+</ul>
+
+<h3>See also:</h3>
+
+<ul>
+<li><a href="methods.html#MessageBox">MessageBox Function</a></li>
+</ul>
+   <!-- ################ End Content ################ -->
+  <script language="javascript" src="common/footer.js"></script> <!-- Footer -->
+   </div> <!-- End content -->
+
+</body>
+</html>

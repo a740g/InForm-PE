@@ -1,0 +1,509 @@
+
+
+/*===== Standard elements  ==========*/
+
+/*== Jump to page link offset ==*/
+/* offsetting an html anchor to adjust for fixed or static header */
+
+
+html {
+/*  scroll-padding-top: 50px;  height of sticky header not required in this version*/
+}
+
+
+body {
+  background-image:  url(../images/menubg.gif);
+  background-repeat: repeat;
+  background-color: #F3F3F7;
+  color: #000000;
+
+  font-family:  Arial, "Segoe UI", Verdana, Sans-Serif;
+  font-size: 14px;
+  line-height: 18px;
+
+  padding:0;
+  margin:0;
+}
+
+b{
+  color: #222222;
+  color: #0f0f0f;
+  font-size: 13px;
+
+}
+
+
+h1 {
+ padding-left: 4px;
+ padding-top: 12px;
+ font-size: 25px;
+ color: #31799F;
+}
+
+h2 {
+ padding-left: 4px;
+ padding-top: 2px;
+ padding-bottom: 2px;
+ font-size: 18px;
+ background-color: #e0e0e0;
+}
+h3 {
+ padding-left: 4px;
+ padding-top: 0;
+ font-size: 16px;
+}
+
+
+h4 {
+ margin-bottom: 5px;
+ font-size: 14px;
+}
+
+p {
+ text-align: left;
+ margin-top: 5px;
+ margin-bottom: 5px;
+ padding: 4px;
+ font-size: 14px;
+ line-height: 18px;
+ font-family: Arial, "Segoe UI", Verdana, Sans-Serif;
+}
+
+
+a {
+  text-decoration: none;
+}
+a:hover {
+  color: #000000;
+  background-color:  #eeeeee;
+}
+
+
+/*== Start: Deselect all (see select all) - select part   ==*/
+code:focus {
+  animation: select 100ms step-end forwards;
+}
+
+@keyframes select {
+  to {
+   -ms-user-select: all;
+   -moz-user-select: all;
+    -webkit-user-select: text;
+    user-select: text;
+  }
+}
+
+/*== End: Deselect all - select part   ==*/
+
+
+
+/*=== PRE tag used to heightlight lines of code  ===*/
+/* A user can select all text with left-mouse click then right click-copy*/
+pre {
+   user-select: all;
+  -ms-user-select: all;
+  -moz-user-select: all;
+  -webkit-user-select: all;
+
+  border: solid 1px #ccc;
+  padding: 5px;
+  background-color: #f8f8f8;
+  background-color: #e8faed;
+  font-family: Consolas, Monaco, "Lucida Console", Courier, monospace;
+  font-size: 12px;
+  line-height: 14px;
+  box-shadow: 3px 3px 3px lightblue;
+}
+   /*=== END PRE tag **/
+
+ /* === PRE tag class This sets window to view long code , scroll bars === */
+ /* A user can select all text with left-mouse click right click copy*/
+.precode{
+  user-select: all;
+  -ms-user-select: all;
+  -moz-user-select: all;
+  -webkit-user-select: all;
+
+  width:98%;
+  height: 300px;
+  margin-left: 10px;
+  margin-bottom:16px;
+  padding: 5px 10px;
+  box-sizing: border-box;
+  border-radius: 7px;
+  border: double #ccc;
+  border-width: 5px;
+  background-color: #e8faed;
+  font-family: Consolas, Monaco, "Lucida Console", Courier, monospace;
+  font-size: 13px;
+  font-size: 12px;
+  line-height: 14px;
+
+  white-space: pre;
+  overflow-wrap: normal;
+  overflow: auto;
+  
+   box-shadow: 3px 3px 3px lightblue;
+}
+  /* === PRE tag class === */
+
+
+/*===== End Standard elements  ======*/
+
+.smalltext{
+  font-size: 11px;
+}
+
+
+/*===== Banner  ======*/
+ .flex-container-banner {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      background-color: #1D3652; 
+      align-items: center;
+      font-family: "Times New Roman", Times, serif;
+      font-style: italic;
+      padding-top:6px;
+      padding-left: 75px;
+      padding-right: 75px;
+      margin-bottom: 10px;
+
+    }
+
+   .ban-large {
+    font-size: 32px;
+   color:   #eeeeee;
+   }
+
+ .ban-small {
+   font-size: 16px;
+   color:#aaaaaa;
+   }
+ 
+ 
+/*===== End Banner  ======*/
+
+/*===== Start Side navigation  ======*/
+
+#sidenav {
+  width: 200px; 
+  background-color: #E7E9EB;
+  border: 1px solid black;
+
+  position: fixed;
+  overflow-y: scroll;   /* scrollable up-down*/
+  top: 10px;            /* 0 absolute top */
+  bottom: 25px;         /* 0 absolute bottom */
+  margin-left:10px;
+  /* scrollbar-width: thin;    thin bar */
+  /*  scrollbar-color:  white red ; */
+   scrollbar-width: none;   /*  No scroll bar. Note content is still scrollable!*/
+}
+
+
+/* Hide scrollbars Chrome, Safari and Opera */ 
+#sidenav::-webkit-scrollbar {
+  display: none;
+}
+
+
+#sidenav a {
+  font-family: Arial, "Segoe UI", Verdana, Sans-Serif;
+  font-size: 12px;
+
+  background-color: transparent;
+  color: black;           /* Black text color */
+  display: block;         /* Make the links appear below each other */
+  text-decoration: none;  /* Remove underline from links */
+  line-height: 18px;      /* was line-height: 22.5px; */
+  padding-bottom: 1px;
+  padding-left: 8px;
+  padding-right: 1px;
+  padding-top: 1px;
+  
+
+  border-bottom: 1px solid #ccc; /* Dark grey */
+  margin-left: 7px;
+  margin-right:7px;
+}
+
+#sidenav a:hover {
+  background-color: #ddd; /* Dark grey background on mouse-over */
+  color: blue;            /* Yellow text color */
+}
+
+#sidenav a.active {
+  background-color: #ccc; /* Add  color to the "active/current" link */
+  color: white;
+}
+
+/* Current page selected link */
+/* Target specific menu. Note current is set by js*/
+
+#sidenav .current {
+  background-color: #ccc;
+}
+
+#sidenav h3 {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 14px;
+  font-style: italic;
+  opacity: 0.7;
+  padding:0;
+  margin:0;
+  margin-bottom:2px;
+  padding-left: 8px;
+  padding-top: 8px;
+  
+}
+/*===== End Side navigation  ======*/
+
+/*===== Start main content ======*/
+#content {
+  border: 1px solid black; 
+  margin-left: 220px;
+  margin-right: 10px;
+  margin-top: 10px;
+  z-index: 6;
+
+  padding-top: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
+
+  background-color: whitesmoke;
+  color: black; 
+  
+  font-family:  Arial, "Segoe UI", Verdana, Sans-Serif;
+  font-size: 14px;
+
+}
+/*===== End main content ======*/
+
+/*===== Start fooder ======*/
+#footer { 
+ padding: 5px;
+ margin:5px;
+ margin-top:10px;
+ margin-bottom: 10px;
+ background-color: #ddd;
+ box-shadow: 3px 3px 3px lightblue;
+ border-radius: 5px;
+ font-size: 14px;
+}
+/*===== End fooder ======*/
+
+/*===== Start up-arrow ======*/
+a.up_arrow {
+ display: block;
+ width: 24px;
+ height: 15px;
+ text-decoration: none;
+ background: url("../images/up_arrow.png");
+ position: fixed;
+
+ bottom: 36px;
+ left: 203px;     /*== was 198px ==*/
+/* opacity: 0.5;*/
+}
+
+
+a.up_arrow:hover {
+ opacity: 1;
+}
+
+/*===== End up-arrow ======*/
+
+/*===== Start Page link boxes ======*/
+#page_links_menu {
+  background-color: #eeeeff;
+  padding: 10px;
+  display: inline-block; 
+  box-shadow: 3px 3px 3px #666666;
+}
+
+#page_links_menu ul{
+ list-style: none;
+  padding: 0;
+  margin:0;
+}
+
+#page_links_menu ul li{
+  margin-bottom: 0;
+  /*font-size: 14px;  
+  line-height: 16px;*/
+  font-size: 13px;  
+  line-height: 16px;
+  font-family:  Verdana, Arial, Geneva, sans-serif;
+}
+
+#page_links_menu ul li a:link,
+#page_links_menu ul li a:visited{
+  text-decoration: none;
+
+}
+
+#page_links_menu ul li a:hover{
+  color: #000000;
+}
+
+/*===== END Page link boxes ========*/
+
+
+
+
+
+
+
+
+/*===== Custom Images for QB64 ========*/
+/*-- Uses a user defined tag 'figure'
+     and flexbox                    --*/
+     
+figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+figure img {
+  box-shadow: 3px 3px 3px #666666;
+}
+
+figure figcaption {
+ padding: 5px;
+ font-weight: bold;
+}
+/*===== END Custom Images for QB64 =====*/
+
+/*===== Start Custom Tages =====*/
+/*-- High lght examples --*/
+.example {
+   background-color: #dddddd;
+   padding:4px;
+ }
+
+/*===== End Custom Tages =======*/
+
+/*=== FLEX ====*/
+
+/*== Flex: Page titles == */
+/* -- All pages -- */
+.flex-page-title {
+ display: flex;
+ flex-direction: row;
+ align-items: center;
+}
+.flex-page-title h1{
+ padding: 0;
+ margin-left: 12px;
+ font-size: 25px;
+ color: #31799F;
+}
+
+/*== END Flex: Page titles == */
+
+/*== Spin image == */
+  .flex-page-title img {
+    animation:spin 0.1s linear;
+        animation-delay: 1s;
+    position: relative;
+  }
+  @keyframes spin { 
+    100% { 
+        transform:rotate(360deg); 
+    } 
+  }
+/*== END Spin image == */
+
+/* === Flex: Left Image-hover text to right === */
+/* -- Page tutorial.html -- */
+  .flex-container-img-hover {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .flex-container-img-hover img {
+    padding:3px;
+    background-color: transparent;
+    margin-right: 10px;
+  }
+
+  .flex-container-img-hover img:hover {
+    background-color: #3366FF;
+  }
+/* === END Flex: Left Image-hover text to right === */ 
+
+
+/*=== Flex image left text right === */
+/* --- Used on games page ---   */
+  .flex-container-img-text{
+    display: flex;
+    flex-direction: row; 
+    align-items: top;
+    margin-bottom: 12px;
+  }
+  .flex-container-img-text img {
+     box-shadow: 3px 3px 3px #666666;
+  }
+
+  .flex-img-text-item1 {
+     text-align: center;
+     font-weight: bold;
+     font-family:  Arial, "Segoe UI", Verdana, Sans-Serif;
+     font-size: 14px;
+   } 
+
+   .flex-img-text-item2 {
+      margin-left: 10px;
+    }
+
+  /* -- side headder title -- */
+  p.games {
+    color: #31799F; 
+    margin-bottom:2px; 
+    margin-top:0px;
+    font-size: 25px; 
+  }
+/*=== END Flex image left text right === */  
+
+
+/*=== Flex: text left - image right === */
+  .flex-container-text-img {
+    display: flex;
+    flex-direction: row; 
+    align-items: top;
+    margin-bottom: 12px;
+  }
+ 
+  .flex-container-text-img  img {
+     box-shadow: 3px 3px 3px #666666;
+  }
+
+   .flex-text-img-item1 {
+      margin-right: 10px;
+    }
+
+  .flex-text-img-item2 {
+     text-align: center;
+     font-weight: bold;
+     font-family:  Arial, "Segoe UI", Verdana, Sans-Serif;
+     font-size: 14px;
+     margin-right: 5px;
+   } 
+/*=== END Flex: text left - image right === */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

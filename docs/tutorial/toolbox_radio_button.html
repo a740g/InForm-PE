@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Toolbox Radio button</title>
+  <meta name="Description" content="This tutorial will focus InForm for the Phoenix Edition of QB64." />
+  <meta name="Keywords" content="InForm, QB64, QB64PE, Phoenix, Installation, MPGCAN" />
+
+  <link href="common/css/main.css" rel="stylesheet" type="text/css">
+  <link href="common/css/menu.css" rel="stylesheet" type="text/css">
+  <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+
+  <script src="common/navigation-js.js"></script> 
+</head>
+<body>
+
+  
+  <script language="javascript" src="common/side-menu.js"></script> <!-- Side menu -->
+ 
+  <div id="content"> <!-- Start content -->
+  <!-- ################ Start Content ################ -->
+   <script language="javascript" src="common/header.js"></script>      <!-- Banner -->
+
+  <div  class="flex-page-title">
+    <div>
+                <img src="common/images/inf_logo.png"  alt="logo" />
+    </div>
+    <div>
+       <h1>Toolbox Radio button</h1>
+     </div>
+  </div>
+
+<p>In an InForm application, radio buttons allow users to choose an option within a group. This page covers buttons in more detail.</p>
+
+
+ <div id="page_links_menu" >
+  <ul>
+    <li><a href="#Radio button" >Radio button</a></li>
+   <li><a href="#Radio button examples" >Radio button examples</a></li>
+   <li><a href="#Form file RadioButtonTest.frm" >&nbsp;&nbsp;Form file RadioButtonTest.frm</a></li>
+   <li><a href="#Basic file RadioButtonTest.bas" >&nbsp;&nbsp;Basic file RadioButtonTest.bas</a></li>
+   <li><a href="#Events" >Events</a></li>
+   <li><a href="#Methods" >Methods</a></li>
+   <li><a href="#Properties editable at runtime" >Properties editable at runtime</a></li>
+    </ul>
+ </div>
+
+<p>Create a new Radio button control by clicking the Radio button icon <img src="images/toolbox/inf_tb6_radio_button.png" alt="ToolBox radio button"> in the Toolbox. The newly created control will be displayed in the preview window; allowing you to move it around to meet your design requirements. Edit the Radio button properties as necessary.</p>
+
+
+<div class="flex-container-text-img" >
+<div>
+<p><b>6) Radio button Properties:</b></p>
+<img src="images/toolbox/toolbox_radio_button1.png" alt="ToolBox">
+</div>
+
+<div style="margin-left: 15px;">
+<p><b>Radio button examples:</b> Preview window.</p>
+<img src="images/toolbox/toolbox_radio_button2.png" alt="ToolBox">
+</div>
+</div>
+
+<p><b>Note:</b>  Radio button properties will reflect the highlighted control selected in the preview window, enabling you to customize it as needed.</p>
+
+<p>Radio buttons allow users to choose an option within a group. The user is presented with a circle that is either empty or checked, followed by a label indicating the setting being edited.</p>
+
+<p>Radio buttons can be grouped. If placed on the main form, they are naturally exclusive, meaning only one can be selected at a time. However, if added to a frame, they can be selected independently from radio button controls outside the frame.</p>
+
+
+<p><b>Design time:</b><br>
+At design time, you can set the <a href="properties.html#Value" target="_blank">Value</a> property to <a href="global_constants_variables.html#Boolean" target="_blank">True</a> or <a  href="global_constants_variables.html#Boolean" target="_blank">False</a> to determine the initial state of the radio button. To have it selected by default, set the Value property to True.</p>
+
+<p><b>Run time:</b><br>
+At runtime, user manipulation triggers the ValueChanged event, allowing you to respond to changes made by the user. You can then read the Value property, which will return either True or False, indicating the current state of the radio button.</p>
+
+<pre ><code tabindex="0">UserChoice%% = Control(ControlID).Value</code></pre>
+
+<p><b>SetCapation:</b><br>
+By using the SetCaption method, you can define a hot-key shortcut for your CheckBox control by placing an ampersand character before the letter you wish to be assigned as a shortcut (Alt+letter).</p>
+
+<pre ><code tabindex="0">SetCaption Button1, "&OK"</code></pre>
+
+<p><b>Set Radio Button:</b><br>
+To change the value of a RadioButton control to True at runtime, use the SetRadioButtonValue method. This method ensures that other RadioButton controls in the same container are properly set to False first.</p>
+
+<pre ><code tabindex="0">SetRadioButtonValue ControlID</code></pre>
+
+<a name="Radio button examples"></a>
+<h2>Radio button examples - refer to the above image.</h2>
+
+<p><b>Specification:</b> Let the Radio button example have the following design specification:</p>
+
+<ol>
+   <li> Add two groups of three radio buttons with labels as shown.</li>
+   <li> At runtime, set the radio buttons to JavsScript and the age range to "61-100".</li>
+   <li> The Run button displays what is selected from each group.</li>
+</ol>
+
+<p><b>Implimenation: </b>The following provide solutions for the above:</p>
+
+<ul>
+ <li> At runtime, use the subroutine <b>__UI_OnLoad</b> and the method <b>SetRadioButtonValue</b> to set selections. </li>
+ <li> For button clicks, use the subroutine <b>__UI_Click</b>. </li>
+ <li> For additional details, refer to the file <b>RadioButtonTest.bas</b>. </li>
+ <li> At the layout stage, save the project by selecting <b>File</b> -&gt; <b>Save project as</b> and enter the name <b>RadioButtonTest</b>.</li>
+</ul>
+
+<a name="Basic file RadioButtonTest.bas"></a>
+<h3>Basic file RadioButtonTest.bas</h3>
+
+<pre class="precode" >
+<code   tabindex="0" >
+': This program uses
+': InForm - GUI library for QB64 - v1.5
+': Fellippe Heitor, 2016-2024 - fellippe@qb64.org - @fellippeheitor
+': https://github.com/FellippeHeitor/InForm
+'-----------------------------------------------------------
+Option _Explicit '&lt;---
+Dim Shared groupA As String '&lt;---
+Dim Shared groupB As String '&lt;---
+
+': Controls' IDs: ------------------------------------------------------------------
+Dim Shared RadioButtonTest As Long
+Dim Shared webFR As Long
+Dim Shared ageFR As Long
+Dim Shared htmlRB As Long
+Dim Shared cssRB As Long
+Dim Shared JavaScriptRB As Long
+Dim Shared age0_30RB As Long
+Dim Shared age31_60RB As Long
+Dim Shared age61_100RB As Long
+Dim Shared RunBT As Long
+
+': External modules: ---------------------------------------------------------------
+'$INCLUDE:'InForm\InForm.bi'
+'$INCLUDE:'InForm\xp.uitheme'
+'$INCLUDE:'RadioButtonTest.frm'
+
+': Event procedures: ---------------------------------------------------------------
+Sub __UI_BeforeInit
+
+End Sub
+
+Sub __UI_OnLoad
+    SetRadioButtonValue JavaScriptRB '&lt;---
+    SetRadioButtonValue age61_100RB ' &lt;---
+End Sub
+
+Sub __UI_BeforeUpdateDisplay
+    'This event occurs at approximately 60 frames per second.
+    'You can change the update frequency by calling SetFrameRate DesiredRate%
+
+End Sub
+
+Sub __UI_BeforeUnload
+    'If you set __UI_UnloadSignal = False here you can
+    'cancel the user's request to close.
+
+End Sub
+
+Sub __UI_Click (id As Long)
+    Select Case id
+        Case RadioButtonTest
+
+        Case webFR
+
+        Case ageFR
+
+        Case htmlRB
+
+        Case cssRB
+
+        Case JavaScriptRB
+
+        Case age0_30RB
+
+        Case age31_60RB
+
+        Case age61_100RB
+
+        Case RunBT
+            Dim resultStr As String '                                   &lt;---
+            resultStr = "Web design language = " + groupA + Chr$(10) '  &lt;---
+            resultStr = resultStr + "Your Age = " + groupB '            &lt;---
+            _MessageBox "Radio button test", resultStr '                &lt;---
+
+    End Select
+End Sub
+
+Sub __UI_MouseEnter (id As Long)
+    Select Case id
+        Case RadioButtonTest
+
+        Case webFR
+
+        Case ageFR
+
+        Case htmlRB
+
+        Case cssRB
+
+        Case JavaScriptRB
+
+        Case age0_30RB
+
+        Case age31_60RB
+
+        Case age61_100RB
+
+        Case RunBT
+
+    End Select
+End Sub
+
+Sub __UI_MouseLeave (id As Long)
+    Select Case id
+        Case RadioButtonTest
+
+        Case webFR
+
+        Case ageFR
+
+        Case htmlRB
+
+        Case cssRB
+
+        Case JavaScriptRB
+
+        Case age0_30RB
+
+        Case age31_60RB
+
+        Case age61_100RB
+
+        Case RunBT
+
+    End Select
+End Sub
+
+Sub __UI_FocusIn (id As Long)
+    Select Case id
+        Case htmlRB
+
+        Case cssRB
+
+        Case JavaScriptRB
+
+        Case age0_30RB
+
+        Case age31_60RB
+
+        Case age61_100RB
+
+        Case RunBT
+
+    End Select
+End Sub
+
+Sub __UI_FocusOut (id As Long)
+    'This event occurs right before a control loses focus.
+    'To prevent a control from losing focus, set __UI_KeepFocus = True below.
+    Select Case id
+        Case htmlRB
+
+        Case cssRB
+
+        Case JavaScriptRB
+
+        Case age0_30RB
+
+        Case age31_60RB
+
+        Case age61_100RB
+
+        Case RunBT
+
+    End Select
+End Sub
+
+Sub __UI_MouseDown (id As Long)
+    Select Case id
+        Case RadioButtonTest
+
+        Case webFR
+
+        Case ageFR
+
+        Case htmlRB
+
+        Case cssRB
+
+        Case JavaScriptRB
+
+        Case age0_30RB
+
+        Case age31_60RB
+
+        Case age61_100RB
+
+        Case RunBT
+
+    End Select
+End Sub
+
+Sub __UI_MouseUp (id As Long)
+    Select Case id
+        Case RadioButtonTest
+
+        Case webFR
+
+        Case ageFR
+
+        Case htmlRB
+
+        Case cssRB
+
+        Case JavaScriptRB
+
+        Case age0_30RB
+
+        Case age31_60RB
+
+        Case age61_100RB
+
+        Case RunBT
+
+    End Select
+End Sub
+
+Sub __UI_KeyPress (id As Long)
+    'When this event is fired, __UI_KeyHit will contain the code of the key hit.
+    'You can change it and even cancel it by making it = 0
+    Select Case id
+        Case htmlRB
+
+        Case cssRB
+
+        Case JavaScriptRB
+
+        Case age0_30RB
+
+        Case age31_60RB
+
+        Case age61_100RB
+
+        Case RunBT
+
+    End Select
+End Sub
+
+Sub __UI_TextChanged (id As Long)
+    Select Case id
+    End Select
+End Sub
+
+Sub __UI_ValueChanged (id As Long)
+    Select Case id
+        Case htmlRB
+            groupA = "HTML" '  &lt;---
+        Case cssRB
+            groupA = "CSS" '   &lt;---
+        Case JavaScriptRB
+            groupA = "Java Script" '  &lt;---
+        Case age0_30RB
+            groupB = "0 - 30" '   &lt;---
+        Case age31_60RB
+            groupB = "31 - 60" '  &lt;---
+        Case age61_100RB
+            groupB = "61 - 100" '  &lt;---
+    End Select
+End Sub
+
+Sub __UI_FormResized
+
+End Sub
+
+'$INCLUDE:'InForm/InForm.ui'
+
+</code>
+</pre>
+
+
+<a name="Form file RadioButtonTest.frm"></a>
+<h3>Form file RadioButtonTest.frm</h3>
+
+<pre class="precode" >
+<code  tabindex="0"  >
+': This form was generated by
+': InForm - GUI library for QB64 - v1.5
+': Fellippe Heitor, 2016-2024 - fellippe@qb64.org - @fellippeheitor
+': https://github.com/FellippeHeitor/InForm
+'-----------------------------------------------------------
+SUB __UI_LoadForm
+
+    DIM __UI_NewID AS LONG, __UI_RegisterResult AS LONG
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Form, "RadioButtonTest", 300, 300, 0, 0, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Radio button test"
+    Control(__UI_NewID).Font = SetFont("segoeui.ttf", 12)
+    Control(__UI_NewID).HasBorder = False
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Frame, "webFR", 230, 92, 15, 13, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Select Web language"
+    Control(__UI_NewID).HasBorder = True
+    Control(__UI_NewID).Value = 3
+    Control(__UI_NewID).BorderSize = 1
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Frame, "ageFR", 230, 91, 15, 129, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Select your age"
+    Control(__UI_NewID).HasBorder = True
+    Control(__UI_NewID).Value = 3
+    Control(__UI_NewID).BorderSize = 1
+
+    __UI_NewID = __UI_NewControl(__UI_Type_RadioButton, "htmlRB", 152, 23, 10, 14, __UI_GetID("webFR"))
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "HTML"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).Value = -1
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_RadioButton, "cssRB", 150, 23, 12, 38, __UI_GetID("webFR"))
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "CSS"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_RadioButton, "JavaScriptRB", 150, 23, 12, 62, __UI_GetID("webFR"))
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "JavaScript"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_RadioButton, "age0_30RB", 152, 23, 10, 10, __UI_GetID("ageFR"))
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "0 - 30"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_RadioButton, "age31_60RB", 150, 23, 12, 35, __UI_GetID("ageFR"))
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "31 - 60"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_RadioButton, "age61_100RB", 150, 21, 12, 60, __UI_GetID("ageFR"))
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "61 - 100"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Button, "RunBT", 80, 23, 101, 246, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Run"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+END SUB
+
+SUB __UI_AssignIDs
+    RadioButtonTest = __UI_GetID("RadioButtonTest")
+    webFR = __UI_GetID("webFR")
+    ageFR = __UI_GetID("ageFR")
+    htmlRB = __UI_GetID("htmlRB")
+    cssRB = __UI_GetID("cssRB")
+    JavaScriptRB = __UI_GetID("JavaScriptRB")
+    age0_30RB = __UI_GetID("age0_30RB")
+    age31_60RB = __UI_GetID("age31_60RB")
+    age61_100RB = __UI_GetID("age61_100RB")
+    RunBT = __UI_GetID("RunBT")
+END SUB
+
+</code>
+</pre>
+
+
+ <a name="Events"></a>
+<h2>Events</h2>
+
+<ul>
+<li><a  href="events.html#ValueChanged"  target="_blank">ValueChanged</a></li>
+<li><a  href="events.html#Mouse Click"  target="_blank">Click</a></li>
+<li><a  href="events.html#MouseDown/MouseUp"  target="_blank">MouseDown/MouseUp</a></li>
+<li><a  href="events.html#MouseEnter/MouseLeave"  target="_blank">MouseEnter/MouseLeave</a></li>
+<li><a  href="events.html#KeyPress"  target="_blank">KeyPress</a></li>
+</ul>
+
+
+<a name="Methods"></a>
+<h2>Methods</h2>
+
+<ul>
+<li><a  href="methods.html#SetCaption"  target="_blank">SetCaption</a></li>
+</ul>
+
+
+<a name="Properties editable at runtime"></a>
+<h2>Properties editable at runtime</h2>
+
+<ul>
+<li><a  href="properties.html#HasBorder"  target="_blank">HasBorder</a></li>
+<li><a  href="properties.html#Caption"  target="_blank">Caption</a></li>
+<li><a  href="properties.html#Position-and-size"  target="_blank">Top/Left</a></li>
+<li><a  href="properties.html#Font"  target="_blank">Font</a></li>
+<li><a  href="properties.html#Tool tip"  target="_blank">Tool tip</a></li>
+<li><a  href="properties.html#Color-properties"  target="_blank">Color properties</a></li>
+<li><a  href="properties.html#Disabled"  target="_blank">Disabled</a></li>
+<li><a  href="properties.html#BackStyle"  target="_blank">BackStyle</a></li>
+<li><a  href="properties.html#Hidden"  target="_blank">Hidden</a></li>
+<li><a  href="properties.html#Value"  target="_blank">Value</a></li>
+</ul>
+
+
+<h3>See also:</h3>
+
+<ul>
+<li><a href="methods.html#MessageBox"  target="_blank">MessageBox Function</a></li>
+</ul>
+
+
+   <!-- ################ End Content ################ -->
+  <script language="javascript" src="common/footer.js"></script> <!-- Footer -->
+   </div> <!-- End content -->
+
+</body>
+</html>

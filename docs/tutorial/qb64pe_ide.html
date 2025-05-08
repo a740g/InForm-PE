@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>QB64pe IDE tour</title>
+  <meta name="Description" content="This tutorial will focus InForm for the Phoenix Edition of QB64." />
+  <meta name="Keywords" content="InForm, QB64, QB64PE, Phoenix, Installation, MPGCAN" />
+
+  <link href="common/css/main.css" rel="stylesheet" type="text/css">
+  <link href="common/css/menu.css" rel="stylesheet" type="text/css">
+  <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+
+  <script src="common/navigation-js.js"></script> 
+</head>
+<body>
+
+  
+  <script language="javascript" src="common/side-menu.js"></script> <!-- Side menu -->
+ 
+  <div id="content"> <!-- Start content -->
+  <!-- ################ Start Content ################ -->
+   <script language="javascript" src="common/header.js"></script>      <!-- Banner -->
+
+  <div  class="flex-page-title">
+    <div>
+        <img src="common/images/inf_logo.png"  alt="logo" />
+    </div>
+    <div>
+       <h1>QB64pe IDE tour</h1>
+     </div>
+  </div>
+
+<p>QB64pe includes an integrated developer environment (IDE) where you type in code and commands to create a program. The following takes a brief tour of this IDE. To start the IDE, navigate to your project folder (qb64-inform) and double-click the QB64 application file (qb64pe.exe) located inside the qb64pe folder.</p>
+
+
+ <div id="page_links_menu" >
+  <ul>
+   <li><a href="#QB64 IDE overview" >QB64 IDE overview</a></li>
+   <li><a href="#File Menu" >File Menu</a></li>
+   <li><a href="#Edit Menu" >Edit Menu</a></li>
+   <li><a href="#View Menu" >View Menu</a></li>
+   <li><a href="#Search Menu" >Search Menu</a></li>
+   <li><a href="#Run Menu" >Run Menu</a></li>
+   <li><a href="#Debug Menu" >Debug Menu</a></li>
+   <li><a href="#Options Menu" >Options Menu</a></li>
+   <li><a href="#Options Menu - Display" >      &nbsp;&nbsp;Options Menu - Display</a> - setup</li>
+   <li><a href="#Options Menu - IDE Colors" > &nbsp;&nbsp;Options Menu - IDE Colors</a></li>
+   <li><a href="#Options Menu - C++ Complier Settings" >Options Menu - C++ Complier Settings</a></li>
+
+   <li><a href="#Tools Menu" >Tools Menu</a></li>
+   <li><a href="#Help Menu" >Help Menu</a></li>
+   </ul>
+ </div>
+
+<a name="QB64 IDE overview"></a>
+<h2>QB64 IDE overview</h2>
+
+<div class="flex-container-text-img"  >
+
+<div>
+<p><b>Cursor: </b>The QB64 IDE functions similarly to other simple text editors like Notepad. The flashing cursor indicates the position where text will appear when the programmer types a key or pastes text from the clipboard. You can use the keyboard arrow keys or click with the left mouse button to move the cursor anywhere within your code.</p>
+
+<p><b>Menu: </b>The menu operates like any other Windows program menu. It can be accessed by using a mouse or by pressing the ALT key and then using the keyboard arrow keys to navigate through the menu options.</p>
+
+<p><b>Current Program: </b>When you load source code or save your newly written program for the first time, the name you give to the source code file will be displayed here. </p>
+
+<p><b>Help: </b> Selecting "Help" brings up a comprehensive menu of items to assist the programmer. We will discuss these items in more detail as the course progresses.</p>
+
+<p><b>Errors and other information are display here: </b> Any information that the IDE needs to convey to the programmer will be shown here.</p>
+
+<p><b>Search: </b> You can search the source code for any text string by entering it into the search bar and pressing ENTER.</p>
+
+<p><b>Position of Cursor: </b> The IDE will display the current location of the cursor within your code. The row number indicates the current line number of your code. This feature makes it easy to find errors that the IDE reports on a specific line number.</p>
+
+<p><b>Initial screen: </b>  The initial launch of QB64 displays the message shown on the right. Clicking the OK button allows this message to be displayed again the next time QB64 is started. To prevent this action, click the "Don't show this again" button.</p>
+</div>
+
+<div>
+<img src="images/qb64ide/qb_ide_overview.png"   width="500" height="371" alt="IDE overview">
+<p><b>Initial screen</b></p>
+<img src="images/qb64ide/qb_ide_Initial_screen.png" width="500" height="371" alt="IDE initial screen">
+</div>
+</div>
+
+<a name="File Menu"></a>
+<h2>File Menu</h2>
+
+<div  class="flex-container-text-img"  >
+
+<div>
+<p><b>New: </b> This option will erase any currently loaded source code and start a new QB64 project. If the source code in the IDE has not been saved, you will be prompted to save it before it is erased.</p>
+
+<p><b>Open: </b> This option opens a previously saved QB64 project. QB64 projects are typically saved as .BAS files, but the editor can open any standard ASCII text file for editing if desired.</p>
+
+<p><b>Save: </b>  This option saves the current source code in the IDE to a project file. Typically, this file will have a .BAS extension, but you can rename the source file to any desired format.</p>
+
+<p><b>Save As: </b> This option allows you to save the current source code as a project file with a different name or in a different location.</p>
+
+<p><b>Export As:</b>  &#x25b6 Hypertext document (.htm)<br>
+ <b>Export As:</b>  &#x25b6 Rich Text document (.rtf)<br>
+ <b>Export As:</b>  &#x25b6 Forum codebox (to Clopboard)<br>
+<b>Export As:</b>  &#x25b6 Wiki example (to Clipboard)</p>
+
+
+
+
+<p><b>Exit: </b> This option closes the QB64 IDE. If the current source code has not been saved, you will be prompted to save it before exiting the IDE.</p>
+</div>
+
+<div>
+<img src="images/qb64ide/qb_ide_file.png" width="500" height="371" alt="IDE file menu">
+</div>
+</div>
+
+<a name="Edit Menu"></a>
+<h2>Edit Menu</h2>
+
+<div class="flex-container-text-img" >
+<div>
+<p><b>Undo/Redo: </b>These options allow you to undo or redo changes made to your code. The QB64 IDE remembers all changes made to your source code, so repeatedly pressing CTRL-Z will continue to undo changes all the way back to the beginning if needed.</p>
+
+<p><b>Cut/Copy/Paste: </b> These functions work just like in any other Windows program you are familiar with.</p>
+
+<p><b>Clear: </b>  This option deletes any selected source code in the IDE.</p>
+
+<p><b>Select All: </b>This option selects all the source code for actions like cut, copy, paste, or clear.</p>
+
+<p><b>Toggle Comment: </b>This feature provides a quick way to comment out code for debugging purposes. When code is commented, the QB64 compiler ignores it. We will discuss commenting code in more detail later in the course.</p>
+
+<p><b>Add Comment/Remove Comment: </b> These options allow you to either comment or uncomment a single line of code.</p>
+
+<p><b>Increase Indent/Decrease Indent: </b>  Source code is indented to quickly identify command structure, such as a looping construct. The default indent amount in the QB64 IDE is four spaces.</p>
+
+<p><b>New Sub/New Function: </b>  These options are used to start a new subroutine or function within the source code.</p>
+</div>
+
+<div>
+<img src="images/qb64ide/qb_ide_edit.png" width="500" height="371" alt="IDE edit menu">
+</div>
+</div>
+
+<a name="View Menu"></a>
+<h2>View Menu</h2>
+
+<div class="flex-container-text-img" >
+<div>
+<p><b>Subs:</b> Opening this option will display a new window listing all subroutines and functions. This allows the programmer to quickly navigate between different areas of the source code.</p>
+
+<p><b>Line Numbers &#x25b6 Hide Line Numbers:</b> By default, the IDE displays line numbers to the left of the code. This option hides the line numbers if preferred (not recommended).</p>
+
+<p><b>Line Numbers &#x25b6 Background Color:</b> This feature allows the programmer to change the background color of the vertical line number strip to the left of the code.</p>
+
+<p><b>Line Numbers &#x25b6 Show Separator:</b> This option toggles the visibility of the vertical bar located just to the right of the line numbers. (not recommended)</p>
+</div>
+
+<div>
+<img src="images/qb64ide/qb_ide_view.png" width="500" height="371" alt="IDE view menu">
+</div>
+</div>
+
+<a name="Search Menu"></a>
+<h2> Search Menu</h2>
+
+<div class="flex-container-text-img" >
+<div>
+<p><b>Find:</b> Selecting this option opens a window where the programmer can enter a search term. The IDE will find the first instance of that search term in the source code.</p>
+
+<p><b>Repeat Last Find:</b>  After performing a search, this option finds the next occurrence of the same search term.</p>
+
+<p><b>Change:</b> This option allows the programmer to modify text within the source code. More details on this will be provided later.</p>
+
+<p><b>Clear Search History:</b> This option clears the history of all previous searches performed.</p>
+
+<p><b>Enable Quick Navigation:</b> This feature enables the programmer to use the back arrow key to cycle through previous searches quickly.</p>
+
+<p><b>Add/Remove Bookmark:</b>  It allows the programmer to add or remove a bookmark in the source code, aiding in quick navigation.</p>
+
+<p><b>Next Bookmark:</b> This option moves the cursor to the next bookmark within the source code.</p>
+
+<p><b>Previous Bookmark:</b> This option moves the cursor to the previous bookmark within the source code. </p>
+
+<p><b>Go To Line:</b>  It enables the programmer to quickly jump to a specific line of code.</p>
+</div>
+
+<div>
+<img src="images/qb64ide/qb_ide_search.png" width="500" height="371" alt="IDE Search Menu">
+</div>
+</div>
+
+<a name="Run Menu"></a>
+<h2>Run Menu</h2>
+
+<div class="flex-container-text-img" >
+<div>
+<p><b>Start:</b>  This option compiles and executes the source code currently loaded in the IDE.</p>
+
+<p><b>Run only (No exe):</b>  Similar to the Start option, but after execution, the executable file is deleted.</p>
+
+<p><b>Modify Command$:</b> This feature allows the programmer to change the command-line options passed to the program during execution. More details on this will be provided later.</p>
+
+<p><b>Output EXE to Source Folder:</b> When this option is checked, QB64pe creates the executable file in the same folder as the source code. When unchecked, the executable will be saved to QB64pe's folder.</p>
+
+<p><b>Generate License For EXE:</b>  The lience file is placed next to the executable.</p>
+
+
+<p><b>Make EXE only:</b>  This option compiles only the source code into an executable file without running it.</p>
+</div>
+
+<div>
+<img src="images/qb64ide/qb_ide_run.png" width="500" height="371" alt="IDE Run Menu">
+</div>
+</div>
+
+<a name="Debug Menu"></a>
+<h2>Debug Menu</h2>
+
+<div class="flex-container-text-img" >
+<div>
+<p><b>Start Paused:</b> Compiles the current program and starts in pause mode.</p>
+
+<p><b>Toggle Breakpoint:</b> Sets/Clears breakpoint at cursor location.</p>
+
+<p><b>Clear All Breakpoints:</b> Removes all Breakpoints.</p>
+
+<p><b>Toggle Skip Line:</b> Sets/Clears flag to skip line.</p>
+
+<p><b>Unskip All Lines:</b> Removes all line skip flags. </p>
+
+<p><b>Watch List:</b> Add variables to watch list.</p>
+
+<p><b>Call Stack:</b> Displays the call stack of the current program's last execution.</p>
+
+<p><b>Auto-add $Debug Metacommand:</b> Toggles whether the IDE will auto-add the $Debug Metacommand as required.</p>
+
+<p><b>Output Watch List to Console:</b> Toggles directing the output of the Watch List to the console window.</p>
+
+<p><b>Set Base TCP/IP Port Number:</b> Set the initial port number for TCP/IP communication with the degugger.</p>
+
+<p><b>Purge C++ Libraries:</b> Purges all pre-compiled content.</p>
+</div>
+
+<div>
+<img src="images/qb64ide/qb_ide_debug.png" width="500" height="371" alt="IDE Deebug Menu">
+</div>
+</div>
+
+
+<a name="Options Menu"></a>
+<h2>Options Menu</h2>
+
+<div class="flex-container-text-img" >
+<div>
+<p>The Options menu items are used to change the look and feel of the IDE to suit the programmer's preferences.</p>
+
+<p>By default, the IDE screen is much too small to work on. The reason for this is that QB64 is a direct descendant of Microsoft's QuickBasic programming language.</p>
+
+<p> The default look of the QB64 IDE tries to mimic the QuickBasic 4.5 IDE as much as possible for those familiar with QuickBasic 4.5 to feel at home. Shown below is the display option:</p>
+
+<p><b>GUI Dialogs:</b> Uses GUI-based File Dialog Windows</p>
+
+</div>
+
+<div>
+<img src="images/qb64ide/qb_ide_options.png" width="500" height="371" alt="IDE Options Menu">
+</div>
+</div>
+
+<a name="Options Menu - Display"></a>
+<h3>Options Menu - Display</h3>
+
+<div class="flex-container-text-img" >
+<div>
+<p><b>Display: </b>To access display options, select "Options" in the menu, and then choose "Display" from the drop-down menu. A pop-up for display options will appear, allowing you to modify the display configuration.</p>
+
+<p>Options enable you to adjust the overall size of the IDE window. For instance, you can modify the width value from 80 to 120 and the height value from 25 to 40, then click "OK".</p>
+
+<p>Feel free to increase these numbers further if you prefer to utilize more of your screen. On my 1920x1080 screen, for example, my personal preference is 140 characters wide by 50 lines high.</p>
+</div>
+
+<div>
+<img src="images/qb64ide/qb_ide_options_display.png" width="500" height="371" alt="IDE Options Menu Display">
+</div>
+</div>
+
+<a name="Options Menu - IDE Colors"></a>
+<h3>Options Menu - IDE Colors</h3>
+
+<div class="flex-container-text-img" >
+<div>
+<p><b>IDE Colors:</b> To access IDE color settings, click on "Options" in the menu bar, then select "IDE Colors" from the drop-down menu. A screen will appear, as depicted on the right.</p>
+
+<p>To apply a different color scheme, click on the right triangle next to the word "scheme". This will cycle through various color schemes; click "OK" once you have found your preferred scheme.</p>
+
+<p><b>Note:</b> You can create your own personal color scheme. Start by selecting a scheme, renaming it, adjusting the colors to your liking, and then save the new scheme.</p>
+</div>
+
+<div>
+<img src="images/qb64ide/qb_ide_options_ide_colors.png" width="500" height="371" alt="IDE Options Colors">
+</div>
+</div>
+
+
+<a name="Options Menu - C++ Complier Settings"></a>
+<h3>Options Menu - C++ Complier Settings</h3>
+
+<div class="flex-container-text-img" >
+<div>
+<p><b>C++ Complier Settings:</b> This feature provides options to fine-tune the compile operation. It includes:</p>
+
+<ul>
+  <li> Compiling programs with C++ optimizations using '-O2' (turned off by default).</li>
+  <li> Stripping symbols from executables (turned on by default).</li>
+  <li> Adding C++ debug information to executables (turned off by default).</li>
+</ul>
+
+<p>Additionally, it offers:</p>
+<ul>
+  <li> Textbox for providing extra compiler flags.</li>
+  <li> Textbox for providing extra linker flags.</li>
+  <li> Option to adjust the maximum number of C++ compiler processes to run (increasing this can speed up compilation).</li>
+</ul>
+<p>Note: To enable '-O2' optimization, simply check the 'Compile program with C++ optimization flag' option in the dialog. For any other option besides '-O2', you will need to input it into the compiler flags manually (e.g., '-O3'; refer to the image on the right).</p>
+</div>
+
+<div>
+<img src="images/qb64ide/qb_ide_compiler_settings.png" width="500" height="371" alt="IDE Options C++ Complier Settings">
+</div>
+</div>
+
+<a name="Tools Menu"></a>
+<h2>Tools Menu</h2>
+
+<div class="flex-container-text-img" >
+<div>
+<p><b>ASCII Chart:</b> This feature displays an ASCII (American Standard Code for Information Interchange) chart, allowing the programmer to select from the extended ASCII set. To use it, select the desired character and click the "Insert Character" button to insert it at the current cursor position. Alternatively, you can insert the character code using the CHR$() string by pressing the "CHR$" button.</p>
+
+
+<p><b>Insert Quick Keycode: </b>  This feature captures a keycode (_KEYHIT or KEYDOWN) when a key is pressed and inserts it at the current cursor position. </p>
+
+<p><b> Math Evaluator:</b> This feature displays a math evaluator dialog, providing a simple calculation box for inserting the result into the source code.</p>
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<p><b> RGB Color Mixer:</b> This feature allows mixing colors to edit or insert _RGB statements.</p>
+
+<p><b> Insert: </b> Clicking the "Insert" button inserts code at the cursor position. For example, in the shown selection, clicking "Insert" inserts code _RGB32(44, 78, 105) and closes the mixer window.</p>
+
+<p><b> Copy:</b> Clicking the "Copy" button inserts code into the copy buffer, such as _RGB32(44, 78, 105), allowing you to paste it at the desired location.</p>
+
+<p><b> Cancel:</b>  Clicking the "Cancel" button closes the color mixer without making changes.</p>
+</div>
+
+<div>
+<img src="images/qb64ide/qb_ide_tools.png" width="500" height="371" alt="IDE Tools Menu">
+<p><b> RGB Color Mixer:</b></p>
+<img src="images/qb64ide/qb_ide_tools_rgb_coler_mixer.png" width="500" height="371" alt="IDE Tools RGB">
+</div>
+</div>
+
+<a name="Help Menu"></a>
+<h2>Help Menu</h2>
+
+<div class="flex-container-text-img" >
+<div>
+<p><b>View:</b>  Opens the help window, occupying the bottom half of the IDE screen.</p>
+
+<p><b>Contents Page:</b>  Opens the help contents page.</p>
+
+<p><b>Keyword Index:</b>  Displays an alphabetical index of all QB64 keywords.</p>
+
+<p><b>Keywords by Usage:</b> Shows keywords indexed by their usage.</p>
+
+<p><b>Update Current Page:</b>  Updates the help files to the latest version available on the QB64 website for the current page.</p>
+
+<p><b>Update All Pages:</b>  Updates all help files to the latest versions available on the QB64 website.</p>
+
+<p><b>View Current Page on Wiki:</b>  Opens the default browser and navigates to the current article on the wiki.</p>
+
+
+<p><b>About:</b> Displays the version and build number of QB64 in use. This information is often requested when seeking assistance in the QB64 forums.</p>
+</div>
+
+<div>
+<img src="images/qb64ide/qb_ide_help.png" width="500" height="371" alt="IDE help">
+</div>
+</div>
+
+
+   <!-- ################ End Content ################ -->
+  <script language="javascript" src="common/footer.js"></script> <!-- Footer -->
+   </div> <!-- End content -->
+
+</body>
+</html>

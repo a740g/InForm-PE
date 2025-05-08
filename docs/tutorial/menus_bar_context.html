@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>MenuBar ContextMenu</title>
+  <meta name="Description" content="Lists present the user with selectable items." />
+  <meta name="Keywords" content="Menus Bar and Context,Inform,QB64,QB64PE, Phoenix,Background,Installation,Fellippe Heitor,MPGCAN" />
+
+  <link href="common/css/main.css" rel="stylesheet" type="text/css">
+  <link href="common/css/menu.css" rel="stylesheet" type="text/css">
+  <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+
+  <script src="common/navigation-js.js"></script> 
+</head>
+<body>
+
+  
+  <script language="javascript" src="common/side-menu.js"></script> <!-- Side menu -->
+ 
+  <div id="content"> <!-- Start content -->
+  <!-- ################ Start Content ################ -->
+   <script language="javascript" src="common/header.js"></script>      <!-- Banner -->
+
+  <div  class="flex-page-title">
+    <div>
+                <img src="common/images/inf_logo.png"  alt="logo" />
+    </div>
+    <div>
+       <h1>MenuBar and ContextMenu</h1>
+     </div>
+  </div>
+
+<p>The controls MenuBar and MenuItem provide an easy way to add a menu system to your program.</p>
+
+
+ <div id="page_links_menu" >
+  <ul>
+   <li><a href="#Menu Bar" >Menu Bar</a></li>
+   <li><a href="#Create menu bar" >&nbsp;&nbsp;Create menu bar</a></li>
+   <li><a href="#Configure bar items" >&nbsp;&nbsp;Configure bar items</a></li>
+   <li><a href="#Configure drop-dowmn items" >&nbsp;&nbsp;Configure drop-dowmn items</a></li>
+   <li><a href="#Context Menu" >Context Menu</a></li>
+   <li><a href="#Create a Context menu" >&nbsp;&nbsp;Create a Context menu</a></li>
+   <li><a href="#Configure context menu name" >&nbsp;&nbsp;Configure context menu name</a></li>
+   <li><a href="#Configure context menu items" >&nbsp;&nbsp;Configure context menu items</a></li>
+   <li><a href="#Assign Context Menu" >&nbsp;&nbsp;Assign Context Menu</a></li>
+   <li><a href="#Marker style example" >Marker style example.</a></li>
+   <li><a href="#Common menu Techniques" >Common menu Techniques.</a> - Hot-key, Separator, Icon-image, etc</li>
+   <li><a href="#Events" >Events</a></li>
+   <li><a href="#Methods" >Methods</a></li>
+   <li><a href="#Properties editable at runtime" >Properties editable at runtime</a></li>
+   </ul>
+ </div>
+
+<a name="Menu Bar"></a>
+<h2>Menu Bar</h2>
+
+<div class="flex-container-text-img" >
+<div>
+   <a name="Create menu bar"></a>
+    <p><b>To create a menu bar in InForm, follow these steps:</b>.</p>
+
+<p>a) Click the InForm designer's <b>Insert </b>menu button, then select <b>Menu Bar</b> from the drop-down menu to create a new MenuBar.<br/>
+b) The menu bar will be created with the first item highlighted.<br/>
+c) Create additional menu items by clicking the grayed-out <b>Add new</b> option.<br/>
+d) Add sub-menu items by clicking the grayed-out <b>Add new</b> option.<br/>
+</p>
+
+</div>
+
+<div>
+    <p><b>InForm Designer</b>.</p>
+     <img src="images/menubar/inf_menu_bar.png" alt="Menu Bar">
+</div>
+
+<div style="margin-left: 15px;">
+   <p><b>Preview window</b>.</p>
+     <img src="images/menubar/inf_menu_bar_a.png" alt="Menu Bar">
+</div>
+</div>
+
+<p><b>Note 1:</b> An alternative method to create a menu bar is to right-click anywhere in the preview window. From the pop-up menu, choose <b>New MenuBar control</b>.<br>
+
+<b>Note 2: </b> Menu fonts and colors are based on the main form; they will change accordingly when you edit the main form's font and color properties.</p>
+
+
+<div class="flex-container-text-img" >
+<div>
+   <a name="Configure bar items"></a>
+    <p><b>Configure bar items</b>.</p>
+
+
+<p>After adding bar menu and sub-menu items, you will notice they have been automatically given identities and caption text.
+ These require configuration. The easiest method is to leave the name unchanged and modify the caption only.</p>
+
+ <p>1)   Begin by updating all bar menu items. For example, the first two items can be updated to "File" and "Edit." The last item (MenuBar3) is highlighted and ready to be changed.<br/>
+    2) Both the Name and Caption text boxes display "MenuItem3." Change the Caption text from "MenuItem3" to "Help."<br/>
+    3) After pressing Enter, the preview window's menu bar changes from "MenuBar3" to "Help." The Name text box changes from "MenuBar3" to "HelpMenu."
+</p>
+
+</div>
+
+<div>
+    <p><b>InForm Designer</b>.</p>
+     <img src="images/menubar/inf_menu_bar_b.png" alt="Menu Bar">
+</div>
+
+<div style="margin-left: 15px;">
+   <p><b>Preview window</b>.</p>
+     <img src="images/menubar/inf_menu_bar_c.png" alt="Menu Bar">
+</div>
+</div>
+
+
+<div class="flex-container-text-img" >
+<div>
+   <a name="Configure drop-dowmn items"></a>
+    <p><b>Configure drop-dowmn items</b>.</p>
+
+<p>After configuring menu-bar items, their corresponding drop-down sub-menu lists require configuration. Similar to the bar-menu, these were automatically given identities and caption text. The easiest method is to leave the Name unchanged and modify the Captions only.</p>
+
+<p>
+a) Select the menu-bar item required by clicking on it, and its corresponding drop-down list is displayed.<br/>
+b) Click on the menu item you want to change; it becomes highlighted to indicate selection.<br/>
+c) Change the Caption text from "MenuItem2" to "Open" and press Enter.<br/>
+d) After pressing Enter, the preview window's drop-down menu item changes from "MenuItem2" to "Open." The Name text box changes from "MenuItem2" to "FileMenuOpen."<br/>
+</p>
+
+
+</div>
+
+<div>
+    <p><b>InForm Designer</b>.</p>
+     <img src="images/menubar/inf_menu_bar_d.png" alt="Menu Bar">
+</div>
+
+<div  style="margin-left: 15px;">
+   <p><b>Preview window</b>.</p>
+     <img src="images/menubar/inf_menu_bar_e.png" alt="Menu Bar">
+</div>
+</div>
+
+<p>Note: For steps c) and d), the Name and Caption fields initially display the creation default, in this example, "MenuItem2."</p>
+
+<a name="Context Menu"></a>
+<h2>Context Menu</h2>
+
+<div class="flex-container-text-img" >
+<div>
+   <a name="Create a Context menu"></a>
+    <p><b>Create a Context menu</b>.</p>
+
+<p>a) Click the InForm Designer's <b>Insert</b> menu button. From the drop-down menu, select <b>Context Menu</b> to create a new Context Menu.<br/>
+b) The context menu is created with the body highlighted. Create additional menu items by clicking the grayed-out <b>Add new</b> option. Add sub-menu items by clicking the grayed-out <b>Add new</b> option.</p>
+
+</div>
+
+<div>
+   <p><b>InForm Designer</b>.</p>
+     <img src="images/menubar/inf_menu_context_a.png" alt="Context menu">
+</div>
+
+<div style="margin-left: 15px;">
+   <p><b>Preview window</b>.</p>
+     <img src="images/menubar/inf_menu_context_b.png" alt="Context menu">
+</div>
+</div>
+
+<p><b>Note 1:</b>  An alternative method to create a context menu is to right-click anywhere in the preview window. From the pop-up menu, choose "New ContextMenu control."<br/>
+<b>Note 2:</b> Menu fonts and colors are based on the main form; they will change accordingly when you edit the main form's font and color properties.</p>
+
+
+<div class="flex-container-text-img" >
+<div>
+   <a name="Configure context menu name"></a>
+    <p><b>Configure context menu name</b>.</p>
+
+<p>More than one context menu can be instantiated. Each menu will have a corresponding symbol added to the bottom left-hand corner of the preview window. If you wish to change a context menu name, follow these steps; generally, you will leave these unchanged.</p>
+
+<p>1)    In the preview window, click on the context menu symbol. This highlights the selection.<br/>
+ 2)    Change the name as required. For example, change the pre-defined name from "ContextMenu1" to your desired name.</p>
+
+</div>
+
+<div>
+   <p><b>InForm Designer</b>.</p>
+     <img src="images/menubar/inf_menu_context_c.png" alt="Context menu">
+</div>
+
+<div style="margin-left: 15px;">
+   <p><b>Preview window</b>.</p>
+     <img src="images/menubar/inf_menu_context_d.png" alt="Context menu">
+</div>
+</div>
+
+
+<div class="flex-container-text-img" >
+<div>
+   <a name="Configure context menu items"></a>
+    <p><b>Configure context menu items</b>.</p>
+
+
+<p>Menu items require configuration. The easiest method is to leave the Name unchanged and modify the Caption only.</p>
+
+<p>a) Select the menu item to change: In the preview window, click on the context menu symbol and then on the menu item you want to change.<br/>
+b) Change the caption from "MenuItem2" to the required text. For example, "Abort."<br/>
+c) After pressing Enter, the menu item is updated from "MenuItem2" to "Abort." The name (identity) changes from "MenuItem2" to "ContextMenu1Abort."</p>
+
+</div>
+
+<div>
+    <p><b>InForm Designer</b>.</p>
+     <img src="images/menubar/inf_menu_context_e.png" alt="Context menu">
+</div>
+
+<div style="margin-left: 15px;">
+   <p><b>Preview window</b>.</p>
+     <img src="images/menubar/inf_menu_context_f.png" alt="Context menu">
+</div>
+</div>
+
+
+<div class="flex-container-text-img" >
+<div>
+   <a name="Assign Context Menu"></a>
+    <p><b>Assign Context Menu</b>.</p>
+
+<p>After creating context menus, they are assigned to their respective controls, such as the main form. Follow these steps:</p>
+
+ <p>1)   Note: In this example, two context menus have been created: ContextMenu1 and ContextMenu2.<br/>
+ 2)   Click the down arrow on the Context menu drop-down list.<br/>
+ 3)   From the dropdown list, select the menu you wish to assign.</p>
+
+
+</div>
+
+<div>
+    <p><b>InForm Designer</b>.</p>
+     <img src="images/menubar/inf_menu_context_g.png" alt="Context menu">
+</div>
+
+<div style="margin-left: 15px;">
+   <p><b>Preview window</b>.</p>
+     <img src="images/menubar/inf_menu_context_h.png" alt="Context menu">
+</div>
+</div>
+
+<a name="Marker style example"></a>
+<h2>Marker style example</h2>
+
+<div class="flex-container-text-img" >
+<div>
+   <p><b>Marker style example.</b></p>
+
+<p>The space to the left of a menu item can be assigned a style, either a check mark (✓) or bullet (●).</p>
+
+<p>a) Setting the Value to True enables styles, while a value of False disables styles. Selections are made using the drop-down menu.</p>
+
+<p>Note: Setting the Value to False disables styles, as shown in 3).</p>
+
+<p>b) After enabling styles, select the desired style using the drop-down menu. Choose either Check mark or Bullet.</p>
+
+</div>
+
+<div>
+    <p><b>Properties: ActionMenuRunMySQL</b></p>
+     <img src="images/menubar/inf_menu_style_a.png" alt="Menu style a">
+</div>
+
+<div style="margin-left: 15px;">
+    <p><b>Marker style example.</b></p>
+    <img src="images/menubar/inf_menu_style_b.png" alt="Menu style b">
+</div>
+</div>
+
+<a name="Common menu Techniques"></a>
+<h2>Common menu Techniques</h2>
+
+
+<p><b>Here are the techniques explained:</b></p>
+
+<ul>
+   <li> <b>Add Hot-key Shortcuts:</b> Use the <a href="methods.html#SetCaption"  target="_blank">SetCaption</a> function (or at design time in the Editor) by adding an ampersand (&) before the desired letter ("&File", "E&xit").</li>
+
+    <li> <b>Add a Separator: </b>Finish the item before the desired separator position with a hyphen ("-"), like "Save &as... -".</li>
+
+    <li> <b>Menu Item Icons:</b> Menu items can have icons, which must be regular 16x16 pixel images (not .ico files). Select the "Image file" property in the editor and enter the image file name.</li>
+
+    <li> <b>Checked Menu Items:</b> Set the <b>Value</b> property of a menu item to True to make it checked.</li>
+
+    <li> <b>Grouped and Bulleted Menu Items: </b>Set the <b>MarkerStyle</b> property to Bullet (from CheckMark) and set the <b>Value</b> property to True.<br/>
+ Note that if a menu item contains an image icon, it won't be shown when the item is "checked."</li>
+
+    <li> <b>Align the Last Menu Item:</b> The last menu item can be aligned to the right on the menu bar. Select it and choose "Right" in the "Text align" drop-down list.</li>
+
+    <li> <b>Reordering Menu Items:</b> After adding a menu item or menu bar item, you can reorder them by changing their z-order (Edit->Z-ordering).</li>
+
+</ul>
+
+<p>Use the <b>SetRadioButtonValue </b>method to set the value of a MenuItem control created with the bullets style to <b>True</b> at runtime. This method ensures that the other MenuItem controls in the same group are first set to False.</p>
+
+<pre ><code tabindex="0">SetRadioButtonValue ControlID
+</code></pre>
+
+<p>&nbsp;</p>
+
+<a name="Events"></a>
+<h2>Events</h2>
+
+<ul>
+<li><a  href="events.html#Mouse Click" target="_blank">Click</a></li>
+</ul>
+
+<script language="javascript" src="common/top.js"></script>
+<a name="Methods"></a>
+<h2>Methods</h2>
+
+<ul>
+<li><a href="methods.html#SetCaption" target="_blank">SetCaption</a></li>
+<li><a href="methods.html#SetRadioButtonValue" target="_blank">SetRadioButtonValue</a></li>
+<li><a href="methods.html#LoadImage" target="_blank">LoadImage</a></li>
+</ul>
+
+<a name="Properties editable at runtime"></a>
+<h2>Properties editable at runtime</h2>
+
+<ul>
+<li><a  href="properties.html#Align" target="_blank">Align</a></li>
+<li><a  href="properties.html#Caption" target="_blank">Caption</a></li>
+<li><a  href="properties.html#Tool-tip" target="_blank">Tool tip</a></li>
+<li><a  href="properties.html#Disabled" target="_blank">Disabled</a></li>
+<li><a  href="properties.html#Hidden" target="_blank">Hidden</a></li>
+</ul>
+
+   <!-- ################ End Content ################ -->
+  <script language="javascript" src="common/footer.js"></script> <!-- Footer -->
+   </div> <!-- End content -->
+
+</body>
+</html>

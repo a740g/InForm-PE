@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Methods</title>
+  <meta name="Description" content="Methods are SUBs or FUNCTIONs that change how controls behave." />
+  <meta name="Keywords" content="Events,Inform,QB64,QB64PE,Phoenix,Fellippe Heitor,MPGCAN" />
+  <link href="common/css/main.css" rel="stylesheet" type="text/css">
+  <link href="common/css/menu.css" rel="stylesheet" type="text/css">
+  <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+
+  <script src="common/navigation-js.js"></script> 
+</head>
+<body>
+
+  
+  <script language="javascript" src="common/side-menu.js"></script> <!-- Side menu -->
+ 
+  <div id="content"> <!-- Start content -->
+  <!-- ################ Start Content ################ -->
+   <script language="javascript" src="common/header.js"></script>      <!-- Banner -->
+
+  <div  class="flex-page-title">
+    <div>
+                <img src="common/images/inf_logo.png"  alt="logo" />
+    </div>
+    <div>
+       <h1>Methods</h1>
+     </div>
+  </div>
+
+<p>Methods are SUBs or FUNCTIONs that alter how controls behave or complement their functionality.</p>
+
+ <div id="page_links_menu" >
+  <ul>
+   <li><a href="#Methods/Functions" >Methods/Functions</a></li>
+   <li><a href="#LoadImage" >LoadImage</a> -- sub</li>
+   <li><a href="#SetCaption" >SetCaption</a> -- sub</li>
+   <li><a href="#SetFocus" >SetFocus</a> -- sub</li>
+   <li><a href="#SetFont" >SetFont</a> -- function</li>
+   <li><a href="#SetRadioButtonValue" >SetRadioButtonValue</a> -- sub</li>
+   <li><a href="#Listbox and Dropdown List summary" >Listbox and Dropdown List summary</a></li>
+   <li><a href="#AddItem" >&nbsp;&nbsp;&nbsp;-AddItem</a> -- sub</li>
+   <li><a href="#GetItem" >&nbsp;&nbsp;&nbsp;-GetItem</a> -- function</li>
+   <li><a href="#RemoveItem" >&nbsp;&nbsp;&nbsp;-RemoveItem</a> -- sub</li>
+   <li><a href="#ReplaceItem" >&nbsp;&nbsp;&nbsp;-ReplaceItem</a> -- sub</li>
+   <li><a href="#ResetList" >&nbsp;&nbsp;&nbsp;-ResetList</a> -- sub</li>
+   <li><a href="#Helper functions" >Helper functions</a></li>
+   <li><a href="#Darken" >&nbsp;&nbsp;&nbsp;-Darken</a> -- function</li>
+   <li><a href="#MessageBox" >&nbsp;&nbsp;&nbsp;-MessageBox</a> -- function (Inform)</li>
+   <li><a href="#_MessageBoxF" >&nbsp;&nbsp;&nbsp;-_MessageBox</a> -- function (QB64pe core)</li>
+   <li><a href="#_MessageBox" >&nbsp;&nbsp;&nbsp;-_MessageBox</a> -- sub (QB64pe core)</li>
+
+   <li><a href="#Replace" >&nbsp;&nbsp;&nbsp;-Replace</a> -- function (Inform)</li>
+    </ul>
+ </div>
+
+<a name="Methods/Functions"></a>
+<h1>Methods/Functions</h1>
+
+<a name="LoadImage"></a>
+<h2>LoadImage</h2>
+
+<p>The LoadImage method is employed to load a valid image file into a control's helper canvas. It serves the purpose of assigning icons to buttons or menu items, as well as assigning an image file to a PictureBox control.</p>
+
+<p>Usage:</p>
+<pre ><code tabindex="0">LoadImage Control(ControlID), ImageFile$</code></pre>
+
+
+<p>If the specified <b>ImageFile$</b> cannot be found or is not a valid image, one of the following scenarios will occur:</p>
+<ul>
+   <li> For Button and Menu item controls, the method will ignore the failed load attempt.</li>
+    <li>For PictureBox controls, a warning stating "image not found" or "invalid image file" will be displayed in the control's canvas.</li>
+</ul>
+<p>To reset a control's canvas, simply pass an empty <b>ImageFile$</b> to the <b>LoadImage</b> method:</p>
+
+<pre ><code tabindex="0">LoadImage Control(ControlID), ""
+</code></pre>
+
+
+<a name="SetCaption"></a>
+<h2>SetCaption</h2>
+
+ <p>The <b>SetCaption</b> method modifies a control's caption and parses for hot-key indicators.</p>
+<p><b>Syntax:</b></p>
+
+<pre ><code tabindex="0">SetCaption ControlID, "Caption"
+</code></pre>
+
+<p><b>Example:</b></p>
+<pre><code tabindex="0">SetCaption Button1, "&amp;OK"
+</code></pre>
+
+<p>The ampersand symbol (&amp;) is utilized to indicate that the subsequent letter will serve as a hot-key, allowing the user to hold Alt and press the letter to activate the control.</p>
+
+<p>Moreover, you can use <b>\n</b> to insert a line break in a caption, which will be replaced with CHR$(10). Note that line breaks only function with <b>Label</b> controls that have the <b>WordWrap</b> property set to <b>True</b>.</p>
+
+<p><b>Notes:</b></p>
+
+<p>The <b>SetCaption</b> method can be bypassed altogether by manipulating the <b>Caption array</b> directly. However, it's important to note that by doing so, the hot-key indicators won't be parsed.</p>
+
+<pre ><code tabindex="0">Caption(Button1) = "Your caption"</code></pre>
+
+
+<a name="SetFocus"></a>
+<h2>SetFocus</h2>
+
+<p>The <b>SetFocus</b> method directs focus to a specified control.</p>
+<p>Syntax:</p>
+
+<pre ><code tabindex="0">SetFocus ControlID</code></pre>
+
+<p>Example:</p>
+<pre ><code tabindex="0">SetFocus Button1</code></pre>
+
+
+<a name="SetFont"></a>
+<h2>SetFont</h2>
+
+<p>The <b>Font</b> property contains the handle of the loaded font associated with a control. It must be established using the <b>SetFont</b> method and cannot be directly manipulated using QB64's built-in font commands.</p>
+
+<p><b>SetFont method:</b></p>
+<pre ><code tabindex="0">Control(ControlID).Font = SetFont(FontName$, FontSize%)
+</code></pre>
+
+<ul>
+   <li><b> FontName$</b> must reference a font file. Both TTF and OTF fonts are accepted.</li> 
+    <li> Multiple fonts can be specified as alternatives in case one fails to load. Indicate the desired fonts, separated by a question mark.</li> 
+   <ul>
+        <li> If you don't specify a path, the current path is used.</li> 
+       <li>  In Windows, if a path isn't specified, the default font location, <b>C:\Windows\Font</b>, is searched.</li> 
+    </ul>
+  <li> <b> FontSize%</b> is in pixels, not points.</li> 
+</ul>
+
+<p>Additionally, you can utilize QB64's built-in fonts (<b>_FONT 16</b> or <b>_FONT 8</b>). To do so, specify only the <b>FontSize%</b> parameter:</p> 
+
+<pre ><code tabindex="0">Control(Label1).Font = SetFont("", 8)
+Control(Label2).Font = SetFont("", 16)
+</code></pre>
+
+<p>To designate a font at design time, either select it from the list or specify the font file, and separate the desired size with a comma. If you wish to type a font file name that's not listed, right-click the "Font" label and deselect "Show system fonts list":</p>
+
+
+ <figure><img src="images/font_selection.png" alt="Font Selection" style="align: center;"></figure>
+
+<p>Use a question mark (?) to specify multiple fonts. This is useful when you wish to specify replacement fonts in case the desired font isn't found or can't be loaded.</p>
+
+<pre ><code tabindex="0">Control(ControlID).Font = SetFont("font1.ttf?relative/path/font2.ttf?c:\absolutpath\font3.ttf", FontSize%)</code></pre>
+
+<p>The default font for new controls in Windows is <b>segoeui.ttf</b> If this font cannot be loaded, it falls back to <b>arial.ttf</b> The next font attempted is also Arial, but on macOS, InForm attempts to load it from the default fonts folder. If all attempts fail, it likely means the system is running on Linux, and then either Arial or Liberation fonts are loaded. If all else fails, the font shipped with InForm, located at <b>InForm/resources/NotoMono-Regular.ttf</b>, is loaded. All of these fonts are attempted at size 12.</p>
+
+<p>If you don't set a control's font property, it will inherit its container's font, either the main form or a frame if present.</p>
+
+<a name="SetRadioButtonValue"></a>
+<h2>SetRadioButtonValue</h2>
+
+<p>To modify the value of a RadioButton control to True during runtime, employ the <b>SetRadioButtonValue</b> method. This ensures that the other RadioButton controls within the same container are correctly set to False first:</p>
+
+<pre ><code tabindex="0">SetRadioButtonValue ControlID
+</code></pre>
+
+<a name="Listbox and Dropdown List summary"></a>
+<h1>Listbox and Dropdown List summary</h1>
+
+<p>Lists and dropdown lists provide users with selectable items. Dropdown lists function similarly to lists, but when they don't have focus, they only display the selected item, requiring users to click the down arrow button to view the rest of the list.</p>
+
+<p>The items of List and Dropdown list controls are stored in the control's Text property. However, they must be manipulated using the following methods because they also update crucial internal variables used to display the control:</p>
+
+
+<a name="AddItem"></a>
+<h2>AddItem</h2>
+
+<p>Adds a new item to the end of the list.</p>
+<pre ><code tabindex="0">AddItem ControlID, "Item"
+</code></pre>
+
+<a name="GetItem"></a>
+<h2>GetItem</h2>
+
+<p>Returns the contents of an item.</p>
+<pre ><code tabindex="0">DesiredItem$ = GetItem$(ControlID, ItemIndexToRead%)
+</code></pre>
+
+<a name="RemoveItem"></a>
+<h2>RemoveItem</h2>
+
+<p>Removes the specified item.</p>
+<pre ><code tabindex="0">RemoveItem ControlID, ItemIndexToRemove%
+</code></pre>
+
+
+<a name="ReplaceItem"></a>
+<h2>ReplaceItem</h2>
+
+<p>Replaces the text of the specified item with the new one provided.</p>
+<pre ><code tabindex="0">ReplaceItem ControlID, ItemIndexToReplace%, "New item"
+</code></pre>
+
+
+<a name="ResetList"></a>
+<h2>ResetList</h2>
+
+<p>Erases all list items.</p>
+<pre ><code tabindex="0">ResetList ControlID
+</code></pre>
+
+
+<a name="Helper functions"></a>
+<h1>Helper functions</h1>
+
+<p>The following are general helper functions:</p>
+
+<a name="Darken"></a>
+<h2>Darken</h2>
+
+<p>The specified background is darkened:</p>
+
+<pre><code tabindex="0">  Control(FontLB).BackColor = Darken(__UI_DefaultColor(__UI_Type_Form, 2), 90)
+  Control(FontListLB).BackColor = Darken(__UI_DefaultColor(__UI_Type_Form, 2), 90)
+</code></pre>
+
+
+<a name="MessageBox"></a>
+<h2>MessageBox - (Inform)</h2>
+
+<p>The INFORM MESSAGEBOX has been superseded by the new <b>QB64pe _MESSAGEBOX</b> function (see below). This has been introduced as a core element since QB64-PE <b>v3.4.0</b> and later versions. Older INFORM code that utilizes the old message box will still function as it is automatically detected and translated to the new message box format.</p>
+
+<a name="_MessageBoxF"></a>
+<h2>_MessageBox  - Function (QB64pe core)</h2>
+
+<p>The <b>_MESSAGEBOX</b> function displays a message dialog box, presenting a message, and returns the button ID clicked by the user. Syntax:</p>
+
+<pre ><code tabindex="0">result& = _MESSAGEBOX([title$][, message$][, dialogType$][, iconType$][, defaultButton&])</code></pre>
+
+<ul>
+
+<li><b>title$</b> is the dialog box title<br><br></li>
+<li><b>message$</b> is the dialog box message<br><br></li>
+
+<li><b>dialogType$</b>   Shows different buttons. Buttons can be: <pre ><code tabindex="0"> "ok", "okcancel", "yesno", or "yesnocancel"
+</code></pre></li>
+
+<li><b>iconType$</b>  Icon type that is displayed inside the dialog box. Icons can be: <pre ><code tabindex="0"> "info", "warning", "error", or "question"</code></pre>
+</li>
+
+<li><b>defaultButton&</b>  Default button selected can be:
+ <pre ><code tabindex="0">  0 for "cancel"/"no",
+  1 for "ok"/"yes",
+  2 for "no" in "yesnocancel"
+</code></pre>
+</li>
+
+<li><b>result&</b>  The possible return values are:
+ <pre ><code tabindex="0"> 0 for "cancel"/"no",
+ 1 for "ok"/"yes"
+ 2 for "no" in "yesnocancel". 
+</code></pre>
+</li>
+</ul>
+
+<p>Notes:</p>
+<ul>
+    <li>"ok", "okcancel", "yesno", "yesnocancel", "info", "warning", "error", or "question" can be in any case</li>
+    <li>All parameters accept nothing or an empty string (""). In both cases, system defaults are used.</li>
+    <li>The dialog box automatically becomes a modal window if the application window is visible</li>
+</ul>
+
+<p>Example:</p>
+
+<pre ><code tabindex="0">Answer = _MessageBox("Test", "Do you love QB64?", "YesNo", "Question", 1)
+If Answer = 1 Then
+    Print "We do too!"
+Else
+    Print "I'll give you some more time to fall in love."
+End If
+</code></pre>
+
+<p>See <a href="https://qb64phoenix.com/qb64wiki/index.php/MESSAGEBOX_(function)" target="_blank">Wki for full details</a>.</p>
+
+<a name="_MessageBox"></a>
+<h2>_MessageBox  - sub (QB64pe core)</h2>
+
+<p>The _MESSAGEBOX statement displays a message dialog box, presenting a message to the user.  Syntax:</p>
+
+<pre ><code tabindex="0">_MESSAGEBOX [title$][, message$][, iconType$]</code></pre>
+
+<p>Parameters:</p>
+  <ul>
+    <li><b>title$</b>: The title of the dialog box.</li>
+    <li><b>message$</b>: The message displayed inside the dialog box.</li>
+    <li><b>iconType$</b>: The type of icon displayed inside the dialog box, which can be "info", "warning", or "error".</li>
+   </ul>
+
+<p>Description:</p>
+  <ul>
+    <li>All parameters are optional.
+    <li>If no parameters are used, a blank dialog box with an OK button will be shown.</li>
+    <li>When specifying an icon type, "info", "warning", or "error" should be in lower case.</li>
+    <li>The dialog box automatically becomes a modal window if the application window is visible.</li>
+  </ul>
+
+
+<p>For further details, please refer to the <a href="https://qb64phoenix.com/qb64wiki/index.php/MESSAGEBOX" target="_blank">Wki</a> documentation.</p>
+
+   <!-- ################ End Content ################ -->
+  <script language="javascript" src="common/footer.js"></script> <!-- Footer -->
+   </div> <!-- End content -->
+
+</body>
+</html>

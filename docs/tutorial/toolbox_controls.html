@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Toolbox Controls</title>
+  <meta name="Description" content="This tutorial will focus InForm for the Phoenix Edition of QB64." />
+  <meta name="Keywords" content="InForm, QB64, QB64PE, Phoenix, Installation, MPGCAN" />
+
+  <link href="common/css/main.css" rel="stylesheet" type="text/css">
+  <link href="common/css/menu.css" rel="stylesheet" type="text/css">
+  <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+
+  <script src="common/navigation-js.js"></script> 
+</head>
+<body>
+
+  
+  <script language="javascript" src="common/side-menu.js"></script> <!-- Side menu -->
+ 
+  <div id="content"> <!-- Start content -->
+  <!-- ################ Start Content ################ -->
+   <script language="javascript" src="common/header.js"></script>      <!-- Banner -->
+
+  <div  class="flex-page-title">
+    <div>
+                <img src="common/images/inf_logo.png"  alt="logo" />
+    </div>
+    <div>
+       <h1>Toolbox Controls introduction</h1>
+     </div>
+  </div>
+
+<p>The toolbox in the InForm Designer window contains the most commonly used Windows controls (components). Clicking with the left mouse button inserts a selected control into the preview window.</p>
+
+
+ <div id="page_links_menu" >
+  <ul>
+   <li><a href="#Toolbox controls" >Toolbox controls</a></li>
+   <li><a href="#To manipulate any control" >To manipulate any control</a></li>
+   </ul>
+ </div>
+
+<a name="Toolbox controls"></a>
+<h2>Toolbox controls</h2>
+
+<p>Running <b>UiEditor.exe</b> opens the InForm Designer window. You can create a new form by adding controls from the toolbox to the preview window. Additionally, you can edit their properties, align controls, and adjust their z-ordering.</p>
+
+<p>Below is the component toolbox with corresponding links to each component. An example of each component is displayed in the preview window.</p>
+
+<div class="flex-container-text-img" >
+<div>
+<p><b>Toolbox:</b></p>
+<img src="images/toolbox.png" alt="ToolBox">
+
+<p>Toolbox from left to right:</p>
+<ol>
+<li><a href="toolbox_button.html">Button</a> </li>
+<li><a href="toolbox_label.html">Label</a></li>
+<li><a href="toolbox_textbox.html">Textbox</a></li>
+<li><a href="toolbox_numeric_textbox.html">Numeric Textbox</a></li>
+<li><a href="toolbox_checkbox.html">Checkbox</a></li>
+<li><a href="toolbox_radio_button.html">Radio button</a></li>
+<li><a href="toolbox_listbox.html">ListBox</a></li>
+<li><a href="toolbox_dropdown_list.html">Dropdown list</a></li>
+<li><a href="toolbox_track_bar.html">Track bar/Slider</a></li>
+<li><a href="toolbox_progress_bar.html">Progress bar</a></li>
+<li><a href="toolbox_picture_box.html">Picture box</a></li>
+<li><a href="toolbox_frame.html">Frame</a></li>
+<li><a href="toolbox_toggle_switch.html">Toggle switch</a></li>
+</ol>
+</div>
+
+<div style="margin-left: 20px;">
+<p><b>Preview window examples:</b></p>
+<img src="images/toolbox/toolbox_examples.png" alt="ToolBox examples">
+</div>
+</div>
+
+<p><b>Note1: </b>A test example for each toolbox component is provided on a separate page. Please use the links above to select a component description and example page.</p>
+<p><b>Note2: </b> Saving a project in InForm automatically generates a template <b>.bas</b> file. You can add code to this template to create the functionality you require. In the test examples provided by the links above, code added to the templates is indicated by <b>&lt;---</b>.</p>
+
+
+<a name="To manipulate any control"></a>
+<h2>To manipulate any control</h2>
+
+<p>Controls in InForm-PE are manipulated using the <b>Control()</b> array. <br>
+For example, to create a progress bar to count the number of downloaded files:
+</p>
+
+<pre><code tabindex="0">    Control(ProgressBar1).Min = 0
+    Control(ProgressBar1).Max = 12 'Number of files you will be loading 12</code>
+</pre>
+
+<p>To update the progress bar, you would change the <b>.Value</b> property:</p>
+
+<pre><code tabindex="0">Control(ProgressBar1).Value = Control(ProgressBar1).Value + 1</code>
+</pre>
+
+<p>You would use the above code to update the progress bar every time a file is downloaded.</p>
+
+ <p>To display these changes, incorporate the code into the subroutine <b>SUB __UI_BeforeUpdateDisplay</b>. For operations like this, you can treat this subroutine as your main program loop.</p>
+
+ <p><b>Note: </b>The <b>SUB __UI_BeforeUpdateDisplay</b> event occurs at approximately 30 frames per second.</p>
+ 
+<p>For additionl information refer to  the following section <a href="properties.html#Properties overview" target="_blank">Properties overview</a></p>
+
+   <!-- ################ End Content ################ -->
+  <script language="javascript" src="common/footer.js"></script> <!-- Footer -->
+   </div> <!-- End content -->
+
+</body>
+</html>

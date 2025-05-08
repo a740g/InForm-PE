@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>InForm-PE IDE tour</title>
+  <meta name="Description" content="This tutorial will focus InForm for the Phoenix Edition of QB64." />
+  <meta name="Keywords" content="InForm, QB64, QB64PE, Phoenix, Installation, MPGCAN" />
+
+  <link href="common/css/main.css" rel="stylesheet" type="text/css">
+  <link href="common/css/menu.css" rel="stylesheet" type="text/css">
+  <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+
+  <script src="common/navigation-js.js"></script> 
+</head>
+<body>
+
+  
+  <script language="javascript" src="common/side-menu.js"></script> <!-- Side menu -->
+ 
+  <div id="content"> <!-- Start content -->
+  <!-- ################ Start Content ################ -->
+   <script language="javascript" src="common/header.js"></script>      <!-- Banner -->
+
+  <div  class="flex-page-title">
+    <div>
+                <img src="common/images/inf_logo.png"  alt="logo" />
+    </div>
+    <div>
+       <h1>InForm-PE IDE tour</h1>
+     </div>
+  </div>
+
+ <p>The InForm-PE IDE includes an integrated designer and a real-time component layout application. To start the IDE tools, navigate into your QB64-PE folder (qb64pe) and double-click the application file <b>UiEditor.exe</b></p>. 
+
+ <div id="page_links_menu" >
+  <ul>
+  <li><a href="#InForm Designer overview" >InForm Designer overview</a></li>
+   <li><a href="#File Menu" >File menu</a></li>
+   <li><a href="#Edit Menu" >Edit menu</a></li>
+   <li><a href="#View Menu" >View menu</a></li>
+   <li><a href="#Insert Menu" >Insert menu</a></li>
+   <li><a href="#Align Menu" >Align menu</a></li>
+   <li><a href="#Options Menu" >Options menu</a></li>
+   <li><a href="#Help Menu" >Help Menu</a></li>
+   </ul>
+ </div>
+
+<a name="InForm Designer overview"></a>
+<h2>InForm Designer overview</h2>
+
+<div class="flex-container-text-img" >
+
+<div>
+<p><b>Current Project: </b> When you load a project or save a newly created form for the first time, the name you give the project is displayed here.</p>
+
+<p><b>Menu: </b>The menu functions like any other Windows program menu. It can be activated through the use of a mouse or by pressing the ALT key and then using the keyboard arrow keys to navigate the menu options.</p>
+
+<p><b>Help: </b>Selecting "Help" brings up a basic help menu that includes the About box displaying the version number. </p>
+
+
+<p><b>Toolbox: </b> The Toolbox allows you to easily add controls. Left-mouse-click on the required control. A selected control is inserted and displayed in the component-preview window. 
+For details, checkout <a href="toolbox_controls.html#Toolbox controls" target="_blank">Toolbox controls</a>.</p>
+
+<p><b>Control Properties:</b> A list of properties that are dynamically updated according to the currently selected control. Edit these properties as required.</p>
+
+<p><b>Control toggles:</b> The three options allow the application to start up centered, resize, and include a gif extension.</p>
+
+<p><b>Color select-mixer:</b> The color select and mixer, which you use to send color data to the preview application.</p>
+
+<p><b>Note:</b> The preview application is loaded side-by-side with the editor and allows you to see in real-time how your form will look after being compiled.</p>
+</div>
+
+<div>
+<img src="images/informide/inf_ide_a.png" alt="InForm IDE overview">
+</div>
+</div>
+
+<a name="File Menu"></a>
+<h2>File Menu</h2>
+
+<div class="flex-container-text-img" >
+<div>
+<p><b>New:</b> This action will erase the current InForm project and begin a new one. If the current project has not been saved, you will be prompted to save it.</p>
+
+<p><b>Open:</b> This option opens the folder/file navigation and displays a list of previously saved projects. Select a project file. (Projects are saved with the file extension .frm.) If the current project has not been saved, you will be prompted to save it.</p>
+
+
+<p><b>Open recent project:</b> This option opens a list allowing you to select a previously saved project (projects are saved with the file extension .frm). If the current project has not been saved, you will be prompted to save it.</p>
+
+<p><b>Save project:</b> This menu option saves your project.<br>
+Two files are output: <b>*.frm</b> and <b>*.bas</b>. The <b>.frm</b> file contains your form layout information in QB64 code. The <b>.bas</b> file is the actual program to which you will add your code. You only need to enter the project name you want to save, and the file extension is automatically added.</p>
+
+<p><b>Save project as:</b> This allows you to save the current project with a different name; both <b>*.frm</b> and <b>*.bas</b> files are created.</p>
+
+<ul>
+<li><b>Note:</b> To ensure that only the form with the file extension <b>*.frm</b> is saved, please make sure you have enabled the <b>Save form only</b> option in the <a href="#Options Menu" >Options menu</a></li>
+. </ul>
+
+<p><b>Exit:</b> This will close the InForm IDE. If the current project has not been saved, you will be prompted to save it before the InForm IDE closes.</p>
+
+</div>
+
+<div>
+<img src="images/informide/inf_ide_b.png" alt="Inf IDE file menu">
+</div>
+</div>
+
+
+
+
+
+<a name="Edit Menu"></a>
+<h2>Edit Menu</h2>
+
+<div class="flex-container-text-img" >
+<div>
+<p><b>Note:</b>  The Edit menu operates on a selected component or components in the Component Preview Form Window. Additionally, it operates on changes made to the InForm designer window.</p>
+
+<p><b>Undo/Redo:</b> This feature allows you to undo or redo changes you made using the InForm Designer. The InForm Designer IDE remembers all changes made, so repeatedly pressing CTRL-Z will continue to undo changes all the way back to the beginning, if desired.</p>
+
+<p><b>Cut/Copy/Paste:</b> These functions work exactly like those in any other Windows program you are familiar with. They operate on a selected component or components in the Component Preview Form Window.</p>
+
+<p><b>Delete:</b> This option deletes a selected component or components in the Component Preview Form Window.</p>
+
+<p><b>Select All:</b> This command selects all components in the Component Preview Form Window.</p>
+
+<p><b>Convert to **:</b>   Allows a selected component to be toggled between similar functionalities. For example, between the <b>ListBox</b> and the <b>Dropdown list</b> or between the <b>Textbox</b> and the <b>Numeric Textbox</b>.</p>
+
+<p><b>Z-ordering</b> Opens a window allowing you to set the component selection order when the tab key is pressed.</p>
+
+</div>
+
+<div>
+<img src="images/informide/inf_ide_c.png" alt="InForm IDE edit menu">
+</div>
+</div>
+
+<a name="View Menu"></a>
+<h2>View Menu</h2>
+
+<div class="flex-container-text-img" >
+<div>
+<p><b>Keep preview window attached:</b> When checked, the preview window moves with the InForm Designer window. Uncheck this option for independent windows.</p>
+
+<p><b>Show position and size on the preview:</b> When checked, selecting a component in the preview window displays its position and size. Uncheck this option to hide this information.</p>
+
+<p><b>Show invisible controls on the preview:</b> Checking this menu option displays components with their hidden attribute set to hide. Uncheck it to hide these components in the preview window.</p>
+
+<p><b>Reload preview window:</b> This option refreshes the preview window.</p>
+
+<p><b>Loaded fonts:</b>  Displays a pop-up list of all fonts used in the current project.</p>
+</div>
+
+<div>
+<img src="images/informide/inf_ide_d.png" alt="IDE view menu">
+</div>
+</div>
+
+<a name="Insert Menu"></a>
+<h2> Insert Menu</h2>
+
+
+<div class="flex-container-text-img" >
+<div>
+<p><b>Menu Bar:</b> Inserts a menu bar into the preview window. You can add items to the bar and include drop-down items.</p>
+
+<p><b>Context menu:</b> This menu item inserts a context menu located at the bottom-left of the preview window. You can add drop-down items and additional items to these drop-downs.</p>
+
+<p> Note1:  To assign a context menu to your application, navigate to "Control Properties." From the "Context menu" dropdown list, select your context menu name.</p>   
+<p> Note2: To display a context menu, run your application, right-click anywhere in the application.</p> 
+
+<p><b>Menu item:</b> To display a context menu, run your application, and right-click anywhere in the application.</p>
+  
+<p>For detailed menu information, refer to the following page <a href="menus_bar_context.html">MenuBar and ContextMenu</a>.</p>. 
+</div>
+
+<div>
+<img src="images/informide/inf_ide_e.png" alt="IDE Insert Menu">
+</div>
+</div> 
+
+<a name="Align Menu"></a>
+<h2>Align Menu</h2>
+
+<div class="flex-container-text-img" >
+<div>
+<p><b>Snap to edges:</b>  When moving a single component, you will notice a reference line, enabling easy positioning of the component to snap to another component's edge. As you move toward another component, the minimum snapping distance will be 5 pixels.</p>
+
+<p>The operation of other menu items is self-explanatory, except for the last two items, which become highlighted when two or more components are selected. The last two items are highlighted when three or more components are selected.</p>
+
+<p><b>Note:</b> Some alignment methods are available using the preview window's context menu.</p>
+</div>
+
+<div>
+<img src="images/informide/inf_ide_f.png" alt="IDE Align Menu">
+</div>
+</div>
+
+<a name="Options Menu"></a>
+<h2>Options Menu</h2>
+
+<div class="flex-container-text-img" >
+<div>
+<p><b>Auto-name controls:</b> <br>When checked, the default setting allows InForm Designer to automatically name controls. When unchecked, you need to supply unique names for the controls.</p>
+
+
+<p><b>Save form only:</b> <br>
+When  the checkbox is <b>unchecked</b>, the default setting forces  both file options<b>Save project </b> and <b>Save project as</b> to save project files with extensions<b>.bas and .frm </b></p>
+
+<p>  When  the checkbox is <b>checked</b>,  it forces  both file options <b>Save project </b> and <b>Save project as</b> to save only project file with extension <b>.frm </b> This is convenient when you want to make minor changes to only the form.</p>
+
+
+</div>
+
+<div>
+<img src="images/informide/inf_ide_g.png" alt="IDE Options Menu">
+</div>
+</div>
+
+<a name="Help Menu"></a>
+<h2>Help Menu</h2>
+
+<div class="flex-container-text-img" >
+<div>
+<p>The "Help" menu displays general information as follows:</p>
+
+<p><b>What's all this:</b> Opens a pop-up displaying a general description of the InForm Designer's functions.</p>
+
+<img src="images/informide/inf_ide_h1.png" alt="IDE help">
+
+<p><b>About:</b> The "About" option opens a pop-up displaying general information, such as the designer's name, development version number, and contact details.</p>
+
+<img src="images/informide/inf_ide_h2.png" alt="IDE help">
+</div>
+
+<div>
+<img src="images/informide/inf_ide_h.png" alt="IDE help">
+</div>
+</div>
+
+   <!-- ################ End Content ################ -->
+  <script language="javascript" src="common/footer.js"></script> <!-- Footer -->
+   </div> <!-- End content -->
+
+</body>
+</html>

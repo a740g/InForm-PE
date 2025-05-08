@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>General notes</title>
+  <meta name="Description" content="This tutorial will focus InForm for the Phoenix Edition of QB64." />
+  <meta name="Keywords" content="InForm, QB64, QB64PE, Phoenix, Installation, MPGCAN" />
+
+  <link href="common/css/main.css" rel="stylesheet" type="text/css">
+  <link href="common/css/menu.css" rel="stylesheet" type="text/css">
+  <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+
+  <script src="common/navigation-js.js"></script> 
+</head>
+<body>
+
+  
+  <script language="javascript" src="common/side-menu.js"></script> <!-- Side menu -->
+ 
+  <div id="content"> <!-- Start content -->
+  <!-- ################ Start Content ################ -->
+   <script language="javascript" src="common/header.js"></script>      <!-- Banner -->
+
+  <div  class="flex-page-title">
+    <div>
+                <img src="common/images/inf_logo.png"  alt="logo" />
+    </div>
+    <div>
+       <h1>General notes</h1>
+     </div>
+  </div>
+
+<p>Learn how to store information for later retrieval.</p>
+
+
+ <div id="page_links_menu" >
+  <ul>
+   <li><a href="#Font - form designer" >Font - form designer</a></li>
+   <li><a href="#Inform editing" >Inform editing .frm </a></li>
+   <li><a href="#Multi forms" >Multi forms</a></li>
+   <li><a href="#Splash Screen" >Splash Screen</a></li>
+   <li><a href="#Screen resize" >Screen resize</a></li>
+   <li><a href="#Button focus is active" >Button focus is active</a></li>
+   <li><a href="#Masked text" >Masked text</a></li>
+   <li><a href="#" ></a></li>
+   <li><a href="#" ></a></li>
+   </ul>
+ </div>
+
+
+<a name="Font - form designer"></a>
+<h2>Font - form designer .frm </h2>
+
+<p>In the form designer, if you click the label that says <b>Font:</b> to the left of the font list, the list will turn into a text field where you can manually enter a font file name.<br>
+It works, but some care must be taken:</p>
+
+<ul>
+   <li>The font file must be in the same folder as UiEditor.exe (or must be installed on the Windows system), so Inform will find it at edit time.   </li>
+   <li>The font file must be in the same folder as the.EXE file from your project. If not, the default VGA font will be used instead.   </li>
+</ul>
+
+<a name="Inform editing"></a>
+<h2>Inform editing</h2>
+<p>If you wish to just edit the <b>.frm</b> file without affecting the .bas file, you can go to the Save dialog (File->Save project as) and check "Don't save .bas project (save .frm only)".<br>
+If you do that, the .bas file will remain unchanged, but in this case, you should manually add the DIM lines for whatever new controls you may have added.</p>
+
+<a name="Multi forms"></a>
+<h2>Multi forms</h2>
+
+<p>Multiple forms being controlled by the same application are not possible without some sort of "hack," for example.<br> InForm main editor interface is one program, and the form you edit is another program. <br>Both run simultaneously and exchange data through a local TCP/IP connection to each other.</p>
+
+<a name="Splash Screen"></a>
+<h2>Splash Screen</h2>
+
+<p>Because QB64 is limited to a single window, the way to implment a splash screen is to have a PictureBox control covering all controls at the start until your load routines are finished. Then you set its .Hidden property to true and carry on.</p>
+
+
+<a name="Screen resize"></a>
+<h2>Screen resize</h2>
+
+<p>Use the following to resize the screen:</p>
+<pre><code tabindex="0">Control(__UI_FormID).Width = (whatever width suits you)
+Control(__UI_FormID).Height = (whatever height suits you)</code></pre>
+
+<p>Alternatively, you can set a form's CanResize property to true so the user can freely resize the form. That will trigger the __UI_FormResize event, from which you can adapt your interface according to the resulting Control(__UI_FormID).Width and Control(__UI_FormID).Height.</p>
+
+<p>Try creating a dummy empty form in the editor and just set the CanResize property to True as indicated above.<br>
+You will see InForm will automatically add $RESIZE to the .frm file and that the _RESIZE event will be automatically caught and generate a call to the __UI_FormResize event, which will have filled the width and height properties of the Control(__UI_FormID) with the values of _RESIZEWIDTH and _RESIZEHEIGHT that you will use to reposition your controls accordingly.</p>
+
+
+<a name="Button focus is active"></a>
+<h2>Button focus is active</h2>
+
+<p>A button that has received focus reacts to a carriage return by executing the code that is placed under that button's __UI_Click 
+It is a normal response. You can also activate a focused button with the space bar, as it's standard behavior across Windows versions.</p>
+
+<p>If you create a button with a caption hotkey (by adding an ampersand character before the &Desired letter), you can also activate it with Alt+Letter at runtime.</p>
+
+<p>Also, set a button as default (by right-clicking it->"Set as default" at design time) and it'll also respond to Enter even if the button doesn't have focus (say your user is editing a text field and hits enter).</p>
+
+<a name="Masked text"></a>
+<h2>Masked text</h2>
+
+<p>If you have Mask(TextBox1) = "0.0E00" in your program, InForm will only allow the user to enter numbers in that text field, and they will replace those zeros. The dot and the E will remain in place.</p>
+
+<p>You can see that in action in the editor. As soon as you enter "0.0E00" as a mask to a TextBox control, the Text property will be bound to the new format. It'll show "_._E__" providing a feel for how it works.</p>
+
+
+
+
+   <!-- ################ End Content ################ -->
+  <script language="javascript" src="common/footer.js"></script> <!-- Footer -->
+   </div> <!-- End content -->
+
+</body>
+</html>

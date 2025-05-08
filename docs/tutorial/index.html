@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Home QB64 InForm-PE</title>
+  <meta name="Description" content="This tutorial will focus InForm for the Phoenix Edition of QB64." />
+  <meta name="Keywords" content="InForm, QB64, QB64PE, Phoenix, Installation, MPGCAN" />
+
+  <link href="common/css/main.css" rel="stylesheet" type="text/css">
+  <link href="common/css/menu.css" rel="stylesheet" type="text/css">
+  <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+
+  <script src="common/navigation-js.js"></script> 
+</head>
+<body>
+
+  
+  <script language="javascript" src="common/side-menu.js"></script> <!-- Side menu -->
+ 
+  <div id="content"> <!-- Start content -->
+  <!-- ################ Start Content ################ -->
+   <script language="javascript" src="common/header.js"></script>      <!-- Banner -->
+
+  <div  class="flex-page-title">
+    <div>
+        <img src="common/images/inf_logo.png"  alt="logo" />
+    </div>
+    <div>
+       <h1>InForm-PE</h1>
+     </div>
+  </div>
+
+
+<p>Welcome to InForm-PE. This is a fork of InForm that is designed to work with QB64-PE. It is currently maintained by Samuel Gomes (a740g) and can be found on GitHub. The 'PE' references the association with QB64pe (QB64 Phynix edition). It allows you to create graphical user interfaces (GUIs) for your applications</p>
+
+ <div id="page_links_menu" >
+  <ul>
+   <li><a href="#Event-driven QB64 programs" >Event-driven QB64 programs</a></li>
+   <li><a href="#Interface" >Interface</a></li>
+   <li><a href="#Workflow overview" >Workflow overview</a></li>
+   <li><a href="#InForm Designer preview" >InForm Designer preview</a></li>
+   <li><a href="#Component preview" >Component preview</a></li>
+   <li><a href="#Where to next" >Where to next</a></li>
+   </ul>
+ </div>
+
+<a name="Event-driven QB64 programs"></a>
+<h2>Event-driven QB64 programs</h2>
+
+<p>InForm-PE is a Rapid Application Development (RAD) tool for QB64pe. It comprises a library of graphical routines and a WYSIWYG (What You See Is What You Get) editor that enables you to design forms and export the resulting code to generate an event-driven QB64pe program.</p>
+
+<p>In event-driven applications, the program's flow is determined by events such as user actions (mouse clicks, key presses), sensor outputs, or messages from other programs or threads</p>
+
+<a name="Interface"></a>
+<h2>Interface</h2>
+
+<div class="flex-container-text-img"  >
+<div >
+
+<p>The InForm Designer interface consists of a toolbox containing all the controls you can add to your form, a list of properties that are dynamically updated according to the currently selected control, and a color mixer that you use to apply color data to the preview.</p>
+
+<p>The preview is loaded side-by-side with the editor and allows you to see in real-time how your form will look after compilation.</p>
+
+<p>You can detach the preview window by selecting <b>View</b> from the top menu bar and clicking on <b>Keep Preview window attached</b> to remove the checkmark.</p>
+
+</div>
+
+<div class="flex-text-img-item1"  >
+<img src="images/inform/inf_maina.png" alt="InForm main" />
+</div>
+
+<div  class="flex-text-img-item2"  ><b>Preview window:</b><br>
+<img src="images/inform/inf_mainb.png" alt="InForm preview" />
+</div>
+</div>
+
+<a name="Workflow overview"></a>
+<h2>Workflow overview</h2>
+<p>After you have designed your form to your satisfaction, click <b>File</b> > <b>Save.</b> This action exports a form and a source file with extensions .frm and .bas, respectively:</p>
+
+<ul>
+<li><strong>.frm</strong><br>
+The "Form" file is output in QB64 code. If you need to adjust finer details, this file can be loaded back into InForm's designer or manually edited in QB64 or any text editor later.
+</li>
+<li><strong>.bas</strong><br>
+This is the actual file where you add your code.</li>
+</ul>
+
+<p>The source file is pre-configured, enabling you to add code that responds to events such as:</p>
+
+<ul>
+<li><em>Click</em></li>
+<li><em>MouseEnter</em>/<em>MouseLeave</em> (hover)</li>
+<li><em>FocusIn</em>/<em>FocusOut</em></li>
+<li><em>MouseDown</em>/<em>MouseUp</em> (events preceding a click)</li>
+<li><em>KeyPress</em></li>
+<li><em>TextChanged</em> (for text box controls)</li>
+<li><em>ValueChanged</em> (for track bars, lists, and dropdown lists)</li>
+</ul>
+
+<p>There are also events that occur at specific moments; again, you can add code to respond to these events:</p>
+
+<ul>
+<li><em>BeforeInit</em> is triggered just before the form is shown.</li>
+<li><em>OnLoad</em> is triggered right after the form is first shown.</li>
+<li><em>BeforeUpdateDisplay</em> is triggered every time the form is about to be <em>repainted</em>.</li>
+<li><em>BeforeUnload</em> is triggered when the user tries to close the program, either by clicking the window’s X button,<br> right-clicking in the task bar -&gt; Close, or with Alt+F4 (Windows only).</li>
+<li><em>FormResized</em> is triggered when a form with the CanResize property is resized at runtime.</li>
+</ul>
+
+<a name="InForm Designer preview"></a>
+<h2>InForm Designer preview</h2>
+
+<div class="flex-container-text-img"  >
+
+<div>
+<p>You can create a new form using the InForm Designer. Within the designer, you can add new controls, edit their properties, align controls, and adjust their z-ordering</p>
+
+
+<img src="images/toolbox.png" alt="ToolBox" />
+
+<p>Toolbox from left to right:</p>
+<ul>
+<li>Button</li>
+<li>Label</li>
+<li>Textbox</li>
+<li>Numeric Textbox</li>
+<li>Checkbox</li>
+<li>Radio button</li>
+<li>List</li>
+<li>Dropdown list</li>
+<li>Track bar/Slider</li>
+<li>Progress bar</li>
+<li>Picture box</li>
+<li>Frame</li>
+<li>Toggle switch</li>
+</ul>
+<p>You can also add menus to your program, both to the menu bar and as contextual menus, using the InForm Designer. Simply navigate to <b>Insert</b> and select <b>Add menu bar/context menu.</b></p>
+</div>
+
+
+<div>
+<img src="images/inform/inf_main_2.png" alt="InForm InForm Designer" />
+</div>
+
+</div>
+
+<a name="Component preview"></a>
+<h2>Component preview</h2>
+
+<div class="flex-container-text-img" >
+
+<div>
+<p>Your form's design is updated in real-time. The preview component form, shown on the right, is automatically launched with the InForm Designer and provides you with several tools to format your controls.</p> 
+
+
+<p>Features:​</p>
+<ul>
+<li>Drag and resize multiple controls simultaneously.</li>
+<li>Right-click contextual menu offers:
+<ul>
+<li>Add menus</li>
+<li>Aligning selected controls​</li>
+<li>Center individual controls or groups of selected controls</li>
+<li>Clipboard operations</li>
+</ul>
+</li>
+<li>Keyboard-enabled:  Common keyboard shortcuts will respond as expected.</li>
+</ul>
+</div>
+
+<div>
+<img src="images/component_pre.png" alt="Component preview" />
+</div>
+
+</div>
+
+<a name="Where to next"></a>
+<h2>Where to next</h2>
+
+<p>First <a href="install_qb64pe.html">install QB64pe </a>(required to compile InForm-PE), then <a href="install_inform.htm">install InForm-PE</a>. Finally, visit the <a href="toolbox_controls.html">Toolbox Controls</a> page, which provides detailed information about component controls.</p>
+
+
+   <!-- ################ End Content ################ --> 
+  <script language="javascript" src="common/footer.js"></script> <!-- Footer -->
+   </div> <!-- End content -->
+
+</body>
+</html>

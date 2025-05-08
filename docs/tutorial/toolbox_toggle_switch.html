@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Toggle-Switch</title>
+  <meta name="Description" content="This tutorial will focus InForm for the Phoenix Edition of QB64." />
+  <meta name="Keywords" content="InForm, QB64, QB64PE, Phoenix, Installation, MPGCAN" />
+
+  <link href="common/css/main.css" rel="stylesheet" type="text/css">
+  <link href="common/css/menu.css" rel="stylesheet" type="text/css">
+  <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+
+  <script src="common/navigation-js.js"></script> 
+</head>
+<body>
+
+  
+  <script language="javascript" src="common/side-menu.js"></script> <!-- Side menu -->
+ 
+  <div id="content"> <!-- Start content -->
+  <!-- ################ Start Content ################ -->
+   <script language="javascript" src="common/header.js"></script>      <!-- Banner -->
+
+  <div  class="flex-page-title">
+    <div>
+                <img src="common/images/inf_logo.png"  alt="logo" />
+    </div>
+    <div>
+       <h1>Toolbox Toggle-Switch</h1>
+     </div>
+  </div>
+<p>In an InForm application, a Toggle switch control is ideal for settings that have an immediate effect or result. This page provides more detailed information about Toggle switch controls.</p>
+
+
+ <div id="page_links_menu" >
+  <ul>
+   <li><a href="#Toggle-Switch control" >Toggle-Switch control</a></li>
+   <li><a href="#Toggle-Switch examples" >Toggle-Switch examples</a></li>
+   <li><a href="#Form file ToggleSwithExample.frm" >&nbsp;&nbsp;Form file ToggleSwithExample.frm</a></li>
+   <li><a href="#Basic file ToggleSwithExample.bas" >&nbsp;&nbsp;Basic file ToggleSwithExample.bas</a></li>
+   <li><a href="#Events" >Events</a></li>
+   <li><a href="#Properties editable at runtime" >Properties editable at runtime</a></li>
+   </ul>
+ </div>
+
+<a name="Toggle-Switch control"></a>
+<h2>Toggle-Switch control</h2>
+
+<p>Create a new Toggle-Switch control by clicking the Toggle-Switch icon  <img src="images/toolbox/inf_tb13_toggle_switch.png" alt="ToolBox toggle switch"> in the Toolbox. The newly created control will be displayed in the preview window; allowing you to move it around to meet your design requirements. Edit the Toggle-Switch properties as necessary.</p>
+ 
+<div class="flex-container-text-img" >
+<div>
+<p><b>13) Toggle-Switch Properties:</b></p>
+<img src="images/toolbox/toolbox_toggle_switch1.png" alt="Toggle-Switch">
+</div>
+
+<div style="margin-left: 20px;">
+<p><b>Toggle-Switch examples:</b> Preview window.</p>
+<img src="images/toolbox/toolbox_toggle_switch2.png" alt="Toggle-Switch">
+</div>
+</div>
+
+<p><b>Note:</b> Toggle-Switch properties  will reflect the highlighted control selected in the preview window, enabling you to customize it as needed.</p>
+
+<p>A Toggle switch control is ideal for settings that have an immediate effect or result, for example, a light switch.</p>
+
+<b>Run time:</b>
+
+<p>Read a Toggle switch control's current state with the <b>.Value</b> property
+ (returns <a  href="global_constants_variables.html#Boolean" target="_blank">True</a> or
+ <a  href="global_constants_variables.html#Boolean" target="_blank">False</a>):</p>
+
+<pre><code tabindex="0">state%% = Control(myToggleControlID).Value
+</code></pre>
+
+
+<p>Set a Toggle switch control's state with the <b>.Value</b> property.
+ (values are <a  href="global_constants_variables.html#Boolean" target="_blank">True</a> or
+ <a  href="global_constants_variables.html#Boolean" target="_blank">False</a>):</p>
+
+<pre><code tabindex="0">Control(myToggleControlID).Value = True or False
+</code></pre>
+
+
+
+<a name="Toggle-Switch examples"></a>
+<h2>Toggle-Switch examples- refer to the above image</h2>
+
+<p><b>Specification:</b> Let the Toggle-Switch examples have the following design specification:</p>
+
+<ol>
+   <li> Add two Toggle-Switches. Set swith 2 to have a yellow back ground.</li>
+   <li> Add three buttons with the captions Set, Reset, and Set color.</li>
+   <li> The Set button sets both toggle switches to a true state.</li>
+   <li> The reset button sets both toggle switches to a false state.</li>
+   <li> The Set color button. Changes Both toggle switches selected state to have a red background with a blue foreground.</li>
+</ol>
+
+<p><b>Implimenation: </b>The following provide solutions for the above:</p>
+
+
+<ul>
+ <li> Button click: use the subroutine <b>__UI_Click</b>.</li>
+ <li> Set button: use <b>Control(myToggleControlID).Value = True</b> for both toggle switches</li>
+ <li> Reset button use <b>Control(myToggleControlID).Value = False</b> for both toggle switches</li>
+ <li> Color button: use the following to change</li>
+      <ul>
+        <li>  Control(ControlID).SelectedForeColor = _RGB32(Red%, Green%, Blue%)</li>
+         <li> Control(ControlID).SelectedBackColor = _RGB32(Red%, Green%, Blue%)</li>
+        <li>  Note: Force a redraw using <b>Control(myControlID).Redraw = True</b></li>
+      </ul>
+ <li> For additional details, check out the file <b>ToggleSwithExample.bas</b></li>
+ <li> At the layout stage, save the project using <b>File</b> -> <b>Save project as</b> and enter the name <b>ToggleSwithExample</b>.</li>
+</ul>
+
+
+<a name="Basic file ToggleSwithExample.bas"></a>
+<h3>Basic file ToggleSwithExample.bas</h3>
+
+<pre class="precode" >
+<code   tabindex="0" >
+': This program uses
+': InForm - GUI library for QB64 - v1.5
+': Fellippe Heitor, 2016-2024 - fellippe@qb64.org - @fellippeheitor
+': https://github.com/FellippeHeitor/InForm
+'-----------------------------------------------------------
+
+': Controls' IDs: ------------------------------------------------------------------
+Dim Shared Form1 As Long
+Dim Shared ToggleSwitch1 As Long
+Dim Shared ToggleSwitch2 As Long
+Dim Shared setBtn As Long
+Dim Shared resetBtn As Long
+Dim Shared colorBtn As Long
+
+': External modules: ---------------------------------------------------------------
+'$INCLUDE:'InForm\InForm.bi'
+'$INCLUDE:'InForm\xp.uitheme'
+'$INCLUDE:'ToggleSwithExample.frm'
+
+': Event procedures: ---------------------------------------------------------------
+Sub __UI_BeforeInit
+
+End Sub
+
+Sub __UI_OnLoad
+
+End Sub
+
+Sub __UI_BeforeUpdateDisplay
+    'This event occurs at approximately 60 frames per second.
+    'You can change the update frequency by calling SetFrameRate DesiredRate%
+
+End Sub
+
+Sub __UI_BeforeUnload
+    'If you set __UI_UnloadSignal = False here you can
+    'cancel the user's request to close.
+
+End Sub
+
+Sub __UI_Click (id As Long)
+    Select Case id
+        Case Form1
+
+        Case ToggleSwitch1
+
+        Case ToggleSwitch2
+
+        Case setBtn
+            Control(ToggleSwitch1).Value = TRUE '  &lt;---
+            Control(ToggleSwitch2).Value = TRUE '  &lt;---
+        Case resetBtn
+            Control(ToggleSwitch1).Value = FALSE ' &lt;---
+            Control(ToggleSwitch2).Value = FALSE ' &lt;---
+        Case colorBtn
+            Control(ToggleSwitch1).SelectedForeColor = _RGB32(0, 0, 255) ' &lt;---
+            Control(ToggleSwitch1).SelectedBackColor = _RGB32(255, 0, 0) ' &lt;---
+
+            Control(ToggleSwitch2).SelectedForeColor = _RGB32(0, 0, 255) ' &lt;---
+            Control(ToggleSwitch2).SelectedBackColor = _RGB32(255, 0, 0) ' &lt;---
+
+            'Force a redraw
+            Control(ToggleSwitch1).Redraw = TRUE ' &lt;---
+            Control(ToggleSwitch2).Redraw = TRUE ' &lt;---
+
+    End Select
+End Sub
+
+Sub __UI_MouseEnter (id As Long)
+    Select Case id
+        Case Form1
+
+        Case ToggleSwitch1
+
+        Case ToggleSwitch2
+
+        Case setBtn
+
+        Case resetBtn
+
+        Case colorBtn
+
+    End Select
+End Sub
+
+Sub __UI_MouseLeave (id As Long)
+    Select Case id
+        Case Form1
+
+        Case ToggleSwitch1
+
+        Case ToggleSwitch2
+
+        Case setBtn
+
+        Case resetBtn
+
+        Case colorBtn
+
+    End Select
+End Sub
+
+Sub __UI_FocusIn (id As Long)
+    Select Case id
+        Case ToggleSwitch1
+
+        Case ToggleSwitch2
+
+        Case setBtn
+
+        Case resetBtn
+
+        Case colorBtn
+
+    End Select
+End Sub
+
+Sub __UI_FocusOut (id As Long)
+    'This event occurs right before a control loses focus.
+    'To prevent a control from losing focus, set __UI_KeepFocus = True below.
+    Select Case id
+        Case ToggleSwitch1
+
+        Case ToggleSwitch2
+
+        Case setBtn
+
+        Case resetBtn
+
+        Case colorBtn
+
+    End Select
+End Sub
+
+Sub __UI_MouseDown (id As Long)
+    Select Case id
+        Case Form1
+
+        Case ToggleSwitch1
+
+        Case ToggleSwitch2
+
+        Case setBtn
+
+        Case resetBtn
+
+        Case colorBtn
+
+    End Select
+End Sub
+
+Sub __UI_MouseUp (id As Long)
+    Select Case id
+        Case Form1
+
+        Case ToggleSwitch1
+
+        Case ToggleSwitch2
+
+        Case setBtn
+
+        Case resetBtn
+
+        Case colorBtn
+
+    End Select
+End Sub
+
+Sub __UI_KeyPress (id As Long)
+    'When this event is fired, __UI_KeyHit will contain the code of the key hit.
+    'You can change it and even cancel it by making it = 0
+    Select Case id
+        Case ToggleSwitch1
+
+        Case ToggleSwitch2
+
+        Case setBtn
+
+        Case resetBtn
+
+        Case colorBtn
+
+    End Select
+End Sub
+
+Sub __UI_TextChanged (id As Long)
+    Select Case id
+    End Select
+End Sub
+
+Sub __UI_ValueChanged (id As Long)
+    Select Case id
+        Case ToggleSwitch1
+
+        Case ToggleSwitch2
+
+    End Select
+End Sub
+
+Sub __UI_FormResized
+
+End Sub
+
+'$INCLUDE:'InForm/InForm.ui'
+
+</code>
+</pre>
+
+<a name="Form file ToggleSwithExample.frm"></a>
+<h3>Form file ToggleSwithExample.frm</h3>
+
+<pre class="precode" >
+<code   tabindex="0" >
+': This form was generated by
+': InForm - GUI library for QB64 - v1.5
+': Fellippe Heitor, 2016-2024 - fellippe@qb64.org - @fellippeheitor
+': https://github.com/FellippeHeitor/InForm
+'-----------------------------------------------------------
+SUB __UI_LoadForm
+
+    DIM __UI_NewID AS LONG, __UI_RegisterResult AS LONG
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Form, "Form1", 300, 300, 0, 0, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Toggle-Switch example"
+    Control(__UI_NewID).Font = SetFont("segoeui.ttf", 12)
+    Control(__UI_NewID).HasBorder = False
+
+    __UI_NewID = __UI_NewControl(__UI_Type_ToggleSwitch, "ToggleSwitch1", 40, 17, 31, 51, 0)
+    __UI_RegisterResult = 0
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).Value = -1
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_ToggleSwitch, "ToggleSwitch2", 40, 17, 31, 97, 0)
+    __UI_RegisterResult = 0
+    Control(__UI_NewID).ForeColor = _RGB32(134, 0, 0)
+    Control(__UI_NewID).SelectedForeColor = _RGB32(163, 223, 228)
+    Control(__UI_NewID).SelectedBackColor = _RGB32(255, 255, 0)
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Button, "setBtn", 75, 23, 14, 155, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Set"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Button, "resetBtn", 80, 23, 108, 155, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Reset"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Button, "colorBtn", 80, 23, 207, 155, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Set color"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+END SUB
+
+SUB __UI_AssignIDs
+    Form1 = __UI_GetID("Form1")
+    ToggleSwitch1 = __UI_GetID("ToggleSwitch1")
+    ToggleSwitch2 = __UI_GetID("ToggleSwitch2")
+    setBtn = __UI_GetID("setBtn")
+    resetBtn = __UI_GetID("resetBtn")
+    colorBtn = __UI_GetID("colorBtn")
+END SUB
+
+</code>
+</pre>
+
+
+<a name="Events"></a>
+<h2>Events</h2>
+
+<ul>
+<li><a  href="events.html#ValueChanged"  target="_blank">ValueChanged</a></li>
+<li><a  href="events.html#Mouse Click"  target="_blank">Click</a></li>
+<li><a  href="events.html#MouseDown/MouseUp"  target="_blank">MouseDown/MouseUp</a></li>
+<li><a  href="events.html#MouseEnter/MouseLeave"  target="_blank">MouseEnter/MouseLeave</a></li>
+<li><a  href="events.html#FocusIn/FocusOut"  target="_blank">FocusIn/FocusOut</a></li>
+</ul>
+
+
+<a name="Properties editable at runtime"></a>
+<h2>Properties editable at runtime</h2>
+
+<ul>
+<li><a  href="properties.html#Caption"  target="_blank">Caption</a></li>
+<li><a  href="properties.html#Position-and-size"  target="_blank">Top/Left</a></li>
+<li><a  href="properties.html#Font"  target="_blank">Font</a></li>
+<li><a  href="properties.html#Tool tip"  target="_blank">Tool tip</a></li>
+<li><a  href="properties.html#Color-properties"  target="_blank">Color properties</a></li>
+<li><a  href="properties.html#Disabled"  target="_blank">Disabled</a></li>
+<li><a  href="properties.html#Hidden"  target="_blank">Hidden</a></li>
+
+</ul>
+
+
+<h3>See also:</h3>
+
+<ul>
+<li><a href="methods.html#MessageBox"  target="_blank">MessageBox Function</a></li>
+</ul>
+
+   <!-- ################ End Content ################ -->
+  <script language="javascript" src="common/footer.js"></script> <!-- Footer -->
+   </div> <!-- End content -->
+
+</body>
+</html>

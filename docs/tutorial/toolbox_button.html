@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Toolbox button</title>
+  <meta name="Description" content="This tutorial will focus InForm for the Phoenix Edition of QB64." />
+  <meta name="Keywords" content="InForm, QB64, QB64PE, Phoenix, Installation, MPGCAN" />
+
+  <link href="common/css/main.css" rel="stylesheet" type="text/css">
+  <link href="common/css/menu.css" rel="stylesheet" type="text/css">
+  <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+
+  <script src="common/navigation-js.js"></script> 
+</head>
+<body>
+
+  
+  <script language="javascript" src="common/side-menu.js"></script> <!-- Side menu -->
+ 
+  <div id="content"> <!-- Start content -->
+  <!-- ################ Start Content ################ -->
+   <script language="javascript" src="common/header.js"></script>      <!-- Banner -->
+
+  <div  class="flex-page-title">
+    <div>
+                <img src="common/images/inf_logo.png"  alt="logo" />
+    </div>
+    <div>
+       <h1>Toolbox button</h1>
+     </div>
+  </div>
+
+<p>When a button is clicked in an InForm application, it triggers an on-click event. This page covers buttons in more detail. </p>
+
+
+
+ <div id="page_links_menu" >
+  <ul>
+   <li><a href="#Button control" >Button control</a></li>
+
+   <li><a href="#Button example" >Button example</a></li>
+
+   <li><a href="#Basic file ButtonTest.bas" >&nbsp;&nbsp;Basic file ButtonTest.bas</a></li>
+   <li><a href="#Form file ButtonTest.frm" >&nbsp;&nbsp;Form file ButtonTest.frm</a></li>
+
+   <li><a href="#Events" >Events</a></li>
+   <li><a href="#Methods" >Methods</a></li>
+   <li><a href="#Properties editable at runtime" >Properties editable at runtime</a></li>
+   </ul>
+ </div>
+
+<a name="Button control"></a>
+<h2>Button control</h2>
+
+<p>Create a new Button control by clicking the Button icon <img src="images/toolbox/inf_tb1_button.png" alt="ToolBox button"> in the Toolbox. The  newly created control will be displayed in the preview window; allowing you to move it around to meet your design requirements. Edit the Button properties as necessary.</p>
+
+<div class="flex-container-text-img" >
+<div>
+<p><b>1) Button Properties:</b></p>
+<img src="images/toolbox/toolbox_button1.png" alt="ToolBox1">
+
+</div>
+
+<div style="margin-left: 15px;">
+<p><b>Button example:</b> Preview window.</p>
+<img src="images/toolbox/toolbox_button2.png" alt="ToolBox2">
+
+</div>
+</div>
+
+<p><b>Note:</b>  Button properties will reflect the highlighted control selected in the preview window, enabling you to customize it as needed.</p>
+
+<a name="Button example"></a>
+<h2>Button example</h2>
+
+<p><b>Specification:</b> Let the button example have the following design specification:</p>
+
+<ol>
+   <li>Red button click: Set the label text to "Red clicked"</li>
+   <li>Green button hover: Concatenate the left and right button caption text.</li>
+   <li> Blue button hover: Set label text to "Hover Blue Button"</li>
+</ol>
+
+<p><b>Implimenation:</b> The following provide solutions for the above:</p>
+
+<ul>
+  <li>Button click uses the subroutine  __UI_Click .</li>
+  <li>Button hover uses the subroutine __UI_MouseEnter.</li>
+  <li> User feedback is provided by setting a label caption: Caption(Label1) = "some text" </li>
+  <li> For additional details, check out ButtonTest.bas</li>
+  <li> At the layout stage, save the project using <b>file</b> -&gt; <b>Save project as</b> and enter the name <b>ButtonTest</b>.</li>
+ </ul>
+
+
+ <a name="Basic file ButtonTest.bas"></a>
+<h3>Basic file ButtonTest.bas</h3>
+
+<pre class="precode" >
+<code  tabindex="0" >
+': This program uses
+': InForm - GUI library for QB64 - v1.5
+': Fellippe Heitor, 2016-2024 - fellippe@qb64.org - @fellippeheitor
+': https://github.com/FellippeHeitor/InForm
+'-----------------------------------------------------------
+
+': Controls' IDs: ------------------------------------------------------------------
+Dim Shared Form1 As Long
+Dim Shared RedBtn As Long
+Dim Shared GreenBtn As Long
+Dim Shared BlueBtn As Long
+Dim Shared Label1 As Long
+
+': External modules: ---------------------------------------------------------------
+'$INCLUDE:'InForm\InForm.bi'
+'$INCLUDE:'InForm\xp.uitheme'
+'$INCLUDE:'ButtonTest.frm'
+
+': Event procedures: ---------------------------------------------------------------
+Sub __UI_BeforeInit
+
+End Sub
+
+Sub __UI_OnLoad
+
+End Sub
+
+Sub __UI_BeforeUpdateDisplay
+    'This event occurs at approximately 60 frames per second.
+    'You can change the update frequency by calling SetFrameRate DesiredRate%
+
+End Sub
+
+Sub __UI_BeforeUnload
+    'If you set __UI_UnloadSignal = False here you can
+    'cancel the user's request to close.
+
+End Sub
+
+Sub __UI_Click (id As Long)
+    Select Case id
+        Case Form1
+
+        Case RedBtn
+            Caption(Label1) = "Red clicked" '&lt;---
+        Case GreenBtn
+
+        Case BlueBtn
+
+        Case Label1
+
+    End Select
+End Sub
+
+Sub __UI_MouseEnter (id As Long)
+    Select Case id
+        Case Form1
+
+        Case RedBtn
+
+        Case GreenBtn
+            Caption(Label1) = Caption(RedBtn) + Caption(BlueBtn) '&lt;---
+        Case BlueBtn
+            Caption(Label1) = "Hover Blue Button" '              &lt;---
+        Case Label1
+
+    End Select
+End Sub
+
+Sub __UI_MouseLeave (id As Long)
+    Select Case id
+        Case Form1
+
+        Case RedBtn
+
+        Case GreenBtn
+
+        Case BlueBtn
+
+        Case Label1
+
+    End Select
+End Sub
+
+Sub __UI_FocusIn (id As Long)
+    Select Case id
+        Case RedBtn
+
+        Case GreenBtn
+
+        Case BlueBtn
+
+    End Select
+End Sub
+
+Sub __UI_FocusOut (id As Long)
+    'This event occurs right before a control loses focus.
+    'To prevent a control from losing focus, set __UI_KeepFocus = True below.
+    Select Case id
+        Case RedBtn
+
+        Case GreenBtn
+
+        Case BlueBtn
+
+    End Select
+End Sub
+
+Sub __UI_MouseDown (id As Long)
+    Select Case id
+        Case Form1
+
+        Case RedBtn
+
+        Case GreenBtn
+
+        Case BlueBtn
+
+        Case Label1
+
+    End Select
+End Sub
+
+Sub __UI_MouseUp (id As Long)
+    Select Case id
+        Case Form1
+
+        Case RedBtn
+
+        Case GreenBtn
+
+        Case BlueBtn
+
+        Case Label1
+
+    End Select
+End Sub
+
+Sub __UI_KeyPress (id As Long)
+    'When this event is fired, __UI_KeyHit will contain the code of the key hit.
+    'You can change it and even cancel it by making it = 0
+    Select Case id
+        Case RedBtn
+
+        Case GreenBtn
+
+        Case BlueBtn
+
+    End Select
+End Sub
+
+Sub __UI_TextChanged (id As Long)
+    Select Case id
+    End Select
+End Sub
+
+Sub __UI_ValueChanged (id As Long)
+    Select Case id
+    End Select
+End Sub
+
+Sub __UI_FormResized
+
+End Sub
+
+'$INCLUDE:'InForm/InForm.ui'
+
+</code>
+</pre>
+
+<a name="Form file ButtonTest.frm"></a>
+<h3>Form file ButtonTest.frm</h3>
+
+<pre class="precode" >
+<code  tabindex="0" >
+': This form was generated by
+': InForm - GUI library for QB64 - v1.5
+': Fellippe Heitor, 2016-2024 - fellippe@qb64.org - @fellippeheitor
+': https://github.com/FellippeHeitor/InForm
+'-----------------------------------------------------------
+SUB __UI_LoadForm
+
+    DIM __UI_NewID AS LONG, __UI_RegisterResult AS LONG
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Form, "Form1", 300, 300, 0, 0, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Form1"
+    Control(__UI_NewID).Font = SetFont("segoeui.ttf", 12)
+    Control(__UI_NewID).HasBorder = False
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Button, "RedBtn", 80, 23, 25, 150, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Red"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Button, "GreenBtn", 80, 23, 110, 150, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Green"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Button, "BlueBtn", 80, 23, 195, 150, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Blue"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).CanHaveFocus = True
+
+    __UI_NewID = __UI_NewControl(__UI_Type_Label, "Label1", 150, 23, 25, 61, 0)
+    __UI_RegisterResult = 0
+    SetCaption __UI_NewID, "Label1"
+    Control(__UI_NewID).HasBorder = False
+    Control(__UI_NewID).VAlign = __UI_Middle
+
+END SUB
+
+SUB __UI_AssignIDs
+    Form1 = __UI_GetID("Form1")
+    RedBtn = __UI_GetID("RedBtn")
+    GreenBtn = __UI_GetID("GreenBtn")
+    BlueBtn = __UI_GetID("BlueBtn")
+    Label1 = __UI_GetID("Label1")
+END SUB
+
+</code>
+</pre>
+
+
+<a name="Events"></a>
+<h2>Events</h2>
+
+<ul>
+<li><a  href="events.html#Mouse Click" target="_blank">Click</a></li>
+<li><a  href="events.html#MouseDown/MouseUp" target="_blank">MouseDown/MouseUp</a></li>
+<li><a  href="events.html#MouseEnter/MouseLeave" target="_blank">MouseEnter/MouseLeave</a></li>
+<li><a  href="events.html#FocusIn/FocusOut" target="_blank">FocusIn/FocusOut</a></li>
+<li><a  href="events.html#KeyPress" target="_blank">KeyPress</a></li>
+</ul>
+
+
+<a name="Methods"></a>
+<h2>Methods</h2>
+
+<ul>
+<li><a  href="methods.html#LoadImage" target="_blank">LoadImage</a></li>
+<li><a  href="methods.html#SetCaption" target="_blank">SetCaption</a></li>
+</ul>
+
+
+<a name="Properties editable at runtime"></a>
+<h2>Properties editable at runtime</h2>
+
+<ul>
+<li><a  href="properties.html#Caption" target="_blank">Caption</a></li>
+<li><a  href="properties.html#Position-and-size" target="_blank">Top/Left/Width/Height</a></li>
+<li><a  href="properties.html#Font" target="_blank">Font</a></li>
+<li><a  href="properties.html#Tool tip" target="_blank">Tool tip</a></li>
+<li><a  href="properties.html#Color-properties" target="_blank">Color properties</a></li>
+<li><a  href="properties.html#Disabled" target="_blank">Disabled</a></li>
+<li><a  href="properties.html#Hidden" target="_blank">Hidden</a></li>
+</ul>
+
+
+<h3>See also:</h3>
+
+<ul>
+<li><a href="methods.html#MessageBox">MessageBox Function</a></li>
+</ul>
+
+
+   <!-- ################ End Content ################ -->
+  <script language="javascript" src="common/footer.js"></script> <!-- Footer -->
+   </div> <!-- End content -->
+
+</body>
+</html>

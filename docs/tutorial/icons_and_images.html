@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Icons and Images</title>
+  <meta name="Description" content="Changing the default programs title, icon and adding menu icons." />
+  <meta name="Keywords" content="Icons, images,Inform,QB64,QB64, QB64PE, Phoenix, Fellippe Heitor,MPGCAN" />
+  <link href="common/css/main.css" rel="stylesheet" type="text/css">
+  <link href="common/css/menu.css" rel="stylesheet" type="text/css">
+  <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+
+  <script src="common/navigation-js.js"></script> 
+</head>
+<body>
+
+  
+  <script language="javascript" src="common/side-menu.js"></script> <!-- Side menu -->
+ 
+  <div id="content"> <!-- Start content -->
+  <!-- ################ Start Content ################ -->
+   <script language="javascript" src="common/header.js"></script>      <!-- Banner -->
+
+  <div  class="flex-page-title">
+    <div>
+                <img src="common/images/inf_logo.png"  alt="logo" />
+    </div>
+    <div>
+       <h1>Icons, Images and Title.</h1>
+     </div>
+  </div>
+
+<p>Changing the default program title and icon, as well as adding menu icons, can enhance the professional appearance of your program. Below are various methods to make these changes.</p>
+
+
+ <div id="page_links_menu" >
+  <ul>
+   <li><a href="#Program Icon and Title" >Program Icon and Title</a></li>
+   <li><a href="#Program Icon use PNG image" >Program Icon use PNG image</a></li>
+   <li><a href="#Embed image." >Embed image.</a> $Embed</li>
+   <li><a href="#Extract embedded image." >Extract embedded image.</a>  _Embedded$</li>
+   <li><a href="#Extract image to memory return image pointer" >Extract image to memory return image pointer.</a> Icon use PNG image</li>
+   <li><a href="#Extract embedded image and save to disk" >Extract embedded image and save to disk</a></li>
+ 
+  <li><a href="#Inform image information" >Inform image information</a></li>
+  <li><a href="#Inform image sizes" >Inform image sizes</a></li>
+   <li><a href="#LoadImage method" >&nbsp;&nbsp;LoadImage method</a></li>
+   <li><a href="#Helper canvas and image pointer" >&nbsp;&nbsp;Helper canvas and image pointer</a></li>
+
+ 
+   </ul>
+ </div>
+
+<p>Note: I tend to use the following terms interchangeably when referring to image pointers, references, and handles.</p>
+
+<a name="Program Icon and Title"></a>
+<h2>Program Icon and Title</h2>
+
+<p>Setting custom text for the Title Bar and adding an icon to the application (displayed in the Taskbar and Title Bar) is straightforward.<br/>
+ Add the following two lines at the top of your program:</p>
+
+<pre >
+<code tabindex="0">$EXEICON = 'path/to/icon-image'
+_TITLE "Your title bar text"</code>
+</pre>
+
+<p>The following example assumes that the image ICO file "mg_32.ico" is placed in the QB64pe folder:</p>
+<pre >
+<code tabindex="0">$EXEICON:'mg_32.ico'
+_TITLE "Run Apache and MySQL"</code>
+</pre>
+
+<p>The $EXEICON directive is a pre-compiler metacommand that embeds a designated icon file into the compiled EXE file. This icon is displayed in Windows Explorer. Your program window will automatically use the icon embedded by $EXEICON without having to call _ICON.</p>
+
+<p><b>Note 1:</b> The icon image must be in .ico format, and the path should be correct; otherwise, the program won't compile (error message "file not found").<br/>
+
+<b>Note 2</b>: If you find it difficult to create an <b>.ico</b> file, you can use an online free service such as <a href="https://convertico.com/" target="_blank">https://convertico.com/</a> . This allows you to convert a PNG to an ICO file.<br/>
+
+<b>Note 3:</b>  Place the image "mg_32.ico" in your project folder. If you are not using a project folder, locate the image in the folder that contains the qb64pe.exe executable.</p>
+
+<a name="Program Icon use PNG image"></a>
+<h2>Program Icon use PNG image</h2>
+
+<p>As an alternative to the above, you can use a PNG image directly using the <b>_ICON</b> statement. <br/>
+The <b>_ICON </b>statement utilizes the image handle returned from <b>_LOADIMAGE</b>.</p>
+
+<pre ><code tabindex="0">i&amp; = _LoadImage("iconD.png", 32) ' use your image file name here
+If i&amp; &lt; -1 Then '                  is a valid image
+    _Icon i&amp; '                     pass handle to _Icon loads image
+    _FreeImage i&amp; '                release image handle after setting icon
+End If</code>
+</pre>
+
+<p><b>Note 1:</b> The image must be distributed with the .exe application. You can avoid this by embeding the image; see <a href="icons_and_images.html#Extract image to memory return image pointer" targe="_blank">Extract image to memory return image pointer</a><br>
+<b>Note 2:</b> Icon files are not supported with <b>_LOADIMAGE</b>; if you attempt to use them, an error will occur.<br>
+<b>Note 3:</b> Place the image <b>iconD.png</b> in your project folder. If you are not using a project folder, locate the image in the folder that contains the <b>qb64pe.exe</b> executable.</p>
+
+<a name="Embed image."></a>
+<h2>Embed image.</h2>
+
+<p>You can avoid the need to include images with your application by embedding them into the application using the <b>$EMBED</b> metacommand. 
+<pre><code tabindex="0">$EMBED:'filename','handle'</code></pre>
+
+This command integrates the image into the executable at compile time. Note that you can embed any file, such as images, sounds, fonts, and all other file types.<br>
+The following is an example of embedding an image:
+
+<pre><code tabindex="0">$Embed:'.\iconD.png','mpg1' </code></pre></p>
+
+<p>The path to the image <b>.</b> refers to the current folder for the image named <b>iconD.png</b> to be embedded. Following this is a unique identifier <b>mpg1</b> (handle) specific to the <b>$Embed</b> and <b>_Embedded$</b> commands. It is case-sensitive, must begin with a letter, and may only contain lower or uppercase letters and/or numbers.</p>
+
+<a name="Extract embedded image"></a>
+<h2>Extract embedded image</h2>
+
+<p>To extract the embedded file, you use the <b>_EMBEDDED$</b> function:</p>
+
+<pre><code tabindex="0">filedata$ = _EMBEDDED$("handle")</code></pre>
+
+<p>The filedata$ variable will receive the embedded data as a single contiguous string. The unique identifier (handle) is specific to $Embed and _Embedded$ commands. It is case-sensitive, must begin with a letter, and may only contain lower or uppercase letters and/or numbers.</p>
+
+<a name="Extract image to memory return image pointer"></a>
+<h2>Extract image to memory return image pointer</h2>
+
+<p>As mentioned earlier, you extract the embedded image file using the _EMBEDDED$ function and save the data to a variable such as filedata$. <br>
+The LOADIMAGE function can then use this data to create an image in memory and return its corresponding handle. A complete example is provided below:</p>
+
+<pre><code tabindex="0">$Embed:'.\iconD.png','mpg1'
+
+Dim pic1 As Long '                                    define a pointer variable
+pic1 = _LoadImage(_Embedded$("mpg1"), 32, "memory") ' save handle returned by _LoadImage mpg1=handle 32=bit-image memory=buffer
+_Icon pic1 '                                          example of using, pass handle to _Icon, loads image</code></pre>
+
+
+<a name="Extract embedded image and save to disk"></a>
+<h2>Extract embedded image and save to disk</h2>
+
+<p>As mentioned above, you extract the embedded image file using the _EMBEDDED$ function and save the data to a string variable such as str1. <br>
+This variable will receive the embedded file data as a single contiguous string, which can be written back to disk using a binary write operation, for example:</p>
+
+<pre><code tabindex="0">
+  filename = "toolbox_picture_box1.png" '       original name
+  str1 = _Embedded$("mpg1") '                   set str1 to extracted embeded data string
+  Open filename For Binary As #2 '              open file for binary output  
+  Put #2, , str1 '                              write string data to file           
+  Close #2 '                                    close file handle          
+ </code></pre>
+
+<a name="Inform image information"></a>
+<h1>Inform image information</h1>
+
+<p>This section covers various methods of copying images to Inform applications and provides other relevant information.</p>
+
+<a name="Inform image sizes"></a>
+<h2>Inform image sizes</h2>
+
+<p>The image size for buttons can be any size, as they are automatically resized to fit the button. Generally, it is recommended to keep the height the same as the button size.</p>
+
+<p>For MenuItems, the image size should be 16x16 pixels.</p>
+
+
+<a name="LoadImage method"></a>
+<h2>LoadImage method</h2>
+
+<p>The LoadImage method is utilized to load a valid image file into a control's helper canvas. This method is commonly employed to assign icons to <b>buttons</b> or <b>menu items</b>, as well as to assign an image file to a <b>PictureBox</b> control.</p>
+
+<p>Usage example:</p>
+
+<pre ><code tabindex="0">LoadImage Control(ControlID), ImageFile$</code></pre>
+
+<p>If the specified ImageFile$ cannot be found or is not a valid image, one of the following outcomes will occur:</p>
+<ul>
+    <li>For <b>Button</b> and <b>Menu Item</b> controls, the method will ignore the failed load attempt.</li>
+    <li>For <b>PictureBox</b> controls, an "image not found" or "invalid image file" warning will be displayed in the control's canvas.</li>
+</ul>
+<p>To reset a control's canvas, pass an empty ImageFile$ parameter to the LoadImage method:</p>
+
+<pre ><code tabindex="0">LoadImage Control(ControlID), ""
+</code></pre>
+
+<p><b>Note:</b> The LoadImage method uses a file path and name (ImageFile$) to locate the image; an alternative method is to use the control's helper canvas property, which utilizes a pointer (reference) to the image. For more information, refer to the details below.</p>
+
+<a name="Helper canvas and image pointer"></a>
+<h2>Helper canvas and image pointer</h2>
+
+<p>The LoadImage method described above requires a file path to an image. However, if you have a pointer (reference) to the image, you can utilize the HelperCanvas property instead. Please refer to the example below.</p>
+
+<pre><code tabindex="0">
+Control(ControlID).HelperCanvas = image_ptr&
+</code>
+</pre>
+
+<p>For an embedded image, you can extract this pinter using _Loadimage. For details, refer to the section above titled <a href="icons_and_images.html#Extract image to memory return image pointer" >Extract image to memory return image pointer</a></p>.
+
+
+   <!-- ################ End Content ################ -->
+  <script language="javascript" src="common/footer.js"></script> <!-- Footer -->
+   </div> <!-- End content -->
+
+</body>
+</html>
