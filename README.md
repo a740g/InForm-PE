@@ -76,6 +76,7 @@ InForm/extensions/*.*
 
 | Name | Author |
 |------|-------------|
+| 21-game | TempodiBasic |
 | Bin2Include | Zachary Spriggs |
 | Bubble-Universe | Samuel Gomes |
 | Calculator | Terry Ritchie |
@@ -83,6 +84,7 @@ InForm/extensions/*.*
 | ClockPatience | Richard Notley |
 | DuckShoot | Richard Notley |
 | ebacCalculator | George McGinn |
+| EncryptDecrypt | TempodiBasic |
 | Fahrenheit-Celsius | Richard Notley |
 | Fireworks2 | Fellippe Heitor |
 | GIFPlaySample | Fellippe Heitor |
