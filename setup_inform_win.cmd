@@ -13,8 +13,15 @@ cd /d "%~dp0"
 echo Compiling InForm-PE release. Please be patient...
 
 rem Attempt build with QB64-PE path
-%QB64PE_PATH%\internal\c\c_compiler\bin\mingw32-make.exe -f inform.mk clean OS=Windows_NT QB64PE_PATH=%QB64PE_PATH%
-%QB64PE_PATH%\internal\c\c_compiler\bin\mingw32-make.exe -f inform.mk release OS=Windows_NT QB64PE_PATH=%QB64PE_PATH%
+
+if exist %QB64PE_PATH%\internal\c\c_compiler\bin\mingw32-make.exe (
+    %QB64PE_PATH%\internal\c\c_compiler\bin\mingw32-make.exe -f inform.mk clean OS=Windows_NT QB64PE_PATH=%QB64PE_PATH%
+    %QB64PE_PATH%\internal\c\c_compiler\bin\mingw32-make.exe -f inform.mk release OS=Windows_NT QB64PE_PATH=%QB64PE_PATH%
+) else (
+    mingw32-make.exe -f inform.mk clean OS=Windows_NT QB64PE_PATH=%QB64PE_PATH%
+    mingw32-make.exe -f inform.mk release OS=Windows_NT QB64PE_PATH=%QB64PE_PATH%
+)
+
 if not errorlevel 1 exit /b
 
 echo Build failed with QB64-PE path: %QB64PE_PATH%
@@ -25,6 +32,11 @@ rem Retry build with ..\QB64pe as fallback if it exists
 set "QB64PE_PATH=..\QB64pe"
 
 if exist %QB64PE_PATH% (
-    %QB64PE_PATH%\internal\c\c_compiler\bin\mingw32-make.exe -f inform.mk clean OS=Windows_NT QB64PE_PATH=%QB64PE_PATH%
-    %QB64PE_PATH%\internal\c\c_compiler\bin\mingw32-make.exe -f inform.mk release OS=Windows_NT QB64PE_PATH=%QB64PE_PATH%
+    if exist %QB64PE_PATH%\internal\c\c_compiler\bin\mingw32-make.exe (
+        %QB64PE_PATH%\internal\c\c_compiler\bin\mingw32-make.exe -f inform.mk clean OS=Windows_NT QB64PE_PATH=%QB64PE_PATH%
+        %QB64PE_PATH%\internal\c\c_compiler\bin\mingw32-make.exe -f inform.mk release OS=Windows_NT QB64PE_PATH=%QB64PE_PATH%
+    ) else (
+        mingw32-make.exe -f inform.mk clean OS=Windows_NT QB64PE_PATH=%QB64PE_PATH%
+        mingw32-make.exe -f inform.mk release OS=Windows_NT QB64PE_PATH=%QB64PE_PATH%
+    )
 )
