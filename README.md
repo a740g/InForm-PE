@@ -6,14 +6,17 @@
 
 InForm-PE's main goal is to generate *event-driven* QB64-PE applications. This means that you design a graphical user interface with interactive controls and then write the code to respond to such controls once they are manipulated.
 
-Wiki: <https://github.com/a740g/InForm-PE/wiki>
-
 ## FEATURES
 
 - WYSIWYG interface designer
 - Event-driven application design
 - Works on Windows, Linux & macOS
 - Everything is statically linked (no shared library dependencies)
+
+## DOCUMENTATION
+
+- [Wiki](https://github.com/a740g/InForm-PE/wiki)
+- [Tutorial](https://raw.githack.com/a740g/InForm-PE/refs/heads/master/docs/tutorial/index.html)
 
 ## USAGE
 
@@ -106,6 +109,7 @@ InForm/extensions/*.*
 | TicTacToe | Fellippe Heitor |
 | TicTacToe2 | Fellippe Heitor |
 | Trackword | Richard Notley |
+| VDrops | bobalooie |
 | WordClock | Fellippe Heitor |
 | wordSearch | George McGinn |
 
