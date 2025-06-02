@@ -17,6 +17,8 @@ InForm-PE's main goal is to generate *event-driven* QB64-PE applications. This m
 
 - [Wiki](https://github.com/a740g/InForm-PE/wiki)
 - [Tutorial](https://raw.githack.com/a740g/InForm-PE/refs/heads/master/docs/tutorial/index.html)
+- [INI-Manager](docs/INI-Manager.md)
+- [GIFPlay](docs/GIFPlay.md)
 
 ## USAGE
 
