@@ -274,7 +274,7 @@ $IF WIN THEN
     END DECLARE
 $ELSE
     DECLARE LIBRARY
-    FUNCTION PROCESS_CLOSED& ALIAS kill (BYVAL pid AS INTEGER, BYVAL signal AS INTEGER)
+        FUNCTION PROCESS_CLOSED& ALIAS kill (BYVAL pid AS INTEGER, BYVAL signal AS INTEGER)
     END DECLARE
 $END IF
 
@@ -1296,8 +1296,8 @@ SUB __UI_BeforeUpdateDisplay
         END IF
     $ELSE
         IF PreviewAttached = True THEN
-        PreviewAttached = False
-        SaveSettings
+            PreviewAttached = False
+            SaveSettings
         END IF
         Control(ViewMenuPreviewDetach).Disabled = True
         Control(ViewMenuPreviewDetach).Value = False
@@ -3585,45 +3585,45 @@ SUB CheckPreview
         END IF
     $ELSE
         IF UiPreviewPID > 0 THEN
-        IF PROCESS_CLOSED(UiPreviewPID, 0) THEN
-        'Preview was closed.
-        TIMER(__UI_EventsTimer) OFF
-        Control(ViewMenuPreview).Disabled = False
-        __UI_WaitMessage = "Reloading preview window..."
-        UiPreviewPID = 0
-        __UI_ProcessInputTimer = 0 'Make the "Please wait" message show up immediataly
+            IF PROCESS_CLOSED(UiPreviewPID, 0) THEN
+                'Preview was closed.
+                TIMER(__UI_EventsTimer) OFF
+                Control(ViewMenuPreview).Disabled = False
+                __UI_WaitMessage = "Reloading preview window..."
+                UiPreviewPID = 0
+                __UI_ProcessInputTimer = 0 'Make the "Please wait" message show up immediataly
 
-        CLOSE Client
-        Client = 0
+                CLOSE Client
+                Client = 0
 
-        __UI_UpdateDisplay
+                __UI_UpdateDisplay
 
-        SHELL _DONTWAIT "./InForm/UiEditorPreview " + HostPort
+                SHELL _DONTWAIT "./InForm/UiEditorPreview " + HostPort
 
-        DO
-        Client = _OPENCONNECTION(Host)
-        IF Client THEN EXIT DO
-        IF _EXIT THEN SYSTEM 'Can't force user to wait...
-        _DISPLAY
-        _LIMIT 15
-        LOOP
+                DO
+                    Client = _OPENCONNECTION(Host)
+                    IF Client THEN EXIT DO
+                    IF _EXIT THEN SYSTEM 'Can't force user to wait...
+                    _DISPLAY
+                    _LIMIT 15
+                LOOP
 
-        Handshake
+                Handshake
 
-        IF LEN(LastFormData$) THEN
-        b$ = "RESTORECRASH>" + LastFormData$ + "<END>"
-        Send Client, b$
-        prevScreenX = -1
-        prevScreenY = -1
-        UndoPointer = 0
-        TotalUndoImages = 0
-        END IF
+                IF LEN(LastFormData$) THEN
+                    b$ = "RESTORECRASH>" + LastFormData$ + "<END>"
+                    Send Client, b$
+                    prevScreenX = -1
+                    prevScreenY = -1
+                    UndoPointer = 0
+                    TotalUndoImages = 0
+                END IF
 
-        TIMER(__UI_EventsTimer) ON
-        ELSE
-        'Preview is active.
-        Control(ViewMenuPreview).Disabled = True
-        END IF
+                TIMER(__UI_EventsTimer) ON
+            ELSE
+                'Preview is active.
+                Control(ViewMenuPreview).Disabled = True
+            END IF
         END IF
     $END IF
 END SUB
