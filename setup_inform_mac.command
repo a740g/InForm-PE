@@ -14,7 +14,7 @@ echo "Compiling InForm-PE release. Please be patient..."
 # Loop through each QB64-PE path
 for path in "${QB64PE_PATHS[@]}"; do
     make -f inform.mk clean OS=macOS QB64PE_PATH="$path"
-    make -f inform.mk release OS=macOS QB64PE_PATH="$path"
+    make -f inform.mk OS=macOS QB64PE_PATH="$path"
     if [ $? -eq 0 ]; then
         break  # If build succeeds, exit loop
     fi
