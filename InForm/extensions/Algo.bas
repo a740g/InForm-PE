@@ -5,79 +5,87 @@
 
 $INCLUDEONCE
 
-'-----------------------------------------------------------------------------------------------------------------------
-' Test code for debugging the library
-'-----------------------------------------------------------------------------------------------------------------------
-'_DEFINE A-Z AS LONG
-'OPTION _EXPLICIT
+''' @brief Sorts a string array (non-recursive QuickSort).
+''' @param strArr() The array of strings to sort.
+''' @param l The lower index of the array (inclusive).
+''' @param u The upper index of the array (inclusive).
+''' @param wantsAscending _TRUE = ascending, _FALSE = descending
+''' @param caseSensitive _TRUE = case-sensitive, _FALSE = case-insensitive
+''' @return Whether the array was changed (_TRUE or _FALSE)
+FUNCTION Algo_SortStringArrayRange%% (strArr() AS STRING, l AS _INTEGER64, u AS _INTEGER64, wantsAscending AS _BYTE, caseSensitive AS _BYTE)
+    IF l >= u THEN EXIT FUNCTION
 
-'DIM strArr(0 TO 4) AS STRING
-'strArr(0) = "banana"
-'strArr(1) = "apple"
-'strArr(2) = "orange"
-'strArr(3) = "pear"
-'strArr(4) = "kiwi"
+    DIM n AS _INTEGER64: n = u - l + 1
+    DIM AS _INTEGER64 top, stackL(0 TO n), stackU(0 TO n): stackL(0) = l: stackU(0) = u
 
-'Algo_SortStringArray strArr()
+    DIM AS _INTEGER64 i, j, l0, u0
+    DIM AS _BYTE cmp, changed
+    DIM pivot AS STRING
 
-'DIM i AS LONG
-'FOR i = LBOUND(strArr) TO UBOUND(strArr)
-'    PRINT strArr(i)
-'NEXT
+    WHILE top >= 0
+        l0 = stackL(top)
+        u0 = stackU(top)
+        top = top - 1
 
-'END
-'-----------------------------------------------------------------------------------------------------------------------
+        i = l0
+        j = u0
+        pivot = strArr((l0 + u0) \ 2)
 
-''' @brief Sorts a string array.
-''' @param strArr The array of strings to sort.
-''' @param l The lower index of the array.
-''' @param u The upper index of the array.
-''' @return Whether the array was changed or not.
-FUNCTION Algo_SortStringArrayRange%% (strArr() AS STRING, l AS _UNSIGNED LONG, u AS _UNSIGNED LONG)
-    DIM i AS _UNSIGNED LONG: i = l
-    DIM j AS _UNSIGNED LONG: j = u
-    DIM pivot AS STRING: pivot = strArr((l + u) \ 2)
-    DIM changed AS _BYTE
+        DO WHILE i <= j
+            DO
+                cmp = _IIF(caseSensitive, _STRCMP(strArr(i), pivot), _STRICMP(strArr(i), pivot))
+                IF (wantsAscending _ANDALSO cmp < 0) _ORELSE (NOT wantsAscending _ANDALSO cmp > 0) THEN
+                    i = i + 1
+                ELSE
+                    EXIT DO
+                END IF
+            LOOP
 
-    WHILE i <= j
-        WHILE _STRCMP(strArr(i), pivot) < 0
-            i = i + 1
-        WEND
+            DO
+                cmp = _IIF(caseSensitive, _STRCMP(strArr(j), pivot), _STRICMP(strArr(j), pivot))
+                IF (wantsAscending _ANDALSO cmp > 0) _ORELSE (NOT wantsAscending _ANDALSO cmp < 0) THEN
+                    j = j - 1
+                ELSE
+                    EXIT DO
+                END IF
+            LOOP
 
-        WHILE _STRCMP(strArr(j), pivot) > 0
-            j = j - 1
-        WEND
-
-        IF i <= j THEN
-            IF _STRCMP(strArr(i), strArr(j)) <> 0 THEN
-                SWAP strArr(i), strArr(j)
-                changed = _TRUE
+            IF i <= j THEN
+                cmp = _IIF(caseSensitive, _STRCMP(strArr(i), strArr(j)), _STRICMP(strArr(i), strArr(j)))
+                IF cmp <> 0 THEN
+                    SWAP strArr(i), strArr(j)
+                    changed = _TRUE
+                END IF
+                i = i + 1
+                j = j - 1
             END IF
-            i = i + 1
-            j = j - 1
+        LOOP
+
+        IF l0 < j THEN
+            top = top + 1
+            stackL(top) = l0
+            stackU(top) = j
+        END IF
+
+        IF i < u0 THEN
+            top = top + 1
+            stackL(top) = i
+            stackU(top) = u0
         END IF
     WEND
-
-    IF l < j THEN
-        IF Algo_SortStringArrayRange(strArr(), l, j) THEN changed = _TRUE
-    END IF
-
-    IF i < u THEN
-        IF Algo_SortStringArrayRange(strArr(), i, u) THEN changed = _TRUE
-    END IF
 
     Algo_SortStringArrayRange = changed
 END FUNCTION
 
 ''' @brief Sorts a string array.
-''' @param strArr The array of strings to sort.
-''' @return Whether the array was changed or not.
+''' @param strArr() The array of strings to sort.
+''' @return Whether the array was changed (_TRUE or _FALSE)
 FUNCTION Algo_SortStringArray%% (strArr() AS STRING)
-    Algo_SortStringArray = Algo_SortStringArrayRange(strArr(), LBOUND(strArr), UBOUND(strArr))
+    Algo_SortStringArray = Algo_SortStringArrayRange(strArr(), LBOUND(strArr), UBOUND(strArr), _TRUE, _TRUE)
 END FUNCTION
 
 ''' @brief Sorts a string array.
-''' @param strArr The array of strings to sort.
+''' @param strArr() The array of strings to sort.
 SUB Algo_SortStringArray (strArr() AS STRING)
-    DIM ignored AS _BYTE: ignored = Algo_SortStringArrayRange(strArr(), LBOUND(strArr), UBOUND(strArr))
+    DIM ignored AS _BYTE: ignored = Algo_SortStringArrayRange(strArr(), LBOUND(strArr), UBOUND(strArr), _TRUE, _TRUE)
 END SUB

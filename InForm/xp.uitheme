@@ -23,24 +23,19 @@ FUNCTION __UI_DefaultColor~& (ControlType AS _BYTE, Attribute AS _BYTE)
 
     '.ForeColor
     Colors(1) = _RGB32(0, 0, 0)
-    IF ControlType <> __UI_Type_Form AND Control(__UI_FormID).ForeColor <> Colors(1) THEN _
-        Colors(1) = Control(__UI_FormID).ForeColor
+    IF ControlType <> __UI_Type_Form _ANDALSO Control(__UI_FormID).ForeColor <> Colors(1) THEN Colors(1) = Control(__UI_FormID).ForeColor
     '.BackColor
     Colors(2) = _RGB32(235, 233, 237)
-    IF ControlType <> __UI_Type_Form AND Control(__UI_FormID).BackColor <> Colors(2) THEN _
-        Colors(2) = Control(__UI_FormID).BackColor
+    IF ControlType <> __UI_Type_Form _ANDALSO Control(__UI_FormID).BackColor <> Colors(2) THEN Colors(2) = Control(__UI_FormID).BackColor
     '.SelectedForeColor
     Colors(3) = _RGB32(255, 255, 255)
-    IF ControlType <> __UI_Type_Form AND Control(__UI_FormID).SelectedForeColor <> Colors(3) THEN _
-        Colors(3) = Control(__UI_FormID).SelectedForeColor
+    IF ControlType <> __UI_Type_Form _ANDALSO Control(__UI_FormID).SelectedForeColor <> Colors(3) THEN Colors(3) = Control(__UI_FormID).SelectedForeColor
     '.SelectedBackColor
     Colors(4) = _RGB32(78, 150, 216)
-    IF ControlType <> __UI_Type_Form AND Control(__UI_FormID).SelectedBackColor <> Colors(4) THEN _
-        Colors(4) = Control(__UI_FormID).SelectedBackColor
+    IF ControlType <> __UI_Type_Form _ANDALSO Control(__UI_FormID).SelectedBackColor <> Colors(4) THEN Colors(4) = Control(__UI_FormID).SelectedBackColor
     '.BorderColor
     Colors(5) = _RGB32(167, 166, 170)
-    IF ControlType <> __UI_Type_Form AND Control(__UI_FormID).BorderColor <> Colors(5) THEN _
-        Colors(5) = Control(__UI_FormID).BorderColor
+    IF ControlType <> __UI_Type_Form _ANDALSO Control(__UI_FormID).BorderColor <> Colors(5) THEN Colors(5) = Control(__UI_FormID).BorderColor
     'Tip color (global property)
     Colors(6) = _RGB32(255, 255, 225)
 
@@ -287,7 +282,7 @@ FUNCTION __UI_ImageData$ (id AS _UNSIGNED _BYTE)
             __UI_ImageData = Base64_LoadResourceString(DATA_SLIDERTRACK_BMP_222, SIZE_SLIDERTRACK_BMP_222, COMP_SLIDERTRACK_BMP_222)
 
         CASE ELSE
-            ERROR 51
+            ERROR _ERR_INTERNAL_ERROR
     END SELECT
 END FUNCTION
 

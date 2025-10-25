@@ -1,6 +1,5 @@
 # Makefile for InForm-PE
 
-# Determine the operating system
 ifeq ($(OS),)
 	ifeq ($(shell uname -s),Linux)
 		OS := Linux
@@ -10,37 +9,43 @@ ifeq ($(OS),)
 	endif
 endif
 
-# If OS is still not set, default to Windows
 ifeq ($(OS),)
 	OS := Windows_NT
 endif
 
-# Check if OS is one of the expected values
 ifeq ($(filter $(OS),Linux macOS Windows_NT),)
-$(error OS must be set to 'Linux', 'macOS', or 'Windows_NT')
+	$(error OS must be set to 'Linux', 'macOS', or 'Windows_NT'.)
 endif
 
 $(info OS: $(OS))
 
-# Set platform-specific variables
 ifeq ($(OS),Windows_NT)
 	RM := del /Q
 	EXTENSION := .exe
+	FIXPATH = $(subst /,\,$1)
 else
 	RM := rm -fr
 	EXTENSION :=
+	FIXPATH = $1
 endif
 
-# Set default values or use user-provided ones
-QB64PE_PATH ?= ../qb64pe
+SEARCH_PATHS := $(QB64PE_PATH) . ../qb64pe ../QB64pe ../QB64PE
 
-# Set QB64-PE flags
+QB64PE_PATH_FOUND = $(firstword $(foreach dir,$(SEARCH_PATHS),$(if $(wildcard $(dir)/qb64pe$(EXTENSION)),$(dir),)))
+
+ifeq ($(QB64PE_PATH_FOUND),)
+	$(error QB64-PE executable not found in default search paths. Please provide the path using QB64PE_PATH.)
+endif
+
+QB64PE := $(QB64PE_PATH_FOUND)/qb64pe$(EXTENSION)
+
+$(info Using QB64PE from: $(QB64PE))
+
 QB64PE_FLAGS := -x -w -e
 
-# Set QB64-PE command
-QB64PE := $(QB64PE_PATH)/qb64pe$(EXTENSION)
+TEST_EXECUTABLE := tests/test_main$(EXTENSION)
 
-.PHONY: all clean release
+.PHONY: all release test clean
 
 all: UiEditor$(EXTENSION) InForm/UiEditorPreview$(EXTENSION) InForm/vbdos2inform$(EXTENSION)
 
@@ -53,13 +58,15 @@ InForm/UiEditorPreview$(EXTENSION) : InForm/UiEditorPreview.bas
 InForm/vbdos2inform$(EXTENSION) : InForm/vbdos2inform.bas
 	$(QB64PE) $(QB64PE_FLAGS) $< -o $@
 
-clean:
-ifeq ($(OS),Windows_NT)
-	$(RM) UiEditor$(EXTENSION) InForm\UiEditorPreview$(EXTENSION) InForm\vbdos2inform$(EXTENSION)
-else
-	$(RM) UiEditor$(EXTENSION) InForm/UiEditorPreview$(EXTENSION) InForm/vbdos2inform$(EXTENSION)
-endif
+$(TEST_EXECUTABLE): tests/test_main.bas
+	$(QB64PE) $(QB64PE_FLAGS) $< -o $@
 
-# Add release-specific flag
-release: QB64PE_FLAGS += -f:OptimizeCppProgram=true
-release: all
+release: clean
+	$(MAKE) -f inform.mk all QB64PE_FLAGS="$(QB64PE_FLAGS) -f:OptimizeCppProgram=true"
+
+test: $(TEST_EXECUTABLE)
+	@echo "Running tests..."
+	$(call FIXPATH,./$(TEST_EXECUTABLE))
+
+clean:
+	-$(RM) $(call FIXPATH,UiEditor$(EXTENSION)) $(call FIXPATH,InForm/UiEditorPreview$(EXTENSION)) $(call FIXPATH,InForm/vbdos2inform$(EXTENSION)) $(call FIXPATH,$(TEST_EXECUTABLE))

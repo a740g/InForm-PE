@@ -16,8 +16,8 @@ $VERSIONINFO:OriginalFilename='UiEditor.exe'
 $VERSIONINFO:ProductName='InForm-PE Form Designer'
 $VERSIONINFO:Web='https://github.com/a740g/InForm-PE'
 $VERSIONINFO:Comments='https://github.com/a740g/InForm-PE'
-$VERSIONINFO:FILEVERSION#=1,5,7,0
-$VERSIONINFO:PRODUCTVERSION#=1,5,7,0
+$VERSIONINFO:FILEVERSION#=1,5,8,0
+$VERSIONINFO:PRODUCTVERSION#=1,5,8,0
 $EXEICON:'./resources/InForm.ico'
 
 'Controls: --------------------------------------------------------------------
@@ -278,10 +278,16 @@ $ELSE
     END DECLARE
 $END IF
 
+ON ERROR GOTO __UI_ErrorHandler
+
 '$INCLUDE:'extensions/Pathname.bi'
 '$INCLUDE:'extensions/Ini.bi'
 '$INCLUDE:'extensions/FontMgr.bi'
 '$INCLUDE:'InForm.bi'
+
+__UI_ErrorHandler:
+RESUME NEXT
+
 '$INCLUDE:'UiEditor.frm'
 '$INCLUDE:'InForm.ui'
 '$INCLUDE:'extensions/Pathname.bas'
@@ -481,7 +487,7 @@ SUB __UI_Click (id AS LONG)
             'Hide the preview
             SendSignal -2
 
-            IF LEN(CurrentPath$) = 0 THEN CurrentPath$ = Pathname_FixDirectoryName(_STARTDIR$)
+            IF LEN(CurrentPath$) = 0 THEN CurrentPath$ = Pathname_AddDirectorySeparator(_STARTDIR$)
 
             Caption(StatusBar) = "Specify the name under which to save the current form..."
 
@@ -649,7 +655,7 @@ SUB __UI_Click (id AS LONG)
             'Hide the preview
             SendSignal -2
 
-            IF LEN(CurrentPath$) = 0 THEN CurrentPath$ = Pathname_FixDirectoryName(_STARTDIR$)
+            IF LEN(CurrentPath$) = 0 THEN CurrentPath$ = Pathname_AddDirectorySeparator(_STARTDIR$)
 
             Caption(StatusBar) = "Select a form file to load..."
 

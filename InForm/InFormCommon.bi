@@ -7,7 +7,7 @@
 $INCLUDEONCE
 
 ' Do a complier check to ensure we have the minimum version needed
-$IF VERSION < 4.1.0 THEN
+$IF VERSION < 4.2.0 THEN
     $ERROR 'This requires the latest version of QB64-PE from https://github.com/QB64-Phoenix-Edition/QB64pe/releases/latest'
 $END IF
 
@@ -152,6 +152,7 @@ TYPE __UI_ControlTYPE
     Width AS INTEGER
     Height AS INTEGER
     Canvas AS LONG
+    IsCanvasHardware AS _BYTE
     HelperCanvas AS LONG
     TransparentColor AS _UNSIGNED LONG
     Stretch AS _BYTE

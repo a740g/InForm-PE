@@ -113,6 +113,3 @@ DO
 LOOP
 
 SYSTEM
-
-__UI_ErrorHandler:
-RESUME NEXT

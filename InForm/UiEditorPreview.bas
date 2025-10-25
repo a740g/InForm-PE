@@ -83,12 +83,18 @@ $END IF
 
 CONST EDITOR_IMAGE_CONTEXTMENU = 1
 
+ON ERROR GOTO __UI_ErrorHandler
+
 'Load context menu icon image:
 ContextMenuIcon = LoadEditorImage(EDITOR_IMAGE_CONTEXTMENU)
 __UI_ClearColor ContextMenuIcon, 0, 0
 
 '$INCLUDE:'extensions/GIFPlay.bi'
 '$INCLUDE:'InForm.bi'
+
+__UI_ErrorHandler:
+RESUME NEXT
+
 '$INCLUDE:'UiEditorPreview.frm'
 '$INCLUDE:'InForm.ui'
 '$INCLUDE:'extensions/GIFPlay.bas'
@@ -814,7 +820,7 @@ SUB __UI_BeforeUpdateDisplay
                         NEXT
                     ELSE
                         IF ExeIcon <> 0 THEN _FREEIMAGE ExeIcon: ExeIcon = 0
-                        ExeIcon = IconPreview&(b$)
+                        ExeIcon = IconPreview(b$)
                         IF ExeIcon < -1 THEN
                             _ICON ExeIcon
                             Text(__UI_FormID) = b$
@@ -2522,7 +2528,7 @@ SUB LoadPreview (Destination AS _BYTE)
                         LoadImage Control(TempValue), Text(TempValue)
                     ELSEIF Control(TempValue).Type = __UI_Type_Form THEN
                         IF ExeIcon <> 0 THEN _FREEIMAGE ExeIcon: ExeIcon = 0
-                        ExeIcon = IconPreview&(Text(TempValue))
+                        ExeIcon = IconPreview(Text(TempValue))
                         IF ExeIcon < -1 THEN
                             _ICON ExeIcon
                         END IF
@@ -3040,7 +3046,7 @@ SUB LoadPreviewText
 
                     IF Control(TempValue).Type = __UI_Type_Form THEN
                         IF ExeIcon <> 0 THEN _FREEIMAGE ExeIcon: ExeIcon = 0
-                        ExeIcon = IconPreview&(Text(TempValue))
+                        ExeIcon = IconPreview(Text(TempValue))
                         IF ExeIcon < -1 THEN
                             _ICON ExeIcon
                         END IF
@@ -3825,7 +3831,7 @@ SUB READ_KEYWORDS
     DATA uprint_extra,uprint,uprintwidth,uheight&,uheight,falcon_uspacing&
     DATA falcon_uspacing,uascension&,uascension,GetSystemMetrics&
     DATA GetSystemMetrics,uspacing&,uspacing,SetFrameRate,SetFocus
-    DATA AutoSizeLabel,Darken~&,Darken,isNumber%%,isNumber,RawText$,RawText
+    DATA AutoSizeLabel,Darken~&,Darken,IsNumber%%,IsNumber,RawText$,RawText
     DATA SetFont&,SetFont,SetCaption,BeginDraw,EndDraw,LoadImage
     DATA SetRadioButtonValue,Replace$,Replace,AddItem,RemoveItem,ResetList
     DATA ReplaceItem,SelectItem%%,SelectItem,GetItem$,GetItem,MessageBox&
