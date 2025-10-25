@@ -38,7 +38,7 @@ SUB __UI_InternalMenus
 
     __UI_NewID = __UI_NewControl(__UI_Type_MenuItem, "__UI_PreviewMenuShowInvisibleControls", 0, 0, 0, 0, __UI_GetID("__UI_PreviewMenu"))
     SetCaption __UI_GetID("__UI_PreviewMenuShowInvisibleControls"), "Sho&w invisible controls-"
-    ToolTip(__UI_NewID) = "Toogles the display of invisible items (e.g. ContextMenu controls)"
+    ToolTip(__UI_NewID) = "Toggles the display of invisible items (e.g. ContextMenu controls)"
 
     __UI_NewID = __UI_NewControl(__UI_Type_MenuItem, "__UI_PreviewMenuSetDefaultButton", 0, 0, 0, 0, __UI_GetID("__UI_PreviewMenu"))
     SetCaption __UI_GetID("__UI_PreviewMenuSetDefaultButton"), "&Set as default button-"
@@ -363,7 +363,7 @@ SUB __UI_ProcessInput
     __UI_ExitTriggered = _EXIT
     IF __UI_ExitTriggered AND 1 THEN __UI_ExitTriggered = True: __UI_HasInput = True
 
-    IF _SCREENX = -32000 AND _SCREENY = -32000 THEN
+    IF _SCREENX = -32000 _ANDALSO _SCREENY = -32000 THEN
         'Window was minimized
         EXIT SUB
     END IF
@@ -679,7 +679,7 @@ END SUB
 SUB __UI_UpdateDisplay
     STATIC ActiveTipPanel AS LONG
     DIM i AS LONG, TempCaption$, PrevDest AS LONG, TempParentID AS LONG
-    DIM OverlayisVisible AS _BYTE, OverlayReset AS _BYTE
+    DIM OverlayIsVisible AS _BYTE, OverlayReset AS _BYTE
     DIM ContainerOffsetLeft AS INTEGER, ContainerOffsetTop AS INTEGER
     DIM ControlState AS _BYTE '1 = Normal; 2 = Hover/focus; 3 = Mouse down; 4 = Disabled;
 
@@ -870,7 +870,7 @@ SUB __UI_UpdateDisplay
             ELSE
                 _DEST Control(__UI_FormID).HelperCanvas
             END IF
-            OverlayisVisible = True
+            OverlayIsVisible = True
 
             DIM X1 AS INTEGER, X2 AS INTEGER
             DIM Y1 AS INTEGER, Y2 AS INTEGER
@@ -973,7 +973,7 @@ SUB __UI_UpdateDisplay
             ELSE
                 _DEST Control(__UI_FormID).HelperCanvas
             END IF
-            OverlayisVisible = True
+            OverlayIsVisible = True
 
             IF Control(i).Type = __UI_Type_MenuItem THEN
                 TempParentID = Control(i).ParentID
@@ -1075,7 +1075,7 @@ SUB __UI_UpdateDisplay
         ELSE
             _DEST Control(__UI_FormID).HelperCanvas
         END IF
-        OverlayisVisible = True
+        OverlayIsVisible = True
 
         LINE (__UI_SelectionRectangleLeft, __UI_SelectionRectangleTop)-(__UI_MouseLeft, __UI_MouseTop), _RGBA32(0, 177, 255, 150), BF
         LINE (__UI_SelectionRectangleLeft, __UI_SelectionRectangleTop)-(__UI_MouseLeft, __UI_MouseTop), _RGB32(39, 188, 244), B
@@ -1101,7 +1101,7 @@ SUB __UI_UpdateDisplay
             IF Control(__UI_HoveringID).ControlIsSelected THEN i = __UI_HoveringID
 
             IF Control(i).Type <> __UI_Type_ContextMenu AND Control(i).Type <> __UI_Type_MenuBar AND Control(i).Type <> __UI_Type_MenuItem THEN
-                OverlayisVisible = True
+                OverlayIsVisible = True
                 DIM SizeAndPosition1$, SizeAndPosition2$, pw&
                 DIM InfoLeft AS INTEGER, InfoTop AS INTEGER
                 _FONT Control(__UI_FormID).Font
@@ -1153,7 +1153,7 @@ SUB __UI_UpdateDisplay
         END IF
     NEXT
 
-    IF OverlayisVisible THEN
+    IF OverlayIsVisible THEN
         IF Control(__UI_FormID).HelperCanvas < -1 THEN
             __UI_MakeHardwareImage Control(__UI_FormID).HelperCanvas
             _PUTIMAGE , Control(__UI_FormID).HelperCanvas
@@ -1186,7 +1186,7 @@ SUB __UI_UpdateDisplay
             DIM FindLF AS LONG, TotalLines AS INTEGER, LongestLine AS INTEGER, TempLine$
             _FONT Control(__UI_FormID).Font
 
-            TempCaption$ = __UI_WordWrap(Replace(ToolTip(__UI_ActiveTipID), "\n", CHR$(10), False, 0), Control(__UI_FormID).Width / 2, LongestLine, TotalLines)
+            TempCaption$ = __UI_WordWrap(Replace(ToolTip(__UI_ActiveTipID), "\n", _CHR_LF, False, 0), Control(__UI_FormID).Width / 2, LongestLine, TotalLines)
 
             PanelWidth = LongestLine + 16
             IF TotalLines = 1 THEN
@@ -1209,14 +1209,14 @@ SUB __UI_UpdateDisplay
                     ThisLine% = ThisLine% + 1
                     TextTop% = 3 + ThisLine% * uspacing& - uspacing&
 
-                    FindLF& = INSTR(TempCaption$, CHR$(1))
+                    FindLF& = INSTR(TempCaption$, _CHR_SOH)
                     IF FindLF& > 0 THEN
                         TempLine$ = LEFT$(TempCaption$, FindLF& - 1)
                         TempCaption$ = MID$(TempCaption$, FindLF& + 1)
                     ELSE
                         TempLine$ = TempCaption$
                         TempCaption$ = _STR_EMPTY
-                        IF ThisLine% = 1 THEN TextTop% = ((_HEIGHT \ 2) - uspacing& \ 2)
+                        IF ThisLine% = 1 THEN TextTop% = (_HEIGHT \ 2 - uspacing& \ 2)
                     END IF
 
                     __UI_PrintString 5, TextTop%, TempLine$
@@ -3180,7 +3180,7 @@ SUB __UI_EventDispatcher
                         EXIT FOR
                     END IF
                 ELSE
-                    IF __UI_KeyHit = ASC("F") OR __UI_KeyHit = ASC("f") THEN
+                    IF __UI_KeyHit = __ASC_UPPER_F _ORELSE __UI_KeyHit = __ASC_LOWER_F THEN
                         'Combo match
                         DoCombo = True
                         EXIT FOR
@@ -3641,11 +3641,11 @@ SUB __UI_EventDispatcher
                     IF NOT Control(__UI_Focus).Disabled THEN
                         SELECT EVERYCASE __UI_KeyHit
                             CASE 32 TO 254 'Printable ASCII characters
-                                IF __UI_KeyHit = ASC("v") OR __UI_KeyHit = ASC("V") THEN 'Paste from clipboard (Ctrl+V)
+                                IF __UI_KeyHit = __ASC_LOWER_V OR __UI_KeyHit = __ASC_UPPER_V THEN 'Paste from clipboard (Ctrl+V)
                                     IF __UI_CtrlIsDown THEN
                                         PasteIntoTextBox:
                                         IF Control(__UI_Focus).Multiline THEN
-                                            Clip$ = Replace(_CLIPBOARD$, CHR$(13) + CHR$(10), CHR$(10), False, 0)
+                                            Clip$ = Replace(_CLIPBOARD$, _CHR_CR + _CHR_LF, _CHR_LF, False, 0)
                                             IF LEN(Clip$) > 0 THEN
                                                 IF NOT Control(__UI_Focus).TextIsSelected THEN
                                                     IF Control(__UI_Focus).Cursor = LEN(Text(__UI_Focus)) THEN
@@ -3679,9 +3679,9 @@ SUB __UI_EventDispatcher
                                             __UI_KeyHit = 0
                                         ELSE
                                             Clip$ = _CLIPBOARD$
-                                            FindLF& = INSTR(Clip$, CHR$(13))
+                                            FindLF& = INSTR(Clip$, _CHR_CR)
                                             IF FindLF& > 0 THEN Clip$ = LEFT$(Clip$, FindLF& - 1)
-                                            FindLF& = INSTR(Clip$, CHR$(10))
+                                            FindLF& = INSTR(Clip$, _CHR_LF)
                                             IF FindLF& > 0 THEN Clip$ = LEFT$(Clip$, FindLF& - 1)
                                             IF LEN(Clip$) > 0 THEN
                                                 IF LEN(Mask(__UI_Focus)) > 0 THEN
@@ -3750,13 +3750,13 @@ SUB __UI_EventDispatcher
                                             __UI_KeyHit = 0
                                         END IF
                                     END IF
-                                ELSEIF __UI_KeyHit = ASC("c") OR __UI_KeyHit = ASC("C") THEN 'Copy selection to clipboard (Ctrl+C)
+                                ELSEIF __UI_KeyHit = __ASC_LOWER_C OR __UI_KeyHit = __ASC_UPPER_C THEN 'Copy selection to clipboard (Ctrl+C)
                                     IF __UI_CtrlIsDown THEN
                                         __UI_FillSelectedText 0, 0
                                         IF LEN(__UI_SelectedText) > 0 THEN _CLIPBOARD$ = __UI_SelectedText
                                         __UI_KeyHit = 0
                                     END IF
-                                ELSEIF __UI_KeyHit = ASC("x") OR __UI_KeyHit = ASC("X") THEN 'Cut selection to clipboard (Ctrl+X)
+                                ELSEIF __UI_KeyHit = __ASC_LOWER_X OR __UI_KeyHit = __ASC_UPPER_X THEN 'Cut selection to clipboard (Ctrl+X)
                                     IF __UI_CtrlIsDown THEN
                                         __UI_FillSelectedText 0, 0
                                         IF LEN(__UI_SelectedText) > 0 THEN
@@ -3771,7 +3771,7 @@ SUB __UI_EventDispatcher
                                         END IF
                                         __UI_KeyHit = 0
                                     END IF
-                                ELSEIF __UI_KeyHit = ASC("a") OR __UI_KeyHit = ASC("A") THEN 'Select all text (Ctrl+A)
+                                ELSEIF __UI_KeyHit = __ASC_LOWER_A OR __UI_KeyHit = __ASC_UPPER_A THEN 'Select all text (Ctrl+A)
                                     IF __UI_CtrlIsDown THEN
                                         Control(__UI_Focus).Cursor = LEN(Text(__UI_Focus))
                                         Control(__UI_Focus).SelectionStart = 0
@@ -3867,13 +3867,13 @@ SUB __UI_EventDispatcher
                                     IF LEN(Text(__UI_Focus)) > 0 THEN
                                         IF NOT Control(__UI_Focus).TextIsSelected THEN
                                             IF Control(__UI_Focus).Cursor = LEN(Text(__UI_Focus)) THEN
-                                                IF Control(__UI_Focus).Multiline AND RIGHT$(Text(__UI_Focus), 1) = CHR$(10) THEN
+                                                IF Control(__UI_Focus).Multiline AND RIGHT$(Text(__UI_Focus), 1) = _CHR_LF THEN
                                                     Control(__UI_Focus).CurrentLine = Control(__UI_Focus).CurrentLine - 1
                                                 END IF
                                                 Text(__UI_Focus) = LEFT$(Text(__UI_Focus), LEN(Text(__UI_Focus)) - 1)
                                                 Control(__UI_Focus).Cursor = Control(__UI_Focus).Cursor - 1
                                             ELSEIF Control(__UI_Focus).Cursor >= 1 THEN
-                                                IF Control(__UI_Focus).Multiline AND MID$(Text(__UI_Focus), Control(__UI_Focus).Cursor, 1) = CHR$(10) THEN
+                                                IF Control(__UI_Focus).Multiline AND MID$(Text(__UI_Focus), Control(__UI_Focus).Cursor, 1) = _CHR_LF THEN
                                                     Control(__UI_Focus).CurrentLine = Control(__UI_Focus).CurrentLine - 1
                                                 END IF
                                                 Text(__UI_Focus) = LEFT$(Text(__UI_Focus), Control(__UI_Focus).Cursor - 1) + MID$(Text(__UI_Focus), Control(__UI_Focus).Cursor + 1)
@@ -3896,7 +3896,7 @@ SUB __UI_EventDispatcher
                                             Text(__UI_Focus) = LEFT$(Text(__UI_Focus), LEN(Text(__UI_Focus)) - 1)
                                             Control(__UI_Focus).Cursor = Control(__UI_Focus).Cursor - 1
                                         ELSEIF Control(__UI_Focus).Cursor >= 1 THEN
-                                            IF Control(__UI_Focus).Multiline AND MID$(Text(__UI_Focus), Control(__UI_Focus).Cursor, 1) = CHR$(10) THEN
+                                            IF Control(__UI_Focus).Multiline AND MID$(Text(__UI_Focus), Control(__UI_Focus).Cursor, 1) = _CHR_LF THEN
                                                 Control(__UI_Focus).CurrentLine = Control(__UI_Focus).CurrentLine - 1
                                             END IF
                                             Text(__UI_Focus) = LEFT$(Text(__UI_Focus), Control(__UI_Focus).Cursor - 1) + MID$(Text(__UI_Focus), Control(__UI_Focus).Cursor + 1)
@@ -3984,7 +3984,7 @@ SUB __UI_EventDispatcher
                                 ELSE
                                     IF Control(__UI_Focus).Cursor > 0 THEN Control(__UI_Focus).Cursor = Control(__UI_Focus).Cursor - 1
                                 END IF
-                                IF MID$(Text(__UI_Focus), Control(__UI_Focus).Cursor + 1, 1) = CHR$(10) THEN Control(__UI_Focus).CurrentLine = Control(__UI_Focus).CurrentLine - 1
+                                IF MID$(Text(__UI_Focus), Control(__UI_Focus).Cursor + 1, 1) = _CHR_LF THEN Control(__UI_Focus).CurrentLine = Control(__UI_Focus).CurrentLine - 1
                             CASE _KEY_RIGHT 'Right arrow key
                                 __UI_CheckSelection __UI_Focus
                                 IF __UI_CtrlIsDown THEN
@@ -3998,7 +3998,7 @@ SUB __UI_EventDispatcher
                                 ELSE
                                     IF Control(__UI_Focus).Cursor < LEN(Text(__UI_Focus)) THEN Control(__UI_Focus).Cursor = Control(__UI_Focus).Cursor + 1
                                 END IF
-                                IF MID$(Text(__UI_Focus), Control(__UI_Focus).Cursor, 1) = CHR$(10) THEN Control(__UI_Focus).CurrentLine = Control(__UI_Focus).CurrentLine + 1
+                                IF MID$(Text(__UI_Focus), Control(__UI_Focus).Cursor, 1) = _CHR_LF THEN Control(__UI_Focus).CurrentLine = Control(__UI_Focus).CurrentLine + 1
                             CASE _KEY_UP 'Up arrow key
                                 IF Control(__UI_Focus).Multiline THEN
                                     IF Control(__UI_Focus).CurrentLine > 1 THEN
@@ -4061,31 +4061,31 @@ SUB __UI_EventDispatcher
         IF __UI_TotalActiveMenus > 0 AND LEFT$(Control(__UI_ParentMenu(__UI_TotalActiveMenus)).Name, 5) = "__UI_" THEN GOTO HandleDesignMenu
 
         SELECT CASE __UI_KeyHit
-            CASE ASC("Z"), ASC("z")
+            CASE __ASC_UPPER_Z, __ASC_LOWER_Z
                 IF __UI_CtrlIsDown THEN
                     __UI_KeyPress 214
                 END IF
-            CASE ASC("Y"), ASC("y")
+            CASE __ASC_UPPER_Y, __ASC_LOWER_Y
                 IF __UI_CtrlIsDown THEN
                     __UI_KeyPress 215
                 END IF
-            CASE ASC("A"), ASC("a")
+            CASE __ASC_UPPER_A, __ASC_LOWER_A
                 IF __UI_CtrlIsDown THEN
                     ControlSelect:
                     __UI_KeyPress 221
                 END IF
-            CASE ASC("X"), ASC("x")
+            CASE __ASC_UPPER_X, __ASC_LOWER_X
                 IF __UI_CtrlIsDown AND __UI_TotalSelectedControls > 0 THEN
                     ControlCut:
                     __UI_KeyPress 216
                     __UI_KeyPress 219
                 END IF
-            CASE ASC("C"), ASC("c")
+            CASE __ASC_UPPER_C, __ASC_LOWER_C
                 IF __UI_CtrlIsDown AND __UI_TotalSelectedControls > 0 THEN
                     ControlCopy:
                     __UI_KeyPress 217
                 END IF
-            CASE ASC("V"), ASC("v")
+            CASE __ASC_UPPER_V, __ASC_LOWER_V
                 IF __UI_CtrlIsDown THEN
                     ControlPaste:
                     Clip$ = _CLIPBOARD$
@@ -4343,11 +4343,11 @@ FUNCTION IsNumber%% (n AS STRING)
             CASE 48 TO 57 ' 0 - 9
                 hasDigit = True
 
-            CASE 46 ' "."
+            CASE _ASC_FULLSTOP ' "."
                 IF hasDot THEN EXIT FUNCTION
                 hasDot = True
 
-            CASE 45 ' "-"
+            CASE _ASC_MINUS ' "-"
                 IF i <> 1 THEN EXIT FUNCTION
 
             CASE ELSE
@@ -4989,7 +4989,7 @@ SUB SetCaption (ThisID AS LONG, TempCaption$)
     END IF
 
     'Replace \n for line breaks:
-    NewCaption$ = Replace$(NewCaption$, "\n", CHR$(10), False, 0)
+    NewCaption$ = Replace$(NewCaption$, "\n", _CHR_LF, False, 0)
 
     Caption(ThisID) = NewCaption$
 END SUB
@@ -5400,11 +5400,11 @@ SUB AddItem (WhichListBox AS LONG, TempItem$)
     ThisID = WhichListBox
     IF Control(ThisID).Type <> __UI_Type_ListBox AND Control(ThisID).Type <> __UI_Type_DropdownList THEN EXIT SUB
 
-    Item$ = Replace$(RestoreCHR$(TempItem$), CHR$(10), CHR$(13), False, 0)
+    Item$ = Replace$(RestoreCHR$(TempItem$), _CHR_LF, _CHR_CR, False, 0)
 
-    IF LEN(Text(ThisID)) > 0 AND RIGHT$(Text(ThisID), 1) <> CHR$(10) THEN Text(ThisID) = Text(ThisID) + CHR$(10)
+    IF LEN(Text(ThisID)) > 0 AND RIGHT$(Text(ThisID), 1) <> _CHR_LF THEN Text(ThisID) = Text(ThisID) + _CHR_LF
 
-    Text(ThisID) = Text(ThisID) + Item$ + CHR$(10)
+    Text(ThisID) = Text(ThisID) + Item$ + _CHR_LF
     Control(ThisID).Max = Control(ThisID).Max + 1
 
     IF Control(ThisID).AutoScroll THEN
@@ -5436,7 +5436,7 @@ SUB RemoveItem (WhichListBox AS LONG, ItemToRemove AS INTEGER)
     ThisItem% = 0
     DO WHILE LEN(TempText$)
         ThisItem% = ThisItem% + 1
-        FindLF& = INSTR(TempText$, CHR$(10))
+        FindLF& = INSTR(TempText$, _CHR_LF)
         IF FindLF& THEN
             TempCaption$ = LEFT$(TempText$, FindLF& - 1)
             TempText$ = MID$(TempText$, FindLF& + 1)
@@ -5445,7 +5445,7 @@ SUB RemoveItem (WhichListBox AS LONG, ItemToRemove AS INTEGER)
             TempText$ = _STR_EMPTY
         END IF
 
-        IF ThisItem% <> ItemToRemove THEN Text(This.ID) = Text(This.ID) + TempCaption$ + CHR$(10)
+        IF ThisItem% <> ItemToRemove THEN Text(This.ID) = Text(This.ID) + TempCaption$ + _CHR_LF
     LOOP
 
     This.Max = This.Max - 1
@@ -5493,7 +5493,7 @@ SUB ReplaceItem (WhichListBox AS LONG, ItemToReplace AS INTEGER, NewText$)
     ThisItem% = 0
     DO WHILE LEN(TempText$)
         ThisItem% = ThisItem% + 1
-        FindLF& = INSTR(TempText$, CHR$(10))
+        FindLF& = INSTR(TempText$, _CHR_LF)
         IF FindLF& THEN
             TempCaption$ = LEFT$(TempText$, FindLF& - 1)
             TempText$ = MID$(TempText$, FindLF& + 1)
@@ -5503,9 +5503,9 @@ SUB ReplaceItem (WhichListBox AS LONG, ItemToReplace AS INTEGER, NewText$)
         END IF
 
         IF ThisItem% <> ItemToReplace THEN
-            Text(This.ID) = Text(This.ID) + TempCaption$ + CHR$(10)
+            Text(This.ID) = Text(This.ID) + TempCaption$ + _CHR_LF
         ELSE
-            Text(This.ID) = Text(This.ID) + NewText$ + CHR$(10)
+            Text(This.ID) = Text(This.ID) + NewText$ + _CHR_LF
         END IF
     LOOP
     Control(This.ID).Redraw = True
@@ -5541,7 +5541,7 @@ FUNCTION GetItem$ (id AS LONG, Item AS LONG)
 
     This = Control(id)
 
-    FindLF = INSTR(Text(id), CHR$(10))
+    FindLF = INSTR(Text(id), _CHR_LF)
     IF Item = 1 THEN
         IF FindLF = 0 THEN
             GetItem$ = Text(id)
@@ -5557,7 +5557,7 @@ FUNCTION GetItem$ (id AS LONG, Item AS LONG)
     ThisItem = 2
     DO
         LastLF = FindLF
-        FindLF = INSTR(LastLF + 1, Text(id), CHR$(10))
+        FindLF = INSTR(LastLF + 1, Text(id), _CHR_LF)
         IF FindLF > 0 THEN
             IF ThisItem = Item THEN
                 GetItem$ = MID$(Text(id), LastLF + 1, FindLF - LastLF - 1)
@@ -5583,7 +5583,7 @@ SUB __UI_ListBoxSearchItem (This AS __UI_ControlTYPE)
     TempText$ = Text(This.ID)
     DO WHILE LEN(TempText$)
         ThisItem% = ThisItem% + 1
-        FindLF& = INSTR(TempText$, CHR$(10))
+        FindLF& = INSTR(TempText$, _CHR_LF)
         IF FindLF& THEN
             TempCaption$ = LEFT$(TempText$, FindLF& - 1)
             TempText$ = MID$(TempText$, FindLF& + 1)
@@ -5711,9 +5711,9 @@ FUNCTION __UI_WordWrap$ (PassedText AS STRING, Width AS INTEGER, LongestLine AS 
     TempCaption$ = Text
     IF __UI_PrintWidth(TempCaption$) > Width THEN
         'Word wrap is faster for fixed-width fonts.
-        'CHR$(10) is a line break. CHR$(1) is a soft break (word wrap)
+        '_CHR_LF is a line break. _CHR_SOH is a soft break (word wrap)
         DO WHILE LEN(TempCaption$)
-            FindSep = INSTR(TempCaption$, CHR$(10)) 'process the passed text line by line
+            FindSep = INSTR(TempCaption$, _CHR_LF) 'process the passed text line by line
             IF FindSep > 0 THEN
                 TempLine$ = LEFT$(TempCaption$, FindSep - 1)
                 TempCaption$ = MID$(TempCaption$, FindSep + 1)
@@ -5724,7 +5724,7 @@ FUNCTION __UI_WordWrap$ (PassedText AS STRING, Width AS INTEGER, LongestLine AS 
 
             DO WHILE LEN(TempLine$)
                 IF __UI_PrintWidth(TempLine$) < Width THEN
-                    IF LEN(Temp$) > 0 THEN Temp$ = Temp$ + CHR$(1)
+                    IF LEN(Temp$) > 0 THEN Temp$ = Temp$ + _CHR_SOH
                     ThisLineWidth = __UI_PrintWidth(TempLine$)
                     IF LongestLine < ThisLineWidth THEN LongestLine = ThisLineWidth
                     Temp$ = Temp$ + TempLine$
@@ -5738,13 +5738,13 @@ FUNCTION __UI_WordWrap$ (PassedText AS STRING, Width AS INTEGER, LongestLine AS 
                             IF __UI_PrintWidth(LEFT$(TempLine$, FindSep - 1)) > Width THEN
                                 IF PrevSep = 0 THEN
                                     'This word alone is > than the width, can't fight that.
-                                    IF LEN(Temp$) > 0 THEN Temp$ = Temp$ + CHR$(1)
+                                    IF LEN(Temp$) > 0 THEN Temp$ = Temp$ + _CHR_SOH
                                     Temp$ = Temp$ + LEFT$(TempLine$, FindSep - 1)
                                     TempLine$ = MID$(TempLine$, FindSep + 1)
                                     Lines = Lines + 1
                                     EXIT DO
                                 ELSE
-                                    IF LEN(Temp$) > 0 THEN Temp$ = Temp$ + CHR$(1)
+                                    IF LEN(Temp$) > 0 THEN Temp$ = Temp$ + _CHR_SOH
                                     Temp$ = Temp$ + LEFT$(TempLine$, PrevSep - 1)
                                     ThisLineWidth = __UI_PrintWidth(LEFT$(TempLine$, PrevSep - 1))
                                     IF LongestLine < ThisLineWidth THEN LongestLine = ThisLineWidth
@@ -5756,7 +5756,7 @@ FUNCTION __UI_WordWrap$ (PassedText AS STRING, Width AS INTEGER, LongestLine AS 
                             PrevSep = FindSep
                         ELSE
                             IF PrevSep > 0 THEN
-                                IF LEN(Temp$) > 0 THEN Temp$ = Temp$ + CHR$(1)
+                                IF LEN(Temp$) > 0 THEN Temp$ = Temp$ + _CHR_SOH
                                 Temp$ = Temp$ + LEFT$(TempLine$, PrevSep - 1)
                                 ThisLineWidth = __UI_PrintWidth(LEFT$(TempLine$, PrevSep - 1))
                                 IF LongestLine < ThisLineWidth THEN LongestLine = ThisLineWidth
@@ -5764,7 +5764,7 @@ FUNCTION __UI_WordWrap$ (PassedText AS STRING, Width AS INTEGER, LongestLine AS 
                                 Lines = Lines + 1
                                 EXIT DO
                             ELSE
-                                IF LEN(Temp$) > 0 THEN Temp$ = Temp$ + CHR$(1)
+                                IF LEN(Temp$) > 0 THEN Temp$ = Temp$ + _CHR_SOH
                                 Temp$ = Temp$ + TempLine$
                                 ThisLineWidth = __UI_PrintWidth(TempLine$)
                                 IF LongestLine < ThisLineWidth THEN LongestLine = ThisLineWidth
@@ -5786,22 +5786,22 @@ FUNCTION __UI_WordWrap$ (PassedText AS STRING, Width AS INTEGER, LongestLine AS 
         Lines = 1
         LongestLine = 0
         Temp$ = TempCaption$
-        FindSep = INSTR(TempCaption$, CHR$(10))
+        FindSep = INSTR(TempCaption$, _CHR_LF)
         IF FindSep > 0 THEN
             Temp$ = _STR_EMPTY
             Lines = 0
             DO WHILE LEN(TempCaption$)
-                FindSep = INSTR(TempCaption$, CHR$(10))
+                FindSep = INSTR(TempCaption$, _CHR_LF)
                 IF FindSep > 0 THEN
                     Lines = Lines + 1
-                    IF LEN(Temp$) > 0 THEN Temp$ = Temp$ + CHR$(1)
+                    IF LEN(Temp$) > 0 THEN Temp$ = Temp$ + _CHR_SOH
                     Temp$ = Temp$ + LEFT$(TempCaption$, FindSep - 1)
                     ThisLineWidth = __UI_PrintWidth(LEFT$(TempCaption$, FindSep - 1))
                     IF LongestLine < ThisLineWidth THEN LongestLine = ThisLineWidth
                     TempCaption$ = MID$(TempCaption$, FindSep + 1)
                 ELSE
                     Lines = Lines + 1
-                    Temp$ = Temp$ + CHR$(1) + TempCaption$
+                    Temp$ = Temp$ + _CHR_SOH + TempCaption$
                     EXIT DO
                 END IF
             LOOP
@@ -6915,8 +6915,8 @@ SUB __UI_DrawLabel (This AS __UI_ControlTYPE, ControlState AS _BYTE)
                     TextTop% = This.Height - CaptionIndent - (TotalLines * uspacing&) + (ThisLine% * uspacing& - uspacing&)
                 END IF
 
-                FindSep& = INSTR(TempCaption$, CHR$(1)) 'Search for soft breaks
-                FindLF& = INSTR(TempCaption$, CHR$(10)) 'Search for hard breaks
+                FindSep& = INSTR(TempCaption$, _CHR_SOH) 'Search for soft breaks
+                FindLF& = INSTR(TempCaption$, _CHR_LF) 'Search for hard breaks
                 IF (FindSep& > 0 AND FindLF& > 0 AND FindSep& < FindLF&) OR (FindSep& > 0 AND FindLF& = 0) THEN
                     TempLine$ = LEFT$(TempCaption$, FindSep& - 1)
                     TempCaption$ = MID$(TempCaption$, FindSep& + 1)
@@ -7311,7 +7311,7 @@ SUB __UI_DrawProgressBar (This AS __UI_ControlTYPE, ControlState AS _BYTE)
             DIM CaptionLeft AS INTEGER, FindLF&, FindSep&, ThisLine%
             DIM CaptionLeftFirstLine AS INTEGER, CaptionTopFirstLine AS INTEGER, TextTop%
             DIM TotalLines AS INTEGER
-            IF INSTR(TempCaption$, CHR$(10)) > 0 THEN
+            IF INSTR(TempCaption$, _CHR_LF) > 0 THEN
                 TempCaption$ = __UI_TrimAt0$(__UI_WordWrap(TempCaption$, This.Width - ((__UI_DefaultCaptionIndent) * 2), 0, TotalLines))
                 DO WHILE LEN(TempCaption$)
                     ThisLine% = ThisLine% + 1
@@ -7325,8 +7325,8 @@ SUB __UI_DrawProgressBar (This AS __UI_ControlTYPE, ControlState AS _BYTE)
                         TextTop% = __UI_DefaultCaptionIndent + ThisLine% * uspacing& - uspacing&
                     END IF
 
-                    FindSep& = INSTR(TempCaption$, CHR$(1)) 'Search for soft breaks
-                    FindLF& = INSTR(TempCaption$, CHR$(10)) 'Search for hard breaks
+                    FindSep& = INSTR(TempCaption$, _CHR_SOH) 'Search for soft breaks
+                    FindLF& = INSTR(TempCaption$, _CHR_LF) 'Search for hard breaks
                     IF (FindSep& > 0 AND FindLF& > 0 AND FindSep& < FindLF&) OR (FindSep& > 0 AND FindLF& = 0) THEN
                         TempLine$ = LEFT$(TempCaption$, FindSep& - 1)
                         TempCaption$ = MID$(TempCaption$, FindSep& + 1)
@@ -7608,8 +7608,8 @@ SUB __UI_DrawTextBox (This AS __UI_ControlTYPE, ControlState AS _BYTE)
 
                 TextTop% = CaptionIndent + ThisLine% * uspacing& - uspacing&
 
-                FindSep& = INSTR(TempCaption$, CHR$(1)) 'Search for soft breaks
-                FindLF& = INSTR(TempCaption$, CHR$(10)) 'Search for hard breaks
+                FindSep& = INSTR(TempCaption$, _CHR_SOH) 'Search for soft breaks
+                FindLF& = INSTR(TempCaption$, _CHR_LF) 'Search for hard breaks
                 IF (FindSep& > 0 AND FindLF& > 0 AND FindSep& < FindLF&) OR (FindSep& > 0 AND FindLF& = 0) THEN
                     TempLine$ = LEFT$(TempCaption$, FindSep& - 1)
                     TempCaption$ = MID$(TempCaption$, FindSep& + 1)
@@ -7630,7 +7630,7 @@ SUB __UI_DrawTextBox (This AS __UI_ControlTYPE, ControlState AS _BYTE)
 
             IF This.ID = __UI_Focus THEN
                 FOR i = Control(__UI_Focus).Cursor TO 0 STEP -1
-                    IF MID$(Text(__UI_Focus), i, 1) = CHR$(10) OR i = 0 THEN
+                    IF MID$(Text(__UI_Focus), i, 1) = _CHR_LF OR i = 0 THEN
                         Control(__UI_Focus).VisibleCursor = Control(__UI_Focus).Cursor - i
                         EXIT FOR
                     END IF
@@ -7737,8 +7737,8 @@ SUB __UI_DrawListBox (This AS __UI_ControlTYPE, ControlState AS _BYTE)
             This.PreviousValue = This.Value
         END IF
         This.PreviousInputViewStart = This.InputViewStart
-        IF INSTR(Text(This.ID), CHR$(13) + CHR$(10)) > 0 THEN
-            Text(This.ID) = Replace(Text(This.ID), CHR$(13) + CHR$(10), CHR$(10), 0, 0)
+        IF INSTR(Text(This.ID), _CHR_CR + _CHR_LF) > 0 THEN
+            Text(This.ID) = Replace(Text(This.ID), _CHR_CR + _CHR_LF, _CHR_LF, 0, 0)
         END IF
 
         __UI_TempTexts(This.ID) = Text(This.ID)
@@ -7776,7 +7776,7 @@ SUB __UI_DrawListBox (This AS __UI_ControlTYPE, ControlState AS _BYTE)
             Position& = 1
             DO WHILE LEN(TempText$)
                 ThisItem% = ThisItem% + 1
-                FindLF& = INSTR(Position&, TempText$, CHR$(10))
+                FindLF& = INSTR(Position&, TempText$, _CHR_LF)
                 IF FindLF& THEN
                     TempCaption$ = MID$(TempText$, Position&, FindLF& - Position&)
                 ELSE
@@ -8035,7 +8035,7 @@ SUB __UI_DrawDropdownList (This AS __UI_ControlTYPE, ControlState AS _BYTE)
                 ThisItem% = 0
                 DO WHILE LEN(TempText$)
                     ThisItem% = ThisItem% + 1
-                    FindLF& = INSTR(TempText$, CHR$(10))
+                    FindLF& = INSTR(TempText$, _CHR_LF)
                     IF FindLF& THEN
                         TempCaption$ = LEFT$(TempText$, FindLF& - 1)
                         TempText$ = MID$(TempText$, FindLF& + 1)
@@ -8383,7 +8383,7 @@ SUB __UI_DrawMenuPanel (This AS __UI_ControlTYPE, Parent AS LONG)
                 IF Control(i).Value = True THEN
                     'Checked menu item
                     IF Control(i).BulletStyle = __UI_Bullet%% THEN
-                        __UI_PrintString __UI_MenuItemOffset \ 2 - __UI_PrintWidth(CHR$(7)) \ 2, Control(i).Top + Control(i).Height \ 2 - _UFONTHEIGHT \ 2, CHR$(7)
+                        __UI_PrintString __UI_MenuItemOffset \ 2 - __UI_PrintWidth(_CHR_BEL) \ 2, Control(i).Top + Control(i).Height \ 2 - _UFONTHEIGHT \ 2, _CHR_BEL
                     ELSE
                         _PUTIMAGE (__UI_MenuItemOffset \ 2 - CheckMarkWidth \ 2, Control(i).Top + Control(i).Height \ 2 - CheckMarkHeight \ 2), ControlImage, , (0, CheckMarkIndex * CheckMarkHeight - CheckMarkHeight)-STEP(6, 6)
                     END IF
@@ -8649,7 +8649,7 @@ FUNCTION MessageBox& (message AS STRING, caption AS STRING, setup AS LONG)
 
     _DELAY 0.2 ' delay a bit so that the interface can redraw before the messagebox kicks in
 
-    DIM returnValue AS LONG: returnValue = _MESSAGEBOX(__caption, Replace(message, "\n", CHR$(10), False, 0), dialogType, iconType, defaultButton)
+    DIM returnValue AS LONG: returnValue = _MESSAGEBOX(__caption, Replace(message, "\n", _CHR_LF, False, 0), dialogType, iconType, defaultButton)
 
     SELECT CASE returnValue
         CASE 0
