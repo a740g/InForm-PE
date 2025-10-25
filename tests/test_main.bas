@@ -5,6 +5,9 @@ $CONSOLE:ONLY
 '$INCLUDE:'../InForm/extensions/HashTable.bi'
 '$INCLUDE:'../InForm/extensions/Pathname.bi'
 '$INCLUDE:'../InForm/extensions/StringFile.bi'
+
+'$INCLUDE:'../InForm/extensions/CatchError.bi'
+
 '$INCLUDE:'../InForm/InForm.bi'
 
 SUB __UI_BeforeInit

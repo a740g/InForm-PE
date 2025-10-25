@@ -17,7 +17,7 @@ SUB TEST_BEGIN_ALL
 
     __TestState.filter = _TRIM$(COMMAND$)
 
-    __TestSetColor __TEST_COLOR_HEADER: __TestPrintLn "Minimalistic test framework library for QB64-PE"
+    __TestSetColor __TEST_COLOR_HEADER: __TestPrintLn "Catch test framework library for QB64-PE initialized"
     __TestSetColor __TEST_COLOR_NOTE: __TestPrintLn STRING$(__TEST_SEPARATOR_WIDTH, "-")
 
     IF LEN(__TestState.filter) THEN
