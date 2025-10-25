@@ -117,7 +117,7 @@ SUB Test_Algo
     TEST_CASE_END
 
     TEST_CASE_BEGIN "Algo: Empty Array"
-    DIM zeroArr(0) AS STRING ' An array with 0 elements
+    DIM zeroArr(0) AS STRING
     TEST_REQUIRE_FALSE Algo_SortStringArray(zeroArr()), "Algo_SortStringArray should return FALSE for an empty array"
     TEST_CASE_END
 
@@ -129,7 +129,6 @@ SUB Test_Algo
     rangeArr(3) = "c"
     rangeArr(4) = "b"
     rangeArr(5) = "a"
-    ' Sort only the middle part (index 1 to 4)
     TEST_REQUIRE Algo_SortStringArrayRange(rangeArr(), 1, 4, _TRUE, _TRUE), "Algo_SortStringArrayRange should return TRUE for an unsorted range"
     TEST_CHECK rangeArr(0) = "z", "Element before range should be untouched"
     TEST_CHECK rangeArr(1) = "b", "Range should be sorted"
@@ -529,22 +528,18 @@ SUB Test_InFormUIHelpers
 
     TEST_CASE_BEGIN "InFormUIHelpers: RawText$ and __UI_EmptyMask$"
 
-    ' No mask: RawText$ should return Text(id)
     Mask(0) = ""
     Text(0) = "plaintext"
     TEST_CHECK RawText$(0) = "plaintext", "RawText$ returns full text when no mask"
 
-    ' With mask: RawText$ now returns only the placeholder characters concatenated
     Mask(0) = "00-00"
     Text(0) = "12-34"
     TEST_CHECK RawText$(0) = "1234", "RawText$ should return placeholder characters concatenated"
 
-    ' Empty mask placeholders should be returned as spaces (underscore in Text -> space in RawText$)
     Mask(0) = "00-00"
     Text(0) = "__-5_"
     TEST_CHECK RawText$(0) = "  5 ", "RawText$ should convert underscores to spaces for empty placeholders"
 
-    ' __UI_EmptyMask$ should produce underscores where placeholders are and mask chars elsewhere
     Mask(0) = "00-00"
     TEST_CHECK __UI_EmptyMask$(0) = "__-__", "__UI_EmptyMask$ should produce placeholder underscores"
 
@@ -552,28 +547,58 @@ SUB Test_InFormUIHelpers
 
     TEST_CASE_BEGIN "InFormUIHelpers: RawText$ additional cases"
 
-    ' Mix of placeholder types and non-digit text
     Mask(0) = "9#0#"
     Text(0) = "1a2b"
     TEST_CHECK RawText$(0) = "1a2b", "RawText$ should return characters for placeholder positions (including non-digits)"
 
-    ' Text shorter than mask: missing positions become spaces
     Mask(0) = "0000"
     Text(0) = "12"
     TEST_CHECK RawText$(0) = "12", "RawText$ should return only existing placeholder characters when Text is shorter than mask"
 
-    ' Long mask with literals: only placeholder positions are returned, literals become spaces in RawText$
     Mask(0) = "(000) 000-0000"
     Text(0) = "(123) 456-7890"
-    ' Expected: digits placed at placeholder slots, other slots are spaces
     TEST_CHECK RawText$(0) = "1234567890", "RawText$ should extract digits into a contiguous string for phone mask"
 
-    ' __UI_EmptyMask$ edge cases
     Mask(0) = "ABC"
     TEST_CHECK __UI_EmptyMask$(0) = "ABC", "__UI_EmptyMask$ should return literal mask when no placeholders"
 
     Mask(0) = ""
     TEST_CHECK __UI_EmptyMask$(0) = "", "__UI_EmptyMask$ should return empty string when mask is empty"
+
+    TEST_CASE_END
+
+    TEST_CASE_BEGIN "InFormUIHelpers: 1-char RawText$ and __UI_EmptyMask$"
+
+    Mask(0) = "0"
+    Text(0) = "5"
+    TEST_CHECK RawText$(0) = "5", "RawText$ should return single placeholder digit"
+
+    Mask(0) = "0"
+    Text(0) = "_"
+    TEST_CHECK RawText$(0) = " ", "RawText$ should convert single underscore to space"
+
+    Mask(0) = "0"
+    TEST_CHECK __UI_EmptyMask$(0) = "_", "__UI_EmptyMask$ should return single underscore for single placeholder"
+
+    Mask(0) = ""
+    TEST_CHECK __UI_EmptyMask$(0) = "", "__UI_EmptyMask$ should return empty string for empty mask"
+
+    TEST_CASE_END
+
+    TEST_CASE_BEGIN "InFormUIHelpers: RestoreCHR$"
+
+    TEST_CHECK RestoreCHR$("Hello\65;World") = "HelloAWorld", "RestoreCHR$ should convert \65; to 'A'"
+
+    TEST_CHECK RestoreCHR$("\65;\66;\67;") = CHR$(65) + CHR$(66) + CHR$(67), "Multiple numeric escapes converted"
+
+    TEST_CHECK RestoreCHR$("\\65;") = "\65;", "Double backslash should collapse to single backslash and leave number unprocessed"
+
+    DIM tmp$: tmp$ = "X\6a;Y"
+    TEST_CHECK RestoreCHR$(tmp$) = tmp$, "Malformed numeric escape should be left untouched"
+    TEST_CHECK tmp$ = "X\6a;Y", "Malformed numeric escape should be left untouched"
+
+    TEST_CHECK ASC(RestoreCHR$("\0;"), 1) = 0, "RestoreCHR$ should produce CHR$(0) for \0;"
+    TEST_CHECK ASC(RestoreCHR$("\65;"), 1) = 65, "RestoreCHR$ should produce CHR$(65) for \65;"
 
     TEST_CASE_END
 END SUB
@@ -644,7 +669,6 @@ SUB Test_InFormUIUnicodeUtils
     TEST_CASE_END
 END SUB
 
-' Stubs
 SUB __UI_LoadForm: END SUB
 SUB __UI_AssignIDs: END SUB
 SUB __UI_OnLoad: END SUB
