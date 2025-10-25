@@ -94,6 +94,7 @@ InForm/extensions/*.*
 | Fireworks2 | Fellippe Heitor |
 | GIFPlaySample | Fellippe Heitor |
 | GravitationSimulation | Richard Notley |
+| GX-Map-Maker | boxgaming |
 | InFormPaint | Fellippe Heitor |
 | InsideOutsideTriangle |  Richard Notley |
 | Lander1 | B+ |

@@ -52,18 +52,18 @@ END FUNCTION
 FUNCTION AtCorner%%
     'This function avoids trig divide by zero difficulty at triangle corners
     IF (Vertices%(3, 0) = Vertices%(0, 0) AND Vertices%(3, 1) = Vertices%(0, 1)) OR (Vertices%(3, 0) = Vertices%(1, 0) AND Vertices%(3, 1) = Vertices%(1, 1)) OR (Vertices%(3, 0) = Vertices%(2, 0) AND Vertices%(3, 1) = Vertices%(2, 1)) THEN
-        AtCorner%% = TRUE
+        AtCorner%% = True
     ELSE
-        AtCorner%% = FALSE
+        AtCorner%% = False
     END IF
 END FUNCTION
 
 FUNCTION InPicture%%
     'True if cursor is in PictureBox1
     IF XMouse% > 0 AND XMouse% < 650 AND YMouse% > 0 AND YMouse% < 540 THEN
-        InPicture%% = TRUE
+        InPicture%% = True
     ELSE
-        InPicture%% = FALSE
+        InPicture%% = False
     END IF
 END FUNCTION
 
@@ -80,7 +80,7 @@ SUB __UI_BeforeInit
 END SUB
 
 SUB __UI_OnLoad
-    Control(InsideOutsideLB).Hidden = TRUE
+    Control(InsideOutsideLB).Hidden = True
     BeginDraw PictureBox1
     'Drawing code goes here
     COLOR _RGB32(0, 0, 0), _RGB32(255, 255, 255)
@@ -207,7 +207,7 @@ SUB __UI_Click (id AS LONG)
                         EndDraw PictureBox1
                         Caption(Click1LB) = "Move Cursor"
                         Caption(Click2LB) = "Around"
-                        Control(InsideOutsideLB).Hidden = FALSE
+                        Control(InsideOutsideLB).Hidden = False
                         'Triangle Side Lengths
                         A# = SideLength#(Vertices%(0, 0), Vertices%(0, 1), Vertices%(2, 0), Vertices%(2, 1))
                         B# = SideLength#(Vertices%(1, 0), Vertices%(1, 1), Vertices%(0, 0), Vertices%(0, 1))
@@ -228,41 +228,68 @@ SUB __UI_Click (id AS LONG)
             Caption(Y2LB) = ""
             Caption(X3LB) = ""
             Caption(Y3LB) = ""
-            Control(InsideOutsideLB).Hidden = TRUE
+            Control(InsideOutsideLB).Hidden = True
             Caption(Click1LB) = "Click To Set"
             Caption(Click2LB) = "Vertex 1"
     END SELECT
 END SUB
 
 SUB __UI_MouseEnter (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_MouseLeave (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_FocusIn (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_FocusOut (id AS LONG)
     'This event occurs right before a control loses focus.
     'To prevent a control from losing focus, set __UI_KeepFocus = True below.
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_MouseDown (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_MouseUp (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_KeyPress (id AS LONG)
     'When this event is fired, __UI_KeyHit will contain the code of the key hit.
     'You can change it and even cancel it by making it = 0
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_TextChanged (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_ValueChanged (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_FormResized

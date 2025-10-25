@@ -104,11 +104,13 @@ END SUB
 
 SUB __UI_FocusIn (id AS LONG)
     SELECT CASE id
+        CASE ELSE
     END SELECT
 END SUB
 
 SUB __UI_FocusOut (id AS LONG)
     SELECT CASE id
+        CASE ELSE
     END SELECT
 END SUB
 
@@ -164,16 +166,19 @@ END SUB
 
 SUB __UI_KeyPress (id AS LONG)
     SELECT CASE id
+        CASE ELSE
     END SELECT
 END SUB
 
 SUB __UI_TextChanged (id AS LONG)
     SELECT CASE id
+        CASE ELSE
     END SELECT
 END SUB
 
 SUB __UI_ValueChanged (id AS LONG)
     SELECT CASE id
+        CASE ELSE
     END SELECT
 END SUB
 

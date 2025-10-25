@@ -91,7 +91,7 @@ SUB __UI_OnLoad
     I = 0
     Bdl = 1.055
     OZ = .5
-    SOBER = FALSE: legalToDrive = FALSE
+    SOBER = False: legalToDrive = False
     HELPFile = "EBACHelp.txt"
     displayDisclaimer
 
@@ -144,8 +144,8 @@ SUB __UI_Click (id AS LONG)
         CASE AGREEBT
             Answer = MessageBox("Do you want to perform another calculation?             ", "", MsgBox_YesNo + MsgBox_Question)
             IF Answer = MsgBox_Yes THEN
-                Control(AgreeCB).Value = FALSE
-                Control(AGREEBT).Disabled = TRUE
+                Control(AgreeCB).Value = False
+                Control(AGREEBT).Disabled = True
             ELSE
                 Answer = MessageBox("Thank You for using EBAC Calculator. Please Don't Drink and Drive.", "", MsgBox_Ok + MsgBox_Information)
                 SYSTEM
@@ -155,7 +155,7 @@ SUB __UI_Click (id AS LONG)
             ResetForm
 
         CASE OKBT
-            IF Control(maleRB).Value = FALSE AND Control(femaleRB).Value = FALSE THEN
+            IF Control(maleRB).Value = False AND Control(femaleRB).Value = False THEN
                 Answer = MessageBox("Invalid: You must select either M (male) or F (female). Please Correct.", "", MsgBox_Ok + MsgBox_Information)
                 EXIT SUB
             END IF
@@ -163,7 +163,7 @@ SUB __UI_Click (id AS LONG)
             Wt = Control(WeightTB).Value
             T = Control(TimeTB).Value
             calcEBAC
-            Control(QUITBT).Disabled = TRUE
+            Control(QUITBT).Disabled = True
             ResetList displayResults
             Text(displayResults) = prt_text
 
@@ -195,44 +195,65 @@ SUB __UI_Click (id AS LONG)
 END SUB
 
 SUB __UI_MouseEnter (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_MouseLeave (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_FocusIn (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_FocusOut (id AS LONG)
     'This event occurs right before a control loses focus.
     'To prevent a control from losing focus, set __UI_KeepFocus = True below.
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_MouseDown (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_MouseUp (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_KeyPress (id AS LONG)
     'When this event is fired, __UI_KeyHit will contain the code of the key hit.
     'You can change it and even cancel it by making it = 0
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_TextChanged (id AS LONG)
     SELECT CASE id
 
         CASE WeightTB
-            Control(AgreeCB).Value = FALSE
-            Control(AGREEBT).Disabled = TRUE
+            Control(AgreeCB).Value = False
+            Control(AGREEBT).Disabled = True
 
         CASE nbrDrinksTB
-            Control(AgreeCB).Value = FALSE
-            Control(AGREEBT).Disabled = TRUE
+            Control(AgreeCB).Value = False
+            Control(AGREEBT).Disabled = True
 
         CASE TimeTB
-            Control(AgreeCB).Value = FALSE
-            Control(AGREEBT).Disabled = TRUE
+            Control(AgreeCB).Value = False
+            Control(AGREEBT).Disabled = True
 
     END SELECT
 END SUB
@@ -243,20 +264,20 @@ SUB __UI_ValueChanged (id AS LONG)
         CASE displayResults
 
         CASE maleRB
-            Control(AgreeCB).Value = FALSE
-            Control(AGREEBT).Disabled = TRUE
+            Control(AgreeCB).Value = False
+            Control(AGREEBT).Disabled = True
 
         CASE femaleRB
-            Control(AgreeCB).Value = FALSE
-            Control(AGREEBT).Disabled = TRUE
+            Control(AgreeCB).Value = False
+            Control(AGREEBT).Disabled = True
 
         CASE AgreeCB
-            IF Control(AgreeCB).Value = TRUE THEN
-                Control(AGREEBT).Disabled = FALSE
-                Control(QUITBT).Disabled = FALSE
+            IF Control(AgreeCB).Value = True THEN
+                Control(AGREEBT).Disabled = False
+                Control(QUITBT).Disabled = False
             ELSE
-                Control(AGREEBT).Disabled = TRUE
-                Control(QUITBT).Disabled = TRUE
+                Control(AGREEBT).Disabled = True
+                Control(QUITBT).Disabled = True
             END IF
 
     END SELECT
@@ -308,10 +329,10 @@ SUB ResetForm
     Control(nbrDrinksTB).Value = 0
     Control(WeightTB).Value = 0
     Control(TimeTB).Value = 0
-    Control(AgreeCB).Value = FALSE
-    Control(AGREEBT).Disabled = TRUE
-    Control(maleRB).Value = FALSE
-    Control(femaleRB).Value = FALSE
+    Control(AgreeCB).Value = False
+    Control(AGREEBT).Disabled = True
+    Control(maleRB).Value = False
+    Control(femaleRB).Value = False
     ResetList displayResults
     Sex = ""
 END SUB
@@ -322,7 +343,7 @@ SUB calcEBAC
     ' *** Convert Drinks into Fluid Ounces of EtOH (Pure Alcohol).
     ' *** A is number of drinks. 1 drink is about .6 FLoz of alcohol
     FLoz = A * OZ
-    legalToDrive = FALSE
+    legalToDrive = False
 
     '-----------------------------------------------------
     ' *** Set/calculate EBAC values based on Sex
@@ -423,10 +444,10 @@ SUB calcEBAC
     '***    - When user will be less than .08
     '***    - How long it will take to become completely sober
     IF EBAC > .08 THEN
-        SOBER = FALSE
+        SOBER = False
         CEBAC = EBAC
         st = T
-        DO UNTIL SOBER = TRUE
+        DO UNTIL SOBER = True
             T = T + 1
             IF CEBAC > .0799 THEN I = I + 1
 
@@ -439,16 +460,16 @@ SUB calcEBAC
                     CEBAC = 9.86 * FLoz / Wt - B * T
             END SELECT
 
-            IF legalToDrive = FALSE THEN
+            IF legalToDrive = False THEN
                 IF CEBAC < .08 THEN
                     prt_text = prt_text + CHR$(10) + CHR$(10) + "It will take about " + strFormat$(STR$(I), "##") + " hours from your last drink to be able to drive." + CHR$(10)
-                    legalToDrive = TRUE
+                    legalToDrive = True
                 END IF
             END IF
 
             IF CEBAC <= 0 THEN
                 prt_text = prt_text + "It will take about " + strFormat$(STR$(T - st), "##") + " hours from your last drink to be completely sober."
-                SOBER = TRUE
+                SOBER = True
             END IF
         LOOP
     END IF

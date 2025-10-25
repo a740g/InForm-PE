@@ -1,0 +1,114 @@
+' GX - A BASIC Game Engine for QB64
+' 2021 boxgaming - https://github.com/boxgaming/gx
+'
+$If GXFS = UNDEFINED Then
+    '$Include: 'gx_str.bm'
+    '$Include: 'include/pipecom.bm'
+
+
+    ' File System Utility Methods
+    ' -------------------------------------------------------------------------
+    Function GXFS_GetFilename$ (filepath As String)
+        Dim s As String, i As Integer
+        s = filepath
+        s = GXSTR_Replace(s, "\", "/")
+        i = _InStrRev(s, "/")
+        s = Mid$(s, i + 1)
+        GXFS_GetFilename = s
+    End Function
+
+    Function GXFS_GetParentPath$ (filepath As String)
+        Dim s As String, i As Integer
+        s = filepath
+        s = GXSTR_Replace(s, "\", "/")
+        i = _InStrRev(s, "/")
+        s = Mid$(s, 1, i - 1)
+        s = GXSTR_Replace(s, "/", GXFS_PathSeparator)
+        'IF GXFS_IsDriveLetter(s) THEN s = s + __GXFS_PathSeparator
+        If s = "" Then s = GXFS_PathSeparator
+        GXFS_GetParentPath = s
+    End Function
+
+    Function GXFS_GetFileExtension$ (filename As String)
+        Dim i As Integer
+        'i = __GX_StrLastIndexOf(filename, ".")
+        i = _InStrRev(filename, ".")
+        GXFS_GetFileExtension = Mid$(filename, i + 1)
+    End Function
+
+    Function GXFS_RemoveFileExtension$ (filename As String)
+        Dim i As Integer
+        i = _InStrRev(filename, ".")
+        GXFS_RemoveFileExtension = Mid$(filename, 1, i - 1)
+    End Function
+
+    Function GXFS_IsDriveLetter (path As String)
+        If Len(path) = 2 And Right$(path, 1) = ":" Then
+            GXFS_IsDriveLetter = -1 'GX_TRUE
+        Else
+            GXFS_IsDriveLetter = 0 'GX_FALSE
+        End If
+    End Function
+
+    Function GXFS_PathSeparator$ ()
+        $If WINDOWS Then
+            GXFS_PathSeparator = "\"
+        $Else
+            GXFS_PathSeparator = "/"
+        $End If
+    End Function
+
+    Function GXFS_DirList (path As String, dirmode As Integer, filenames() As String)
+        Dim cmd As String
+
+        ' Determine the OS-specific directory command
+        $If WINDOWS Then
+            If dirmode Then
+                cmd = "dir /b /ad " + Chr$(34) + path + Chr$(34)
+            Else
+                cmd = "dir /b /a-d " + Chr$(34) + path + Chr$(34)
+            End If
+        $Else
+            IF dirmode THEN
+            cmd = "find " + CHR$(34) + path + CHR$(34) + " -maxdepth 1 -type d | sed '1d' | sed 's/.*\///g'"
+            ELSE
+            cmd = "ls -p " + CHR$(34) + path + CHR$(34) + " | grep -v / "
+            END IF
+        $End If
+
+        Dim fcount As Integer
+        If cmd <> "" Then
+            Dim cmdResult As Integer, stdout As String, stderr As String
+            cmdResult = pipecom(cmd, stdout, stderr)
+
+            fcount = GXSTR_Split(stdout, GX_LF, filenames())
+            fcount = fcount - 1 'Last line is blank
+        End If
+
+        ' Return the number of items in the result array
+        GXFS_DirList = fcount
+    End Function
+
+    Function GXFS_DriveList (drives() As String)
+        $If WINDOWS Then
+            Dim cmdResult As Integer
+            Dim stderr As String
+            Dim text As String
+            Dim count As Integer
+            count = 0
+
+            ' Get the drive list
+            cmdResult = pipecom("cmd /c " + Chr$(34) + "fsutil fsinfo drives" + Chr$(34), text, stderr)
+            text = GXSTR_Replace(text, "Drives: ", "")
+            text = GXSTR_Replace(text, GX_LF, "")
+            text = GXSTR_Replace(text, "\", "")
+            count = GXSTR_Split(text, " ", drives())
+
+            GXFS_DriveList = count
+        $Else
+            GXFS_DriveList = 0
+        $End If
+    End Function
+
+    $Let GXFS = 1
+$End If

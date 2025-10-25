@@ -250,11 +250,13 @@ END SUB
 
 SUB __UI_TextChanged (id AS LONG)
     SELECT CASE id
+        CASE ELSE
     END SELECT
 END SUB
 
 SUB __UI_ValueChanged (id AS LONG)
     SELECT CASE id
+        CASE ELSE
     END SELECT
 END SUB
 

@@ -75,7 +75,7 @@ SUB __UI_BeforeUpdateDisplay
     IF NOT InitDone%% THEN
         ': Everything (except events)  is done in the __UI_BeforeUpdateDisplay SUB
         ': All initiations, image loading & manipulations are done once  here
-        InitDone%% = TRUE
+        InitDone%% = True
         DIM Pics&(1, 4), TRange!(1, 3)
         ': Read temperature Ranges
         RESTORE temp_range
@@ -152,7 +152,7 @@ SUB __UI_BeforeUpdateDisplay
         IF OldScale%% THEN
             ': Body Temperature Scales
             FSetTemp! = 98.4
-            CSetTemp! = OnePlace!(FTOC!(FSetTemp!, TRUE))
+            CSetTemp! = OnePlace!(FTOC!(FSetTemp!, True))
             Text(FahrenheitTB) = IText$(FSetTemp!)
             Text(CelsiusTB) = IText$(CSetTemp!)
             FT% = 44
@@ -218,18 +218,18 @@ SUB __UI_BeforeUpdateDisplay
             END IF
         NEXT N%
         EndDraw CelsiusPBox
-        PicUpdate%% = TRUE
+        PicUpdate%% = True
     END IF
     ': Poll Mouse
     LM% = __UI_MouseLeft
     TM% = __UI_MouseTop
     ': Look for position inside thermometer tubes and check Click
     IF LM% > 70 + TFPos% AND LM% < 70 + TFPos% + 24 AND TM% > FT% AND TM% < FB% THEN
-        InFahrenheit%% = TRUE
+        InFahrenheit%% = True
         TempT! = OnePlace!(FTMax% + ((TM% - FT%) * (FTMin% - FTMax%) / (FB% - FT%)))
         IF NOT TClicked%% THEN Text(FahrenheitTB) = IText$(TempT!)
     ELSEIF LM% > 290 + TCPos% AND LM% < 290 + TCPos% + 24 AND TM% > CT% AND TM% < CB% THEN
-        InCelsius%% = TRUE
+        InCelsius%% = True
         TempT! = OnePlace!(CTMax% + (TM% - CT%) * (CTMin% - CTMax%) / (CB% - CT%))
         IF NOT TClicked%% THEN Text(CelsiusTB) = IText$(TempT!)
     ELSE
@@ -238,13 +238,13 @@ SUB __UI_BeforeUpdateDisplay
         ELSEIF InCelsius%% AND NOT TClicked%% THEN
             Text(CelsiusTB) = IText$(CSetTemp!)
         END IF
-        InFahrenheit%% = FALSE
-        InCelsius%% = FALSE
-        IF TClicked%% THEN TClicked%% = FALSE
+        InFahrenheit%% = False
+        InCelsius%% = False
+        IF TClicked%% THEN TClicked%% = False
     END IF
     ': Update thermometers
     IF PicUpdate%% THEN
-        PicUpdate%% = FALSE
+        PicUpdate%% = False
         YF% = FT% + (FSetTemp! - FTMax%) * (FB% - FT%) / (FTMin% - FTMax%)
         YC% = CT% + (CSetTemp! - CTMax%) * (CB% - CT%) / (CTMin% - CTMax%)
         BeginDraw FahrenheitPBox
@@ -335,26 +335,26 @@ SUB __UI_Click (id AS LONG)
         CASE FahrenheitPBox
             ': Check for click in thermometer columns
             IF InFahrenheit%% AND NOT TClicked%% THEN
-                TClicked%% = TRUE
+                TClicked%% = True
                 FSetTemp! = OnePlace!(TempT!)
                 Text(FahrenheitTB) = IText$(FSetTemp!)
-                CSetTemp! = OnePlace!(FTOC!(FSetTemp!, TRUE))
+                CSetTemp! = OnePlace!(FTOC!(FSetTemp!, True))
                 Text(CelsiusTB) = IText$(CSetTemp!)
-                PicUpdate%% = TRUE
+                PicUpdate%% = True
             END IF
         CASE CelsiusPBox
             ': Check for click in thermometer columns
             IF InCelsius%% AND NOT TClicked%% THEN
-                TClicked%% = TRUE
+                TClicked%% = True
                 CSetTemp! = OnePlace!(TempT!)
                 Text(CelsiusTB) = IText$(CSetTemp!)
-                FSetTemp! = OnePlace!(FTOC!(CSetTemp!, FALSE))
+                FSetTemp! = OnePlace!(FTOC!(CSetTemp!, False))
                 Text(FahrenheitTB) = IText$(FSetTemp!)
-                PicUpdate%% = TRUE
+                PicUpdate%% = True
             END IF
         CASE FixTextBoxesTS
             ': Check for Toggle Switch Click
-            PicUpdate%% = TRUE
+            PicUpdate%% = True
         CASE ExitBT
             ': Click Exit Button
             SYSTEM
@@ -362,23 +362,41 @@ SUB __UI_Click (id AS LONG)
 END SUB
 
 SUB __UI_MouseEnter (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_MouseLeave (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_FocusIn (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_FocusOut (id AS LONG)
     'This event occurs right before a control loses focus.
     'To prevent a control from losing focus, set __UI_KeepFocus = True below.
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_MouseDown (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_MouseUp (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_KeyPress (id AS LONG)
@@ -398,16 +416,16 @@ SUB __UI_KeyPress (id AS LONG)
                 ': Update Fahrenheit temperature & convert
                 FSetTemp! = OnePlace!(VAL(Text(FahrenheitTB)))
                 Text(FahrenheitTB) = IText$(FSetTemp!)
-                CSetTemp! = OnePlace!(FTOC!(FSetTemp!, TRUE))
+                CSetTemp! = OnePlace!(FTOC!(FSetTemp!, True))
                 Text(CelsiusTB) = IText$(CSetTemp!)
-                PicUpdate%% = TRUE
+                PicUpdate%% = True
             CASE CelsiusTB
                 ': Update Celsius temperature & convert
                 CSetTemp! = OnePlace!(VAL(Text(CelsiusTB)))
                 Text(CelsiusTB) = IText$(CSetTemp!)
-                FSetTemp! = OnePlace!(FTOC!(CSetTemp!, FALSE))
+                FSetTemp! = OnePlace!(FTOC!(CSetTemp!, False))
                 Text(FahrenheitTB) = IText$(FSetTemp!)
-                PicUpdate%% = TRUE
+                PicUpdate%% = True
             CASE ExitBT
                 SYSTEM 'Does this condition ever get met?
         END SELECT
@@ -415,9 +433,15 @@ SUB __UI_KeyPress (id AS LONG)
 END SUB
 
 SUB __UI_TextChanged (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_ValueChanged (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_FormResized

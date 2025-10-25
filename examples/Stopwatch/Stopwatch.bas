@@ -25,7 +25,6 @@ DIM SHARED elapsed AS SINGLE
 
 ': Event procedures: ---------------------------------------------------------------
 SUB __UI_BeforeInit
-
 END SUB
 
 SUB __UI_OnLoad
@@ -74,15 +73,15 @@ SUB __UI_Click (id AS LONG)
         CASE StartBT
             IF Running THEN
                 Caption(id) = "Start"
-                Running = FALSE
-                Control(StopBT).Disabled = FALSE
-                Control(LapBT).Disabled = TRUE
+                Running = False
+                Control(StopBT).Disabled = False
+                Control(LapBT).Disabled = True
             ELSE
                 Caption(id) = "Pause"
                 start = TIMER - elapsed
-                Running = TRUE
-                Control(StopBT).Disabled = TRUE
-                Control(LapBT).Disabled = FALSE
+                Running = True
+                Control(StopBT).Disabled = True
+                Control(LapBT).Disabled = False
             END IF
         CASE LapBT
             AddItem ListBox1, Caption(TimeLB)
@@ -207,6 +206,7 @@ END SUB
 
 SUB __UI_TextChanged (id AS LONG)
     SELECT CASE id
+        CASE ELSE
     END SELECT
 END SUB
 
@@ -218,5 +218,4 @@ SUB __UI_ValueChanged (id AS LONG)
 END SUB
 
 SUB __UI_FormResized
-
 END SUB

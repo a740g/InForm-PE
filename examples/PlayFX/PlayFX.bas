@@ -70,7 +70,7 @@ SUB SetConfigControls (id AS LONG, curCtrl AS LONG)
 END SUB
 
 SUB ClearWaveform (id AS LONG)
-    Waveform(id).active = FALSE ' set not in use
+    Waveform(id).active = False ' set not in use
     Waveform(id).waveform = 3 ' triangle
     Waveform(id).note = 42 ' half-way through the scale
     Waveform(id).length = 4 ' quarter
@@ -595,7 +595,7 @@ SUB __UI_ValueChanged (id AS LONG)
 
     IF IsDifferentWaveform(temp, Waveform(currentWaveform)) THEN
         Waveform(currentWaveform) = temp
-        Waveform(currentWaveform).active = TRUE
+        Waveform(currentWaveform).active = True
     END IF
 
     MakePlayString

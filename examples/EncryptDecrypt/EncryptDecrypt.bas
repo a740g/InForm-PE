@@ -4,14 +4,6 @@
 ': https://github.com/FellippeHeitor/InForm
 '-----------------------------------------------------------
 
-': Controls' IDs: ------------------------------------------------------------------
-REM NOTICE: THIS FORM HAS BEEN RECENTLY EDITED
-'>> The controls in the list below may have been added or renamed,
-'>> and previously existing controls may have been deleted since
-'>> this program's structure was first generated.
-'>> Make sure to check your code in the events SUBs so that
-'>> you can take your recent edits into consideration.
-
 ': -------------------------------------USER'S Declaration CONST and VARIABLES--------------------------------------------
 CONST MessageConst = "QB64 is the best evolution of QB4.5 and PDS 7.1 for multiplatform BASIC programming. Moreover Inform is a powerful tool to use hardly for our projects."
 CONST StepConst = 1, JumpConst = 0, IncreaseConst = 3
@@ -19,7 +11,7 @@ CONST ALPHAbeta = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345678
 DIM SHARED jump%, DecrMessage$
 jump% = JumpConst
 
-'------------------------- Inform Shared variables---------
+': Controls' IDs: ------------------------------------------------------------------
 DIM SHARED EncryptDecrypt AS LONG
 DIM SHARED ChooseMethodOfCryptingLB AS LONG
 DIM SHARED DropdownList1 AS LONG
@@ -39,7 +31,6 @@ DIM SHARED TextBox4 AS LONG
 DIM SHARED IncreaseLB AS LONG
 DIM SHARED SeedLB AS LONG
 DIM SHARED TextBox5 AS LONG
-
 
 '$INCLUDE:'../../InForm/InForm.bi'
 '$INCLUDE:'EncryptDecrypt.frm'
@@ -195,7 +186,6 @@ SUB encryptProg (Messag$, step1%, steps%, seed%, jump%)
 
 END SUB
 
-
 SUB encryptFixF (Messag$, step2%)
     ' crypting fixed forward
     msg$ = Messag$
@@ -321,7 +311,6 @@ SUB Encrypt
     Caption(EncryptedMessageLB) = DecrMessage$
 END SUB
 
-
 SUB activateItem
     'it enables items of method of crypting choosen
     Control(StepLB).Disabled = False
@@ -350,7 +339,6 @@ SUB disableItem
     Control(DecryptBT).Disabled = True
 END SUB
 
-
 SUB SetValues
     ' this runs when value of DropDownlist is changed
     'set to default if no setting by user
@@ -366,13 +354,9 @@ SUB SetValues
     END IF
     SetCaption EncryptedMessageLB, CHR$(32)
     Caption(DecryptedMessageLB) = " " 'SetCaption DecryptedMessageLB, " "
-
 END SUB
 
-
 ': Event procedures: ---------------------------------------------------------------
-
-
 
 SUB __UI_BeforeInit
     ' enlarging label of results and textbox3 of message to crypt
@@ -383,7 +367,6 @@ SUB __UI_BeforeInit
     Control(DecryptedMessageLB).WordWrap = True
 
     Control(TextBox3).WordWrap = True
-
 END SUB
 
 SUB __UI_OnLoad
@@ -406,14 +389,11 @@ END SUB
 SUB __UI_BeforeUpdateDisplay
     'This event occurs at approximately 30 frames per second.
     'You can change the update frequency by calling SetFrameRate DesiredRate%
-
-
 END SUB
 
 SUB __UI_BeforeUnload
     'If you set __UI_UnloadSignal = False here you can
     'cancel the user's request to close.
-
 END SUB
 
 SUB __UI_Click (id AS LONG)
@@ -668,6 +648,4 @@ SUB __UI_ValueChanged (id AS LONG)
 END SUB
 
 SUB __UI_FormResized
-
 END SUB
-

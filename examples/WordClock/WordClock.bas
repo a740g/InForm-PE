@@ -191,12 +191,12 @@ END SUB
 
 SUB switchOn (this AS LONG)
     Control(this).ForeColor = _RGB32(111, 205, 0)
-    Control(this).Redraw = TRUE
+    Control(this).Redraw = True
 END SUB
 
 SUB switchOff (this AS LONG)
     Control(this).ForeColor = _RGB32(0, 39, 0)
-    Control(this).Redraw = TRUE
+    Control(this).Redraw = True
 END SUB
 
 SUB __UI_BeforeUnload
@@ -360,6 +360,7 @@ END SUB
 
 SUB __UI_FocusIn (id AS LONG)
     SELECT CASE id
+        CASE ELSE
     END SELECT
 END SUB
 
@@ -367,6 +368,7 @@ SUB __UI_FocusOut (id AS LONG)
     'This event occurs right before a control loses focus.
     'To prevent a control from losing focus, set __UI_KeepFocus = True below.
     SELECT CASE id
+        CASE ELSE
     END SELECT
 END SUB
 
@@ -476,19 +478,21 @@ SUB __UI_KeyPress (id AS LONG)
     'When this event is fired, __UI_KeyHit will contain the code of the key hit.
     'You can change it and even cancel it by making it = 0
     SELECT CASE id
+        CASE ELSE
     END SELECT
 END SUB
 
 SUB __UI_TextChanged (id AS LONG)
     SELECT CASE id
+        CASE ELSE
     END SELECT
 END SUB
 
 SUB __UI_ValueChanged (id AS LONG)
     SELECT CASE id
+        CASE ELSE
     END SELECT
 END SUB
 
 SUB __UI_FormResized
-
 END SUB

@@ -91,48 +91,48 @@ END FUNCTION
 SUB __UI_BeforeInit
     RANDOMIZE (TIMER)
     $EXEICON:'.\QB64Mahjong.ico'
-    Innit%% = TRUE
+    Innit%% = True
     'Set Positions Template
     FOR S%% = 4 TO 11 '64
         FOR R%% = 1 TO 8
-            Template`(1, S%%, R%%) = TRUE
+            Template`(1, S%%, R%%) = True
         NEXT R%%
     NEXT S%%
     FOR S%% = 2 TO 3 '8
         FOR R%% = 1 TO 8 STEP 7
-            Template`(1, S%%, R%%) = TRUE
-            Template`(1, S%% + 10, R%%) = TRUE
+            Template`(1, S%%, R%%) = True
+            Template`(1, S%% + 10, R%%) = True
         NEXT R%%
     NEXT S%%
     FOR S%% = 3 TO 12 STEP 9 '8
         FOR R%% = 3 TO 6
-            Template`(1, S%%, R%%) = TRUE
+            Template`(1, S%%, R%%) = True
         NEXT R%%
     NEXT S%%
     FOR S%% = 2 TO 13 STEP 11 '4
         FOR R%% = 4 TO 5
-            Template`(1, S%%, R%%) = TRUE
+            Template`(1, S%%, R%%) = True
         NEXT R%%
     NEXT S%%
     FOR S%% = 5 TO 10 '36
         FOR R%% = 2 TO 7
-            Template`(2, S%%, R%%) = TRUE
+            Template`(2, S%%, R%%) = True
         NEXT R%%
     NEXT S%%
     FOR S%% = 6 TO 9 '16
         FOR R%% = 3 TO 6
-            Template`(3, S%%, R%%) = TRUE
+            Template`(3, S%%, R%%) = True
         NEXT R%%
     NEXT S%%
     FOR S%% = 7 TO 8 '4
         FOR R%% = 4 TO 5
-            Template`(4, S%%, R%%) = TRUE
+            Template`(4, S%%, R%%) = True
         NEXT R%%
     NEXT S%%
-    Template`(1, 1, 4) = TRUE '4 'FIO 4.5 really
-    Template`(1, 14, 4) = TRUE 'FIO 4.5 really
-    Template`(1, 15, 4) = TRUE 'FIO 4.5 really
-    Template`(5, 7, 4) = TRUE 'FIO 7.5, 4.5 really
+    Template`(1, 1, 4) = True '4 'FIO 4.5 really
+    Template`(1, 14, 4) = True 'FIO 4.5 really
+    Template`(1, 15, 4) = True 'FIO 4.5 really
+    Template`(5, 7, 4) = True 'FIO 7.5, 4.5 really
     'Images - all images are hardware accelerated
     'Most images are used only in  __UI_BeforeUpdateDisplay and therefore could be local and static
     'But images are Shared instead
@@ -260,13 +260,13 @@ SUB __UI_BeforeInit
         TilePic%%(N%) = S%% + 38
     NEXT N%
     'Load data
-    FromSave%% = FALSE
+    FromSave%% = False
     IF _FILEEXISTS("mahjong.cfg") THEN
         OPEN "mahjong.cfg" FOR INPUT AS #1
         INPUT #1, HighScore%
         INPUT #1, TilesRem%
         IF TilesRem% <> 144 THEN
-            FromSave%% = TRUE
+            FromSave%% = True
             'Input saved data
             INPUT #1, Score%
             INPUT #1, Counter&
@@ -292,16 +292,16 @@ END SUB
 SUB __UI_OnLoad
     _SCREENMOVE 100, 50
     Caption(ExitBT) = "Start"
-    Control(ScoreLB).Hidden = TRUE
-    Control(ScoringLB).Hidden = TRUE
-    Control(HighScoreLB).Hidden = TRUE
-    Control(HighScoringLB).Hidden = TRUE
-    Control(NumberOfTilesLB).Hidden = TRUE
-    Control(TilesRemainingLB).Hidden = TRUE
-    Control(NewGameBT).Disabled = TRUE
-    Control(SaveGameBT).Disabled = TRUE
-    Control(UndoBT).Disabled = TRUE
-    Control(StillBT).Disabled = TRUE
+    Control(ScoreLB).Hidden = True
+    Control(ScoringLB).Hidden = True
+    Control(HighScoreLB).Hidden = True
+    Control(HighScoringLB).Hidden = True
+    Control(NumberOfTilesLB).Hidden = True
+    Control(TilesRemainingLB).Hidden = True
+    Control(NewGameBT).Disabled = True
+    Control(SaveGameBT).Disabled = True
+    Control(UndoBT).Disabled = True
+    Control(StillBT).Disabled = True
     SetFrameRate FrameRate%
     SetFocus ExitBT
 END SUB
@@ -315,7 +315,7 @@ SUB __UI_BeforeUpdateDisplay
     ELSEIF TilesRem% <> 0 THEN
         'Display In-Play Tiles and Look for Mouse Hover/Select/Match
         NoHov% = 0
-        Matches%% = FALSE
+        Matches%% = False
         MatchCount% = 0
         'Layer 1R
         FOR S%% = 15 TO 14 STEP -1
@@ -376,7 +376,7 @@ SUB __UI_BeforeUpdateDisplay
                             IF MatchCount% > 1 THEN
                                 MatchIndex% = 1
                                 WHILE NOT Matches%% AND MatchIndex% <= MatchCount% - 1
-                                    IF ImType%%(M%) = MatchComp%%(MatchIndex%) THEN Matches%% = TRUE
+                                    IF ImType%%(M%) = MatchComp%%(MatchIndex%) THEN Matches%% = True
                                     MatchIndex% = MatchIndex% + 1
                                 WEND
                             END IF
@@ -403,7 +403,7 @@ SUB __UI_BeforeUpdateDisplay
             IF MatchCount% > 1 THEN
                 MatchIndex% = 1
                 WHILE NOT Matches%% AND MatchIndex% <= MatchCount% - 1
-                    IF ImType%%(M%) = MatchComp%%(MatchIndex%) THEN Matches%% = TRUE
+                    IF ImType%%(M%) = MatchComp%%(MatchIndex%) THEN Matches%% = True
                     MatchIndex% = MatchIndex% + 1
                 WEND
             END IF
@@ -429,7 +429,7 @@ SUB __UI_BeforeUpdateDisplay
             IF MatchCount% > 1 THEN
                 MatchIndex% = 1
                 WHILE NOT Matches%% AND MatchIndex% <= MatchCount% - 1
-                    IF ImType%%(M%) = MatchComp%%(MatchIndex%) THEN Matches%% = TRUE
+                    IF ImType%%(M%) = MatchComp%%(MatchIndex%) THEN Matches%% = True
                     MatchIndex% = MatchIndex% + 1
                 WEND
             END IF
@@ -445,7 +445,7 @@ SUB __UI_BeforeUpdateDisplay
             END IF
         END IF
         _PUTIMAGE (197 - 1, 110 - 1), Borders&
-        IF NOT Matches%% AND MahPlay%% THEN MatchesNone%% = TRUE
+        IF NOT Matches%% AND MahPlay%% THEN MatchesNone%% = True
     END IF
 END SUB
 
@@ -477,7 +477,7 @@ SUB __UI_Click (id AS LONG)
                 IF NoSel% = 0 THEN
                     'First Tile Selected
                     NoSel% = NoHov%
-                    Control(UndoBT).Disabled = FALSE
+                    Control(UndoBT).Disabled = False
                 ELSE
                     'Second Tile Selected
                     IF NoSel% <> NoHov% THEN
@@ -504,16 +504,16 @@ SUB __UI_Click (id AS LONG)
                             Score% = Score% + 3
                             Caption(TilesRemainingLB) = SetText$(TilesRem%)
                             Caption(ScoringLB) = SetText$(Score%)
-                            Control(NewGameBT).Disabled = FALSE
+                            Control(NewGameBT).Disabled = False
                             IF TilesRem% > 0 THEN
-                                Control(SaveGameBT).Disabled = FALSE
-                                Control(UndoBT).Disabled = FALSE
+                                Control(SaveGameBT).Disabled = False
+                                Control(UndoBT).Disabled = False
                             ELSE
-                                Control(SaveGameBT).Disabled = TRUE
-                                Control(UndoBT).Disabled = TRUE
+                                Control(SaveGameBT).Disabled = True
+                                Control(UndoBT).Disabled = True
                                 Caption(Label1LB) = "Congratulations"
-                                Control(Label1LB).Hidden = FALSE
-                                Control(StillBT).Disabled = TRUE
+                                Control(Label1LB).Hidden = False
+                                Control(StillBT).Disabled = True
                             END IF
                             IF ImType%%(NoSel%) = PrevType%% THEN
                                 Score% = Score% + 6
@@ -525,7 +525,7 @@ SUB __UI_Click (id AS LONG)
                         END IF
                     END IF
                     NoSel% = 0
-                    IF TilesRem% = 144 THEN Control(UndoBT).Disabled = TRUE
+                    IF TilesRem% = 144 THEN Control(UndoBT).Disabled = True
                 END IF
             END IF
         CASE UndoBT
@@ -553,76 +553,103 @@ SUB __UI_Click (id AS LONG)
                     Caption(TilesRemainingLB) = SetText$(TilesRem%)
                     Caption(ScoringLB) = SetText$(Score%)
                     IF TilesRem% < 144 THEN
-                        Control(SaveGameBT).Disabled = FALSE
+                        Control(SaveGameBT).Disabled = False
                     ELSE
-                        Control(SaveGameBT).Disabled = TRUE
+                        Control(SaveGameBT).Disabled = True
                     END IF
                     PrevType%% = ImType%%(TileSave%(72 - (TilesRem% / 2), 1))
                     IF ImType%%(One%) = PrevType%% THEN
                         Score% = Score% - 6
                         Caption(ScoringLB) = SetText$(Score%)
                     END IF
-                    MatchesNone%% = FALSE
-                    Control(Label1LB).Hidden = TRUE
-                    CanUndo%% = FALSE
+                    MatchesNone%% = False
+                    Control(Label1LB).Hidden = True
+                    CanUndo%% = False
                 END IF
                 NoSel% = 0 ' Undo also removes selection
-                IF TilesRem% = 144 THEN Control(UndoBT).Disabled = TRUE
+                IF TilesRem% = 144 THEN Control(UndoBT).Disabled = True
             END IF
         CASE ExitBT
             IF Innit%% THEN
                 CALL DoMahjong
             ELSE
-                MahPlay%% = FALSE
-                Innit%% = TRUE
+                MahPlay%% = False
+                Innit%% = True
                 TilesRem% = 144 ' Prevents Save at Exit
             END IF
         CASE NewGameBT
-            MahPlay%% = FALSE
+            MahPlay%% = False
         CASE SaveGameBT
-            MahPlay%% = FALSE
-            Innit%% = TRUE
+            MahPlay%% = False
+            Innit%% = True
             IF TilesRem% = 0 THEN TilesRem% = 144 ' Prevents Save at Exit
         CASE StillBT
             IF WorldStop%% THEN
                 Caption(StillBT) = "Still"
-                WorldStop%% = FALSE
+                WorldStop%% = False
             ELSE
                 Caption(StillBT) = "Spin"
-                WorldStop%% = TRUE
+                WorldStop%% = True
             END IF
     END SELECT
 END SUB
 
 SUB __UI_MouseEnter (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_MouseLeave (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_FocusIn (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_FocusOut (id AS LONG)
     'This event occurs right before a control loses focus.
     'To prevent a control from losing focus, set __UI_KeepFocus = True below.
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_MouseDown (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_MouseUp (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_KeyPress (id AS LONG)
     'When this event is fired, __UI_KeyHit will contain the code of the key hit.
     'You can change it and even cancel it by making it = 0
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_TextChanged (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_ValueChanged (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_FormResized
@@ -631,13 +658,13 @@ END SUB
 SUB DoMahjong
     _SNDPLAYFILE "chrysanthemum.ogg", 4, 0.6
     Caption(ExitBT) = "Exit"
-    Control(ScoreLB).Hidden = FALSE
-    Control(ScoringLB).Hidden = FALSE
-    Control(HighScoreLB).Hidden = FALSE
-    Control(HighScoringLB).Hidden = FALSE
-    Control(NumberOfTilesLB).Hidden = FALSE
-    Control(TilesRemainingLB).Hidden = FALSE
-    Innit%% = FALSE
+    Control(ScoreLB).Hidden = False
+    Control(ScoringLB).Hidden = False
+    Control(HighScoreLB).Hidden = False
+    Control(HighScoringLB).Hidden = False
+    Control(NumberOfTilesLB).Hidden = False
+    Control(TilesRemainingLB).Hidden = False
+    Innit%% = False
     WHILE NOT Innit%%
         'Initial Values
         IF NOT FromSave%% THEN
@@ -651,7 +678,7 @@ SUB DoMahjong
             NEXT U%%
             'Randomly Fill Grid
             FOR N% = 1 TO 144
-                Empty%% = TRUE
+                Empty%% = True
                 WHILE Empty%%
                     URnd%% = 1 + INT(15 * RND)
                     VRnd%% = 1 + INT(8 * RND)
@@ -661,7 +688,7 @@ SUB DoMahjong
                         ImPos%%(N%, 0) = WRnd%%
                         ImPos%%(N%, 1) = URnd%%
                         ImPos%%(N%, 2) = VRnd%%
-                        Empty%% = FALSE
+                        Empty%% = False
                     END IF
                 WEND
             NEXT N%
@@ -675,28 +702,28 @@ SUB DoMahjong
             Counter& = 0
             PrevType%% = 0
         END IF
-        MahPlay%% = TRUE
+        MahPlay%% = True
         NoSel% = 0
         NoHov% = 0
-        MatchesNone%% = FALSE
-        MatchBeeped%% = FALSE
+        MatchesNone%% = False
+        MatchBeeped%% = False
         ECount%% = 0
         EIndex%% = 0
         BCount%% = 0
-        Blink%% = TRUE
-        CanUndo%% = TRUE
+        Blink%% = True
+        CanUndo%% = True
         UCount%% = 0
-        WorldStop%% = FALSE
-        Control(NewGameBT).Disabled = TRUE
-        Control(SaveGameBT).Disabled = TRUE
-        Control(StillBT).Disabled = FALSE
+        WorldStop%% = False
+        Control(NewGameBT).Disabled = True
+        Control(SaveGameBT).Disabled = True
+        Control(StillBT).Disabled = False
         IF FromSave%% THEN
-            FromSave%% = FALSE
-            Control(UndoBT).Disabled = FALSE
+            FromSave%% = False
+            Control(UndoBT).Disabled = False
         ELSE
-            Control(UndoBT).Disabled = TRUE
+            Control(UndoBT).Disabled = True
         END IF
-        Control(Label1LB).Hidden = TRUE
+        Control(Label1LB).Hidden = True
         Caption(Label1LB) = "No Matches Available"
         Caption(ScoringLB) = SetText$(Score%)
         Caption(HighScoringLB) = SetText$(HighScore%)
@@ -707,11 +734,11 @@ SUB DoMahjong
             IF MatchesNone%% THEN
                 IF NOT MatchBeeped%% THEN
                     _SNDPLAYFILE "NoMatch.ogg", 3, 0.8
-                    MatchBeeped%% = TRUE
-                    Control(Label1LB).Hidden = FALSE
+                    MatchBeeped%% = True
+                    Control(Label1LB).Hidden = False
                 END IF
             ELSE
-                MatchBeeped%% = FALSE
+                MatchBeeped%% = False
             END IF
             IF WorldStop%% THEN
                 EIndex%% = 8
@@ -726,14 +753,14 @@ SUB DoMahjong
             BCount%% = BCount%% + 1
             IF Blink%% AND BCount%% = 40 THEN
                 BCount%% = 0
-                Blink%% = FALSE
+                Blink%% = False
             ELSEIF NOT Blink%% AND BCount%% = 10 THEN
                 BCount%% = 0
-                Blink%% = TRUE
+                Blink%% = True
             END IF
             IF NOT CanUndo%% THEN UCount%% = UCount%% + 1
             IF UCount%% = 32 THEN
-                CanUndo%% = TRUE
+                CanUndo%% = True
                 UCount%% = 0
             END IF
             'Following is to adjust score for time in game
@@ -749,8 +776,8 @@ SUB DoMahjong
             k1$ = INKEY$
             IF k1$ <> "" THEN
                 IF ASC(k1$) = 27 THEN
-                    MahPlay%% = FALSE
-                    Innit%% = TRUE
+                    MahPlay%% = False
+                    Innit%% = True
                     TilesRem% = 144
                 END IF
             END IF

@@ -69,14 +69,14 @@ END FUNCTION
 
 FUNCTION Located%% (S2$)
     'Proven to work in all circustances
-    __Located%% = FALSE
+    __Located%% = False
     P0& = 1
     P100& = Entries&
 
     WHILE P0& <= P100& AND NOT __Located%%
         P50& = INT((P0& + P100&) / 2)
         IF S2$ = words$(P50&) THEN
-            __Located%% = TRUE
+            __Located%% = True
         ELSEIF S2$ > words$(P50&) THEN
             P0& = P50& + 1
         ELSE
@@ -169,12 +169,12 @@ SUB __UI_Click (id AS LONG)
             'Search for 9-letter word & place in grid
             OPEN "dictionary.rnd" FOR RANDOM AS #1 LEN = 9
             FIELD #1, 9 AS Lex$
-            NineLetters` = FALSE
+            NineLetters` = False
             WHILE NOT NineLetters`
                 Sel& = INT(Entries& * RND) + 1
                 GET #1, Sel&
                 OutWord$ = RTRIM$(Lex$)
-                IF LEN(OutWord$) = 9 THEN NineLetters` = TRUE
+                IF LEN(OutWord$) = 9 THEN NineLetters` = True
             WEND
             CLOSE #1
             theWord$ = "*********"
@@ -220,60 +220,60 @@ SUB __UI_Click (id AS LONG)
             Caption(WordsFoundLB) = "Words Found"
             NoAnswers% = 0
             NoNineLetters% = 0
-            FullWord` = TRUE
+            FullWord` = True
             IF Text(TextBox1) = "" THEN
-                FullWord` = FALSE
+                FullWord` = False
                 SetFocus TextBox1
             ELSEIF Text(TextBox1) < "A" OR Text(TextBox1) > "Z" THEN
-                FullWord` = FALSE
+                FullWord` = False
                 SetFocus TextBox1
             ELSEIF Text(TextBox2) = "" THEN
-                FullWord` = FALSE
+                FullWord` = False
                 SetFocus TextBox2
             ELSEIF Text(TextBox2) < "A" OR Text(TextBox2) > "Z" THEN
-                FullWord` = FALSE
+                FullWord` = False
                 SetFocus TextBox2
             ELSEIF Text(TextBox3) = "" THEN
-                FullWord` = FALSE
+                FullWord` = False
                 SetFocus TextBox3
             ELSEIF Text(TextBox3) < "A" OR Text(TextBox3) > "Z" THEN
-                FullWord` = FALSE
+                FullWord` = False
                 SetFocus TextBox3
             ELSEIF Text(TextBox4) = "" THEN
-                FullWord` = FALSE
+                FullWord` = False
                 SetFocus TextBox4
             ELSEIF Text(TextBox4) < "A" OR Text(TextBox4) > "Z" THEN
-                FullWord` = FALSE
+                FullWord` = False
                 SetFocus TextBox4
             ELSEIF Text(TextBox5) = "" THEN
-                FullWord` = FALSE
+                FullWord` = False
                 SetFocus TextBox5
             ELSEIF Text(TextBox5) < "A" OR Text(TextBox5) > "Z" THEN
-                FullWord` = FALSE
+                FullWord` = False
                 SetFocus TextBox5
             ELSEIF Text(TextBox6) = "" THEN
-                FullWord` = FALSE
+                FullWord` = False
                 SetFocus TextBox6
             ELSEIF Text(TextBox6) < "A" OR Text(TextBox6) > "Z" THEN
-                FullWord` = FALSE
+                FullWord` = False
                 SetFocus TextBox6
             ELSEIF Text(TextBox7) = "" THEN
-                FullWord` = FALSE
+                FullWord` = False
                 SetFocus TextBox7
             ELSEIF Text(TextBox7) < "A" OR Text(TextBox7) > "Z" THEN
-                FullWord` = FALSE
+                FullWord` = False
                 SetFocus TextBox7
             ELSEIF Text(TextBox8) = "" THEN
-                FullWord` = FALSE
+                FullWord` = False
                 SetFocus TextBox8
             ELSEIF Text(TextBox8) < "A" OR Text(TextBox8) > "Z" THEN
-                FullWord` = FALSE
+                FullWord` = False
                 SetFocus TextBox8
             ELSEIF Text(TextBox9) = "" THEN
-                FullWord` = FALSE
+                FullWord` = False
                 SetFocus TextBox9
             ELSEIF Text(TextBox9) < "A" OR Text(TextBox9) > "Z" THEN
-                FullWord` = FALSE
+                FullWord` = False
                 SetFocus TextBox9
             END IF
             IF FullWord` THEN
@@ -299,11 +299,11 @@ SUB __UI_Click (id AS LONG)
                     FOR M%% = 0 TO 1
                         IF Located%%(S1$(M%%)) THEN
                             IF NoAnswers% > 0 THEN
-                                Present` = FALSE
+                                Present` = False
                                 Index% = 0
                                 WHILE (NOT Present`) AND Index% <= NoAnswers%
                                     GET #1, Index% + 1
-                                    IF RTRIM$(TWord$) = S1$(M%%) THEN Present` = TRUE
+                                    IF RTRIM$(TWord$) = S1$(M%%) THEN Present` = True
                                     Index% = Index% + 1
                                 WEND
                                 IF NOT Present` THEN
@@ -324,9 +324,9 @@ SUB __UI_Click (id AS LONG)
                 WHILE Jump% <= NoAnswers%: Jump% = Jump% * 2: WEND
                 WHILE Jump% > 1
                     Jump% = (Jump% - 1) \ 2
-                    Finished` = FALSE
+                    Finished` = False
                     WHILE NOT Finished`
-                        Finished` = TRUE
+                        Finished` = True
                         FOR Upper% = 1 TO NoAnswers% - Jump%
                             Lower% = Upper% + Jump%
                             GET #1, Upper%: UWord$ = TWord$
@@ -336,7 +336,7 @@ SUB __UI_Click (id AS LONG)
                                 PUT #1, Lower%
                                 LSET TWord$ = LWord$
                                 PUT #1, Upper%
-                                Finished` = FALSE
+                                Finished` = False
                             END IF
                         NEXT Upper%
                     WEND
@@ -377,28 +377,49 @@ SUB __UI_Click (id AS LONG)
 END SUB
 
 SUB __UI_MouseEnter (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_MouseLeave (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_FocusIn (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_FocusOut (id AS LONG)
     'This event occurs right before a control loses focus.
     'To prevent a control from losing focus, set __UI_KeepFocus = True below.
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_MouseDown (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_MouseUp (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_KeyPress (id AS LONG)
     'When this event is fired, __UI_KeyHit will contain the code of the key hit.
     'You can change it and even cancel it by making it = 0
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_TextChanged (id AS LONG)
@@ -452,6 +473,9 @@ SUB __UI_TextChanged (id AS LONG)
 END SUB
 
 SUB __UI_ValueChanged (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_FormResized

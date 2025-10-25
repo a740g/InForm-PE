@@ -124,8 +124,8 @@ SUB __UI_BeforeUpdateDisplay
         END IF
     ELSE
         'actvate restart
-        Control(bRestart).Hidden = FALSE
-        Control(bRestart).Disabled = FALSE
+        Control(bRestart).Hidden = False
+        Control(bRestart).Disabled = False
     END IF 'if no message about ending landing
 
 END SUB
@@ -335,16 +335,17 @@ END SUB
 
 SUB __UI_TextChanged (id AS LONG)
     SELECT CASE id
+        CASE ELSE
     END SELECT
 END SUB
 
 SUB __UI_ValueChanged (id AS LONG)
     SELECT CASE id
+        CASE ELSE
     END SELECT
 END SUB
 
 SUB __UI_FormResized
-
 END SUB
 
 'subify the initial sequence to start a new game
@@ -366,8 +367,8 @@ SUB initialize
     dy = speed * SIN(d2r * vda) 'this is the vertical y change on screen due to speed and angle
     dg = .01 'this is the constant acceleration gravity applies to the vehicle
     dat = .5 'this is burst of acceleration a thrust or reverse thrust will apply to speed and angle
-    Control(bRestart).Hidden = TRUE
-    Control(bRestart).Disabled = TRUE
+    Control(bRestart).Hidden = True
+    Control(bRestart).Disabled = True
 END SUB
 
 '================================================ from Lander 2018-06-04

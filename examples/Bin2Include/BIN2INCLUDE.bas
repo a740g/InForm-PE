@@ -42,9 +42,9 @@ FUNCTION checkExt%% (OFile$)
     IF UCASE$(RIGHT$(OFile$,  4)) <> ".BMP" AND UCASE$(RIGHT$(OFile$,  4)) <> ".JPG" _
     AND UCASE$(RIGHT$(OFile$, 4)) <> ".PNG" AND UCASE$(RIGHT$(OFile$,  5)) <> ".JPEG" _
     AND UCASE$(RIGHT$(OFile$,  4)) <> ".GIF" THEN
-        checkExt = FALSE
+        checkExt = False
     ELSE
-        checkExt = TRUE
+        checkExt = True
     END IF
 END FUNCTION
 
@@ -179,10 +179,10 @@ SUB bin2bas (IN$, OUT$)
         ToolTip(ListBox1) = TIME$ + ": File exported to " + OUT$
         Text(SelectedFileTB) = ""
         Text(OutputFileTB) = ""
-        Control(CONVERTBT).Disabled = TRUE
-        Control(OpenBT).Disabled = TRUE
-        Control(BIN2BASRB).Value = FALSE
-        Control(PIC2MEMRB).Value = FALSE
+        Control(CONVERTBT).Disabled = True
+        Control(OpenBT).Disabled = True
+        Control(BIN2BASRB).Value = False
+        Control(PIC2MEMRB).Value = False
     END IF
 END SUB
 
@@ -290,10 +290,10 @@ SUB pic2mem (IN$, OUT$)
     ToolTip(ListBox1) = TIME$ + ": File exported to " + OUT$
     Text(SelectedFileTB) = ""
     Text(OutputFileTB) = ""
-    Control(CONVERTBT).Disabled = TRUE
-    Control(OpenBT).Disabled = TRUE
-    Control(BIN2BASRB).Value = FALSE
-    Control(PIC2MEMRB).Value = FALSE
+    Control(CONVERTBT).Disabled = True
+    Control(OpenBT).Disabled = True
+    Control(BIN2BASRB).Value = False
+    Control(PIC2MEMRB).Value = False
 END SUB
 
 FUNCTION __opensmall&
@@ -511,7 +511,7 @@ SUB __UI_OnLoad
     Control(CONVERTBT).HelperCanvas = __convert&
     Control(ResetBT).HelperCanvas = __reset&
     Control(ClearLogBT).HelperCanvas = __deletesmall&
-    Control(OpenBT).Disabled = TRUE
+    Control(OpenBT).Disabled = True
     SetFrameRate 60
     _ACCEPTFILEDROP
     AddItem ListBox1, "Open a file above or drag and drop."
@@ -524,20 +524,20 @@ SUB __UI_BeforeUpdateDisplay
     IF _TOTALDROPPEDFILES THEN
         DIM drop$: drop$ = _DROPPEDFILE
         IF _FILEEXISTS(drop$) THEN
-            IF NOT checkExt(drop$) AND Control(PIC2MEMRB).Value = FALSE THEN
-                Control(BIN2BASRB).Value = TRUE
-                Control(PIC2MEMRB).Disabled = TRUE
+            IF NOT checkExt(drop$) AND Control(PIC2MEMRB).Value = False THEN
+                Control(BIN2BASRB).Value = True
+                Control(PIC2MEMRB).Disabled = True
                 Text(SelectedFileTB) = drop$
                 Text(OutputFileTB) = drop$ + ".BM"
-                Control(CONVERTBT).Disabled = FALSE
-            ELSEIF checkExt(drop$) AND Control(PIC2MEMRB).Value = TRUE THEN
-                Control(BIN2BASRB).Disabled = TRUE
+                Control(CONVERTBT).Disabled = False
+            ELSEIF checkExt(drop$) AND Control(PIC2MEMRB).Value = True THEN
+                Control(BIN2BASRB).Disabled = True
                 Text(SelectedFileTB) = drop$
                 Text(OutputFileTB) = drop$ + ".MEM"
-                Control(CONVERTBT).Disabled = FALSE
-            ELSEIF checkExt(drop$) = 0 AND Control(PIC2MEMRB).Value = TRUE THEN
+                Control(CONVERTBT).Disabled = False
+            ELSEIF checkExt(drop$) = 0 AND Control(PIC2MEMRB).Value = True THEN
                 MessageBox "Unsupported file type for PIC2MEM", Caption(BIN2INCLUDE), MsgBox_Critical
-                Control(BIN2BASRB).Disabled = FALSE
+                Control(BIN2BASRB).Disabled = False
             END IF
         END IF
     END IF
@@ -551,45 +551,45 @@ SUB __UI_Click (id AS LONG)
         CASE BIN2INCLUDE
         CASE SelectedFileTB
         CASE OpenBT
-            IF Control(BIN2BASRB).Value = TRUE THEN
+            IF Control(BIN2BASRB).Value = True THEN
                 _DELAY 0.2 ' delay a bit to allow InFrom to draw and refresh all comtrols before the modal dialog box takes over
                 DIM oFile$: oFile$ = _OPENFILEDIALOG$(Caption(BIN2INCLUDE) + ": Open")
-                Control(PIC2MEMRB).Disabled = TRUE
-            ELSEIF Control(PIC2MEMRB).Value = TRUE THEN
+                Control(PIC2MEMRB).Disabled = True
+            ELSEIF Control(PIC2MEMRB).Value = True THEN
                 _DELAY 0.2 ' delay a bit to allow InFrom to draw and refresh all comtrols before the modal dialog box takes over
                 oFile$ = _OPENFILEDIALOG$(Caption(BIN2INCLUDE) + ": Open", , "*.BMP|*.bmp|*.JPG|*.jpg|*.JPEG|*.jpeg|*.PNG|*.png|*.GIF|*.gif", "Supported image files")
-                Control(BIN2BASRB).Disabled = TRUE
+                Control(BIN2BASRB).Disabled = True
             END IF
             IF oFile$ <> "" THEN
-                IF checkExt(oFile$) = 0 AND Control(PIC2MEMRB).Value = TRUE THEN
+                IF checkExt(oFile$) = 0 AND Control(PIC2MEMRB).Value = True THEN
                     MessageBox "Unsupported file type for PIC2MEM", Caption(BIN2INCLUDE), MsgBox_Critical
-                    Control(BIN2BASRB).Disabled = FALSE
-                ELSEIF checkExt(oFile$) AND Control(PIC2MEMRB).Value = TRUE THEN
-                    Control(CONVERTBT).Disabled = FALSE
+                    Control(BIN2BASRB).Disabled = False
+                ELSEIF checkExt(oFile$) AND Control(PIC2MEMRB).Value = True THEN
+                    Control(CONVERTBT).Disabled = False
                     Text(SelectedFileTB) = oFile$
                     Text(OutputFileTB) = oFile$ + ".MEM"
                 ELSE
-                    Control(CONVERTBT).Disabled = FALSE
+                    Control(CONVERTBT).Disabled = False
                     Text(SelectedFileTB) = oFile$
                     Text(OutputFileTB) = oFile$ + ".BM"
                 END IF
             ELSE
                 Text(SelectedFileTB) = ""
                 Text(OutputFileTB) = ""
-                Control(BIN2BASRB).Disabled = FALSE
-                Control(PIC2MEMRB).Disabled = FALSE
-                Control(CONVERTBT).Disabled = TRUE
+                Control(BIN2BASRB).Disabled = False
+                Control(PIC2MEMRB).Disabled = False
+                Control(CONVERTBT).Disabled = True
             END IF
         CASE CONVERTBT
-            IF Control(BIN2BASRB).Value = TRUE THEN
+            IF Control(BIN2BASRB).Value = True THEN
                 Caption(BIN2INCLUDE) = Caption(BIN2INCLUDE) + " - WORKING..."
                 bin2bas Text(SelectedFileTB), Text(OutputFileTB)
-                Control(PIC2MEMRB).Disabled = FALSE
+                Control(PIC2MEMRB).Disabled = False
                 Caption(BIN2INCLUDE) = "BIN2INCLUDE"
-            ELSEIF Control(PIC2MEMRB).Value = TRUE THEN
+            ELSEIF Control(PIC2MEMRB).Value = True THEN
                 Caption(BIN2INCLUDE) = Caption(BIN2INCLUDE) + " - WORKING..."
                 pic2mem Text(SelectedFileTB), Text(OutputFileTB)
-                Control(BIN2BASRB).Disabled = FALSE
+                Control(BIN2BASRB).Disabled = False
                 Caption(BIN2INCLUDE) = "BIN2INCLUDE"
             ELSE
                 MessageBox "Select an option BIN2BAS or PIC2MEM first.", Caption(BIN2INCLUDE), MsgBox_Exclamation
@@ -606,9 +606,9 @@ END SUB
 SUB ResetScreen
     Text(SelectedFileTB) = ""
     Text(OutputFileTB) = ""
-    Control(BIN2BASRB).Disabled = FALSE
-    Control(PIC2MEMRB).Disabled = FALSE
-    Control(CONVERTBT).Disabled = TRUE
+    Control(BIN2BASRB).Disabled = False
+    Control(PIC2MEMRB).Disabled = False
+    Control(CONVERTBT).Disabled = True
     ToolTip(ListBox1) = ""
 END SUB
 
@@ -703,10 +703,10 @@ SUB __UI_ValueChanged (id AS LONG)
     SELECT CASE id
         CASE ListBox1
         CASE BIN2BASRB
-            Control(OpenBT).Disabled = FALSE
+            Control(OpenBT).Disabled = False
             _TITLE "BIN2INCLUDE - BIN2BAS"
         CASE PIC2MEMRB
-            Control(OpenBT).Disabled = FALSE
+            Control(OpenBT).Disabled = False
             _TITLE "BIN2INCLUDE - PIC2MEM"
     END SELECT
 END SUB

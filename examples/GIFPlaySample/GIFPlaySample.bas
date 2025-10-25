@@ -27,8 +27,8 @@ SUB __UI_BeforeInit
 END SUB
 
 SUB __UI_OnLoad
-    Control(PlayButton).Disabled = TRUE
-    Control(DoneProgressBar).Disabled = TRUE
+    Control(PlayButton).Disabled = True
+    Control(DoneProgressBar).Disabled = True
 END SUB
 
 SUB __UI_BeforeUpdateDisplay
@@ -46,7 +46,7 @@ SUB __UI_Click (id AS LONG)
         CASE DoneProgressBar
 
         CASE AboutButton
-            MessageBox "GIFPlay library + InForm-PE demo." + STRING$(2, 10) + "Get it from https://github.com/a740g/InForm-PE", "About " + Caption(GIFPlaySample), MsgBox_OkOnly + MsgBox_Information
+            MessageBox "GIFPlay library + InForm-PE demo.\n\nGet it from https://github.com/a740g/InForm-PE", "About " + Caption(GIFPlaySample), MsgBox_OkOnly + MsgBox_Information
 
         CASE GIFPlaySample
 
@@ -60,17 +60,17 @@ SUB __UI_Click (id AS LONG)
                     Control(GIFPlaySample).Width = Control(GIFPictureBox).Width + Control(LoadButton).Width + 24
                     Control(DoneProgressBar).Width = Control(GIFPictureBox).Width
 
-                    Control(DoneProgressBar).Disabled = FALSE
+                    Control(DoneProgressBar).Disabled = False
 
                     IF GIF_GetTotalFrames(GIFPictureBox) > 1 THEN
-                        Control(PlayButton).Disabled = FALSE
+                        Control(PlayButton).Disabled = False
                         Caption(PlayButton) = "Play"
                     ELSE
-                        Control(PlayButton).Disabled = TRUE
+                        Control(PlayButton).Disabled = True
                     END IF
                 ELSE
-                    Control(PlayButton).Disabled = TRUE
-                    Control(DoneProgressBar).Disabled = TRUE
+                    Control(PlayButton).Disabled = True
+                    Control(DoneProgressBar).Disabled = True
                     MessageBox fileName + " failed to load!", "", MsgBox_Exclamation
                 END IF
             END IF
@@ -85,7 +85,7 @@ SUB __UI_Click (id AS LONG)
             END IF
 
         CASE GIFPictureBox
-            GIF_EnableOverlay GIFPictureBox, FALSE
+            GIF_EnableOverlay GIFPictureBox, False
     END SELECT
 END SUB
 

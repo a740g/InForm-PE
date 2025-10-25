@@ -27,7 +27,7 @@ REDIM SHARED Clock%%(12, 4, 2)
 ': Event procedures: ---------------------------------------------------------------
 SUB __UI_BeforeInit
     $EXEICON:'.\clubs.ico'
-    DoPatience%% = FALSE
+    DoPatience%% = False
     Anime1%% = 31
     Anime2%% = 43
     'Set Data
@@ -204,7 +204,7 @@ SUB __UI_BeforeUpdateDisplay
     'You can change the update frequency by calling SetFrameRate DesiredRate%
     STATIC Count%, InitDone%%, Grandad&, XStart%, YStart%
     IF NOT InitDone%% THEN
-        InitDone%% = TRUE
+        InitDone%% = True
         XStart% = -120
         YStart% = 0
         Grandad& = _LOADIMAGE("Clock1.png", 33)
@@ -300,9 +300,9 @@ SUB __UI_BeforeUpdateDisplay
             END IF
             Anime1%% = Anime1%% + 1
             IF Anime1%% = 31 THEN
-                TurnOver%% = FALSE
+                TurnOver%% = False
                 Clock%%(PickedHour%%, 4, 0) = PickedCard%%
-                Clock%%(PickedHour%%, 4, 1) = TRUE 'Temporary until picked up
+                Clock%%(PickedHour%%, 4, 1) = True 'Temporary until picked up
             END IF
         ELSEIF Anime2%% < 43 THEN
             'Display Tucking-in
@@ -374,7 +374,7 @@ SUB __UI_BeforeUpdateDisplay
                 END IF
             END IF
             Anime2%% = Anime2%% + 1
-            IF Anime2%% = 43 THEN CanPutDown%% = TRUE
+            IF Anime2%% = 43 THEN CanPutDown%% = True
         ELSEIF PickedUp%% THEN
             'Display picked-up card
             IF __UI_MouseLeft > 680 AND __UI_MouseTop > 738 THEN
@@ -476,7 +476,7 @@ SUB __UI_Click (id AS LONG)
     SELECT CASE id
         CASE ClockPatience
             IF GreenValid%% THEN
-                DoPickUp%% = TRUE
+                DoPickUp%% = True
             ELSEIF RedValid%% THEN
                 Anime2%% = 0
             END IF
@@ -484,51 +484,77 @@ SUB __UI_Click (id AS LONG)
             SYSTEM
         CASE NewGameBT
             IF NOT DoPatience%% THEN
-                Control(NewGameBT).Disabled = TRUE
-                Control(NewGameBT).Hidden = TRUE
+                Control(NewGameBT).Disabled = True
+                Control(NewGameBT).Hidden = True
                 Caption(NewGameBT) = "New Game"
                 SetFocus ExitBT
                 CALL Patience
             ELSE
-                DoPatience%% = FALSE
+                DoPatience%% = False
                 Caption(NewGameBT) = "Deal"
             END IF
     END SELECT
 END SUB
 
 SUB __UI_MouseEnter (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_MouseLeave (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_FocusIn (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_FocusOut (id AS LONG)
     'This event occurs right before a control loses focus.
     'To prevent a control from losing focus, set __UI_KeepFocus = True below.
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_MouseDown (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_MouseUp (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_KeyPress (id AS LONG)
     'When this event is fired, __UI_KeyHit will contain the code of the key hit.
     'You can change it and even cancel it by making it = 0
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_TextChanged (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_ValueChanged (id AS LONG)
+    SELECT CASE id
+        CASE ELSE
+    END SELECT
 END SUB
 
 SUB __UI_FormResized
-
 END SUB
 
 SUB Angle (Xin!, Yin!, Xout!, Yout!, Theta!)
@@ -538,7 +564,7 @@ END SUB
 
 SUB Patience
     RANDOMIZE (TIMER)
-    BadDeal%% = TRUE
+    BadDeal%% = True
     WHILE BadDeal%%
         REDIM Clock%%(12, 4, 2)
         CALL Shuffle(Cards%%())
@@ -548,33 +574,33 @@ SUB Patience
             R%% = N%% MOD 13
             Clock%%(R%%, S%% + 1, 2) = Cards%%(N%%)
         NEXT N%%
-        BadDeal%% = FALSE
+        BadDeal%% = False
         FOR M%% = 0 TO 12 'Cards are in S 1 to 4
-            IF Clock%%(M%%, 1, 2) MOD 13 = Clock%%(M%%, 2, 2) MOD 13 AND Clock%%(M%%, 1, 2) MOD 13 = Clock%%(M%%, 3, 2) MOD 13 AND Clock%%(M%%, 1, 2) MOD 13 = Clock%%(M%%, 4, 2) MOD 13 THEN BadDeal%% = TRUE
+            IF Clock%%(M%%, 1, 2) MOD 13 = Clock%%(M%%, 2, 2) MOD 13 AND Clock%%(M%%, 1, 2) MOD 13 = Clock%%(M%%, 3, 2) MOD 13 AND Clock%%(M%%, 1, 2) MOD 13 = Clock%%(M%%, 4, 2) MOD 13 THEN BadDeal%% = True
         NEXT M%%
     WEND
     Stock%% = 52
     Anime1%% = 31
     Anime2%% = 43
-    TurnOver%% = TRUE
-    DoPickUp%% = FALSE
-    PickedUp%% = FALSE
+    TurnOver%% = True
+    DoPickUp%% = False
+    PickedUp%% = False
     PickedCard%% = 0
     PickedHour%% = 12
-    CanPutDown%% = FALSE
-    IsComplete%% = FALSE
-    DoPatience%% = TRUE
-    HangOn%% = TRUE
+    CanPutDown%% = False
+    IsComplete%% = False
+    DoPatience%% = True
+    HangOn%% = True
     HangStop%% = 50
     HCount%% = 0
     WHILE DoPatience%%
         _LIMIT 60
-        GreenValid%% = FALSE
-        RedValid%% = FALSE
+        GreenValid%% = False
+        RedValid%% = False
         IF Stock%% = 0 AND HangOn%% THEN
             HCount%% = HCount%% + 1
             IF HCount%% = HangStop%% THEN
-                HangOn%% = FALSE
+                HangOn%% = False
                 HCount%% = 0
                 HangStop%% = 20
             END IF
@@ -590,7 +616,7 @@ SUB Patience
                 OldHour%% = PickedHour%%
                 Anime1%% = 0
             ELSEIF NOT DoPickUp%% AND NOT PickedUp%% THEN
-                IF SQR((Positions!(4, PickedHour%%, 0, 4) - XM%) * (Positions!(4, PickedHour%%, 0, 4) - XM%) + (Positions!(4, PickedHour%%, 1, 4) - YM%) * (Positions!(4, PickedHour%%, 1, 4) - YM%)) < 40 THEN GreenValid%% = TRUE
+                IF SQR((Positions!(4, PickedHour%%, 0, 4) - XM%) * (Positions!(4, PickedHour%%, 0, 4) - XM%) + (Positions!(4, PickedHour%%, 1, 4) - YM%) * (Positions!(4, PickedHour%%, 1, 4) - YM%)) < 40 THEN GreenValid%% = True
             ELSEIF DoPickUp%% THEN
                 IF PickedHour%% = 12 THEN
                     FOR R%% = 4 TO 2 STEP -1
@@ -612,11 +638,11 @@ SUB Patience
                     PickedHour%% = 0
                 END IF
                 Orient1! = Phi!(PickedHour%%)
-                PickedUp%% = TRUE
-                DoPickUp%% = FALSE
+                PickedUp%% = True
+                DoPickUp%% = False
             ELSEIF PickedUp%% THEN
                 IF SQR((Positions!(4, PickedHour%%, 0, 4) - XM%) * (Positions!(4, PickedHour%%, 0, 4) - XM%) + (Positions!(4, PickedHour%%, 1, 4) - YM%) * (Positions!(4, PickedHour%%, 1, 4) - YM%)) < 40 THEN
-                    IF NOT CanPutDown%% THEN RedValid%% = TRUE
+                    IF NOT CanPutDown%% THEN RedValid%% = True
                     Orient! = Orient1!
                 ELSEIF SQR((Positions!(4, OldHour%%, 0, 4) - XM%) * (Positions!(4, OldHour%%, 0, 4) - XM%) + (Positions!(4, OldHour%%, 1, 4) - YM%) * (Positions!(4, OldHour%%, 1, 4) - YM%)) < 40 THEN
                     Orient! = Orient0!
@@ -624,30 +650,30 @@ SUB Patience
                     Orient! = 0
                 END IF
                 IF CanPutDown%% THEN
-                    CanPutDown%% = FALSE
-                    PickedUp%% = FALSE
-                    HangOn%% = TRUE
+                    CanPutDown%% = False
+                    PickedUp%% = False
+                    HangOn%% = True
                     IF PickedHour%% = 12 THEN
                         Clock%%(PickedHour%%, 1, 0) = PickedCard%%
-                        Clock%%(PickedHour%%, 1, 1) = TRUE
+                        Clock%%(PickedHour%%, 1, 1) = True
                     ELSE
                         Clock%%(PickedHour%%, 0, 0) = PickedCard%%
-                        Clock%%(PickedHour%%, 0, 1) = TRUE
+                        Clock%%(PickedHour%%, 0, 1) = True
                     END IF
                     PickedCard%% = 0
                     IF Clock%%(12, 4, 1) AND Clock%%(12, 1, 0) <> 0 THEN 'Game Finished
-                        IsComplete%% = TRUE
-                        Control(NewGameBT).Disabled = FALSE
-                        Control(NewGameBT).Hidden = FALSE
+                        IsComplete%% = True
+                        Control(NewGameBT).Disabled = False
+                        Control(NewGameBT).Hidden = False
                         SetFocus NewGameBT
-                        GotOut%% = TRUE
+                        GotOut%% = True
                         M%% = 0
                         WHILE M%% <= 11 AND GotOut%%
-                            IF NOT Clock%%(M%%, 4, 1) THEN GotOut%% = FALSE
+                            IF NOT Clock%%(M%%, 4, 1) THEN GotOut%% = False
                             M%% = M%% + 1
                         WEND
                     END IF
-                    IF NOT IsComplete%% THEN TurnOver%% = TRUE
+                    IF NOT IsComplete%% THEN TurnOver%% = True
                 END IF
             END IF
         END IF

@@ -22,7 +22,6 @@ DIM SHARED Drawing AS _BYTE, Tool AS _UNSIGNED _BYTE
 
 ': Event procedures: ---------------------------------------------------------------
 SUB __UI_BeforeInit
-
 END SUB
 
 SUB __UI_OnLoad
@@ -95,7 +94,6 @@ SUB __UI_BeforeUpdateDisplay
 END SUB
 
 SUB __UI_BeforeUnload
-
 END SUB
 
 SUB __UI_Click (id AS LONG)
@@ -180,7 +178,7 @@ SUB __UI_MouseDown (id AS LONG)
         CASE InFormPaint
 
         CASE PictureBox1
-            Drawing = TRUE
+            Drawing = True
         CASE CircleBT
 
         CASE SquareBT
@@ -193,7 +191,7 @@ SUB __UI_MouseDown (id AS LONG)
 END SUB
 
 SUB __UI_MouseUp (id AS LONG)
-    Drawing = FALSE
+    Drawing = False
     SELECT CASE id
         CASE InFormPaint
 
@@ -234,5 +232,4 @@ SUB __UI_ValueChanged (id AS LONG)
 END SUB
 
 SUB __UI_FormResized
-
 END SUB

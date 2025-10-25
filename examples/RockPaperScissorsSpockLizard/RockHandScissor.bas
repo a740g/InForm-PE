@@ -39,10 +39,10 @@ SUB __UI_OnLoad
     Caption(LB) = "0000"
     PlayerChoose = 0
     RANDOMIZE TIMER
-    Control(ChooseYourMoveAndWaitAIsOneLB).Hidden = TRUE ' hide help label
-    Control(ChooseYourMoveAndWaitAIsOneLB).Disabled = TRUE
-    Control(Frame2).Hidden = TRUE ' hide frame2
-    Control(Frame2).Disabled = TRUE
+    Control(ChooseYourMoveAndWaitAIsOneLB).Hidden = True ' hide help label
+    Control(ChooseYourMoveAndWaitAIsOneLB).Disabled = True
+    Control(Frame2).Hidden = True ' hide frame2
+    Control(Frame2).Disabled = True
 END SUB
 
 SUB __UI_BeforeUpdateDisplay
@@ -75,62 +75,62 @@ SUB __UI_Click (id AS LONG)
 
         CASE assetscartajpegPX
             ' user chooses to play paper
-            Control(assetssassojpegPX).Disabled = TRUE ' hide images of rock and scissor
-            Control(assetsforbicepngPX).Disabled = TRUE
-            Control(assetsspokpngPX).Disabled = TRUE
-            Control(assetslizardpngPX).Disabled = TRUE
-            Control(assetssassojpegPX).Hidden = TRUE
-            Control(assetsforbicepngPX).Hidden = TRUE
-            Control(assetsspokpngPX).Hidden = TRUE
-            Control(assetslizardpngPX).Hidden = TRUE
-            Control(assetsRPSLS_helpjpgPX).Disabled = TRUE ' hide AI's choice
-            Control(assetsRPSLS_helpjpgPX).Hidden = TRUE
+            Control(assetssassojpegPX).Disabled = True ' hide images of rock and scissor
+            Control(assetsforbicepngPX).Disabled = True
+            Control(assetsspokpngPX).Disabled = True
+            Control(assetslizardpngPX).Disabled = True
+            Control(assetssassojpegPX).Hidden = True
+            Control(assetsforbicepngPX).Hidden = True
+            Control(assetsspokpngPX).Hidden = True
+            Control(assetslizardpngPX).Hidden = True
+            Control(assetsRPSLS_helpjpgPX).Disabled = True ' hide AI's choice
+            Control(assetsRPSLS_helpjpgPX).Hidden = True
             playAI paper
         CASE assetssassojpegPX
             ' user chooses to play rock
-            Control(assetscartajpegPX).Disabled = TRUE ' hide paper and scissor
-            Control(assetsforbicepngPX).Disabled = TRUE
-            Control(assetsspokpngPX).Disabled = TRUE
-            Control(assetslizardpngPX).Disabled = TRUE
-            Control(assetsspokpngPX).Hidden = TRUE
-            Control(assetslizardpngPX).Hidden = TRUE
-            Control(assetscartajpegPX).Hidden = TRUE
-            Control(assetsforbicepngPX).Hidden = TRUE
-            Control(assetsRPSLS_helpjpgPX).Disabled = TRUE ' hide AI's choice
-            Control(assetsRPSLS_helpjpgPX).Hidden = TRUE
+            Control(assetscartajpegPX).Disabled = True ' hide paper and scissor
+            Control(assetsforbicepngPX).Disabled = True
+            Control(assetsspokpngPX).Disabled = True
+            Control(assetslizardpngPX).Disabled = True
+            Control(assetsspokpngPX).Hidden = True
+            Control(assetslizardpngPX).Hidden = True
+            Control(assetscartajpegPX).Hidden = True
+            Control(assetsforbicepngPX).Hidden = True
+            Control(assetsRPSLS_helpjpgPX).Disabled = True ' hide AI's choice
+            Control(assetsRPSLS_helpjpgPX).Hidden = True
             playAI rock
         CASE assetsforbicepngPX
             'user chooses to play scissor
-            Control(assetssassojpegPX).Disabled = TRUE ' hide  rock and paper
-            Control(assetscartajpegPX).Disabled = TRUE
-            Control(assetsspokpngPX).Disabled = TRUE
-            Control(assetslizardpngPX).Disabled = TRUE
-            Control(assetsspokpngPX).Hidden = TRUE
-            Control(assetslizardpngPX).Hidden = TRUE
-            Control(assetssassojpegPX).Hidden = TRUE
-            Control(assetscartajpegPX).Hidden = TRUE
-            Control(assetsRPSLS_helpjpgPX).Disabled = TRUE ' hide AI's choice
-            Control(assetsRPSLS_helpjpgPX).Hidden = TRUE
+            Control(assetssassojpegPX).Disabled = True ' hide  rock and paper
+            Control(assetscartajpegPX).Disabled = True
+            Control(assetsspokpngPX).Disabled = True
+            Control(assetslizardpngPX).Disabled = True
+            Control(assetsspokpngPX).Hidden = True
+            Control(assetslizardpngPX).Hidden = True
+            Control(assetssassojpegPX).Hidden = True
+            Control(assetscartajpegPX).Hidden = True
+            Control(assetsRPSLS_helpjpgPX).Disabled = True ' hide AI's choice
+            Control(assetsRPSLS_helpjpgPX).Hidden = True
             playAI scissor
         CASE assetsspokpngPX
-            Control(assetssassojpegPX).Disabled = TRUE ' hide  rock and paper
-            Control(assetscartajpegPX).Disabled = TRUE
-            Control(assetsforbicepngPX).Disabled = TRUE
-            Control(assetslizardpngPX).Disabled = TRUE
-            Control(assetsforbicepngPX).Hidden = TRUE
-            Control(assetslizardpngPX).Hidden = TRUE
-            Control(assetssassojpegPX).Hidden = TRUE
-            Control(assetscartajpegPX).Hidden = TRUE
+            Control(assetssassojpegPX).Disabled = True ' hide  rock and paper
+            Control(assetscartajpegPX).Disabled = True
+            Control(assetsforbicepngPX).Disabled = True
+            Control(assetslizardpngPX).Disabled = True
+            Control(assetsforbicepngPX).Hidden = True
+            Control(assetslizardpngPX).Hidden = True
+            Control(assetssassojpegPX).Hidden = True
+            Control(assetscartajpegPX).Hidden = True
             playAI spok
         CASE assetslizardpngPX
-            Control(assetssassojpegPX).Disabled = TRUE ' hide  rock and paper
-            Control(assetscartajpegPX).Disabled = TRUE
-            Control(assetsspokpngPX).Disabled = TRUE
-            Control(assetsforbicepngPX).Disabled = TRUE
-            Control(assetsspokpngPX).Hidden = TRUE
-            Control(assetsforbicepngPX).Hidden = TRUE
-            Control(assetssassojpegPX).Hidden = TRUE
-            Control(assetscartajpegPX).Hidden = TRUE
+            Control(assetssassojpegPX).Disabled = True ' hide  rock and paper
+            Control(assetscartajpegPX).Disabled = True
+            Control(assetsspokpngPX).Disabled = True
+            Control(assetsforbicepngPX).Disabled = True
+            Control(assetsspokpngPX).Hidden = True
+            Control(assetsforbicepngPX).Hidden = True
+            Control(assetssassojpegPX).Hidden = True
+            Control(assetscartajpegPX).Hidden = True
             playAI lizard
         CASE RockHandScissor
 
@@ -139,68 +139,68 @@ SUB __UI_Click (id AS LONG)
         CASE Frame1
 
         CASE StartBT
-            Control(HelpBT).Disabled = TRUE
-            Control(Frame2).Hidden = FALSE ' show frame2
-            Control(Frame2).Disabled = FALSE
-            Control(assetssassojpegPX).Disabled = FALSE ' show and activate 3 image buttons for user
-            Control(assetsforbicepngPX).Disabled = FALSE
-            Control(assetscartajpegPX).Disabled = FALSE
-            Control(assetsspokpngPX).Disabled = FALSE
-            Control(assetslizardpngPX).Disabled = FALSE
-            Control(assetssassojpegPX).Hidden = FALSE
-            Control(assetsforbicepngPX).Hidden = FALSE
-            Control(assetscartajpegPX).Hidden = FALSE
-            Control(assetsspokpngPX).Hidden = FALSE
-            Control(assetslizardpngPX).Hidden = FALSE
+            Control(HelpBT).Disabled = True
+            Control(Frame2).Hidden = False ' show frame2
+            Control(Frame2).Disabled = False
+            Control(assetssassojpegPX).Disabled = False ' show and activate 3 image buttons for user
+            Control(assetsforbicepngPX).Disabled = False
+            Control(assetscartajpegPX).Disabled = False
+            Control(assetsspokpngPX).Disabled = False
+            Control(assetslizardpngPX).Disabled = False
+            Control(assetssassojpegPX).Hidden = False
+            Control(assetsforbicepngPX).Hidden = False
+            Control(assetscartajpegPX).Hidden = False
+            Control(assetsspokpngPX).Hidden = False
+            Control(assetslizardpngPX).Hidden = False
 
-            Control(assetsRPSLS_helpjpgPX).Hidden = TRUE ' hide help/AI image
-            Control(assetsRPSLS_helpjpgPX).Disabled = TRUE
-            Control(ChooseYourMoveAndWaitAIsOneLB).Hidden = TRUE ' hide help label
-            Control(ChooseYourMoveAndWaitAIsOneLB).Disabled = TRUE
+            Control(assetsRPSLS_helpjpgPX).Hidden = True ' hide help/AI image
+            Control(assetsRPSLS_helpjpgPX).Disabled = True
+            Control(ChooseYourMoveAndWaitAIsOneLB).Hidden = True ' hide help label
+            Control(ChooseYourMoveAndWaitAIsOneLB).Disabled = True
 
         CASE ExitBT
             SYSTEM ' exit from program
         CASE HelpBT
 
-            IF Control(ChooseYourMoveAndWaitAIsOneLB).Disabled = FALSE THEN
+            IF Control(ChooseYourMoveAndWaitAIsOneLB).Disabled = False THEN
                 ' here we reactivate the game
-                Control(StartBT).Disabled = FALSE
-                Control(ChooseYourMoveAndWaitAIsOneLB).Hidden = TRUE ' hide help label
-                Control(ChooseYourMoveAndWaitAIsOneLB).Disabled = TRUE
+                Control(StartBT).Disabled = False
+                Control(ChooseYourMoveAndWaitAIsOneLB).Hidden = True ' hide help label
+                Control(ChooseYourMoveAndWaitAIsOneLB).Disabled = True
                 Caption(ChooseYourMoveAndWaitAIsOneLB) = "Choose your move and wait AI's one"
-                Control(Frame2).Hidden = TRUE ' hide frame2
-                Control(Frame2).Disabled = TRUE
-                Control(assetssassojpegPX).Disabled = FALSE ' activate 5 image button for user
-                Control(assetsforbicepngPX).Disabled = FALSE
-                Control(assetscartajpegPX).Disabled = FALSE
-                Control(assetsspokpngPX).Disabled = FALSE
-                Control(assetslizardpngPX).Disabled = FALSE
-                Control(assetssassojpegPX).Hidden = FALSE
-                Control(assetsforbicepngPX).Hidden = FALSE
-                Control(assetscartajpegPX).Hidden = FALSE
-                Control(assetsspokpngPX).Hidden = FALSE
-                Control(assetslizardpngPX).Hidden = FALSE
+                Control(Frame2).Hidden = True ' hide frame2
+                Control(Frame2).Disabled = True
+                Control(assetssassojpegPX).Disabled = False ' activate 5 image button for user
+                Control(assetsforbicepngPX).Disabled = False
+                Control(assetscartajpegPX).Disabled = False
+                Control(assetsspokpngPX).Disabled = False
+                Control(assetslizardpngPX).Disabled = False
+                Control(assetssassojpegPX).Hidden = False
+                Control(assetsforbicepngPX).Hidden = False
+                Control(assetscartajpegPX).Hidden = False
+                Control(assetsspokpngPX).Hidden = False
+                Control(assetslizardpngPX).Hidden = False
 
             ELSE
                 ' here we show the help
-                Control(StartBT).Disabled = TRUE 'disable help button
+                Control(StartBT).Disabled = True 'disable help button
                 Caption(ChooseYourMoveAndWaitAIsOneLB) = "Choose your move and wait AI's one"
-                Control(ChooseYourMoveAndWaitAIsOneLB).Hidden = FALSE ' show help label
-                Control(ChooseYourMoveAndWaitAIsOneLB).Disabled = FALSE
-                Control(assetssassojpegPX).Disabled = TRUE ' hide 5 image button for user
-                Control(assetsforbicepngPX).Disabled = TRUE
-                Control(assetscartajpegPX).Disabled = TRUE
-                Control(assetsspokpngPX).Disabled = TRUE
-                Control(assetslizardpngPX).Disabled = TRUE
-                Control(assetssassojpegPX).Hidden = TRUE
-                Control(assetsforbicepngPX).Hidden = TRUE
-                Control(assetscartajpegPX).Hidden = TRUE
-                Control(assetsspokpngPX).Hidden = TRUE
-                Control(assetslizardpngPX).Hidden = TRUE
-                Control(Frame2).Hidden = FALSE 'show frame2
-                Control(Frame2).Disabled = FALSE
+                Control(ChooseYourMoveAndWaitAIsOneLB).Hidden = False ' show help label
+                Control(ChooseYourMoveAndWaitAIsOneLB).Disabled = False
+                Control(assetssassojpegPX).Disabled = True ' hide 5 image button for user
+                Control(assetsforbicepngPX).Disabled = True
+                Control(assetscartajpegPX).Disabled = True
+                Control(assetsspokpngPX).Disabled = True
+                Control(assetslizardpngPX).Disabled = True
+                Control(assetssassojpegPX).Hidden = True
+                Control(assetsforbicepngPX).Hidden = True
+                Control(assetscartajpegPX).Hidden = True
+                Control(assetsspokpngPX).Hidden = True
+                Control(assetslizardpngPX).Hidden = True
+                Control(Frame2).Hidden = False 'show frame2
+                Control(Frame2).Disabled = False
                 LoadImage Control(assetsRPSLS_helpjpgPX), "assets\RPSLS_help.jpg" ' load and show help picture
-                Control(assetsRPSLS_helpjpgPX).Redraw = TRUE
+                Control(assetsRPSLS_helpjpgPX).Redraw = True
             END IF
         CASE LB
 
@@ -212,27 +212,27 @@ SUB __UI_Click (id AS LONG)
 END SUB
 
 SUB restoreGame
-    Control(assetssassojpegPX).Disabled = FALSE 'activate 5 image buttons for user
-    Control(assetsforbicepngPX).Disabled = FALSE
-    Control(assetscartajpegPX).Disabled = FALSE
-    Control(assetsspokpngPX).Disabled = FALSE
-    Control(assetslizardpngPX).Disabled = FALSE
-    Control(assetsspokpngPX).Hidden = FALSE
-    Control(assetslizardpngPX).Hidden = FALSE
-    Control(assetssassojpegPX).Hidden = FALSE
-    Control(assetsforbicepngPX).Hidden = FALSE
-    Control(assetscartajpegPX).Hidden = FALSE
-    Control(HelpBT).Disabled = FALSE ' activate help button
-    Control(assetsRPSLS_helpjpgPX).Redraw = TRUE ' force to show AI's choice
+    Control(assetssassojpegPX).Disabled = False 'activate 5 image buttons for user
+    Control(assetsforbicepngPX).Disabled = False
+    Control(assetscartajpegPX).Disabled = False
+    Control(assetsspokpngPX).Disabled = False
+    Control(assetslizardpngPX).Disabled = False
+    Control(assetsspokpngPX).Hidden = False
+    Control(assetslizardpngPX).Hidden = False
+    Control(assetssassojpegPX).Hidden = False
+    Control(assetsforbicepngPX).Hidden = False
+    Control(assetscartajpegPX).Hidden = False
+    Control(HelpBT).Disabled = False ' activate help button
+    Control(assetsRPSLS_helpjpgPX).Redraw = True ' force to show AI's choice
     PlayerChoose = 0 ' reset the chooser game
 END SUB
 
 SUB results (result AS INTEGER)
     'here there is the output sound + images for user
     ' and adjourn  score of game
-    Control(assetsRPSLS_helpjpgPX).Hidden = FALSE ' show image of ai's choice
-    Control(assetsRPSLS_helpjpgPX).Disabled = FALSE
-    Control(assetsRPSLS_helpjpgPX).Redraw = TRUE ' force to show image of ai's choice
+    Control(assetsRPSLS_helpjpgPX).Hidden = False ' show image of ai's choice
+    Control(assetsRPSLS_helpjpgPX).Disabled = False
+    Control(assetsRPSLS_helpjpgPX).Redraw = True ' force to show image of ai's choice
     SELECT CASE result
         CASE wins
             Caption(LB) = STR$(VAL(Caption(LB)) + 10)
@@ -244,16 +244,16 @@ SUB results (result AS INTEGER)
             Caption(LB) = STR$(VAL(Caption(LB)) - 10)
             Caption(ChooseYourMoveAndWaitAIsOneLB) = " YOU LOOSE!! "
     END SELECT
-    Control(ChooseYourMoveAndWaitAIsOneLB).Hidden = FALSE 'show result as text in helplabel
-    Control(ChooseYourMoveAndWaitAIsOneLB).Disabled = FALSE
+    Control(ChooseYourMoveAndWaitAIsOneLB).Hidden = False 'show result as text in helplabel
+    Control(ChooseYourMoveAndWaitAIsOneLB).Disabled = False
 END SUB
 
 SUB playAI (choose AS INTEGER)
     PlayerChoose = 1 ' the user has made his choice
     DIM choosen AS INTEGER
     choosen = INT(RND * 5) + 1 ' ai chooses
-    Control(ChooseYourMoveAndWaitAIsOneLB).Hidden = TRUE ' hide help label
-    Control(ChooseYourMoveAndWaitAIsOneLB).Disabled = TRUE
+    Control(ChooseYourMoveAndWaitAIsOneLB).Hidden = True ' hide help label
+    Control(ChooseYourMoveAndWaitAIsOneLB).Disabled = True
     LoadImage Control(assetsRPSLS_helpjpgPX), "" ' reset to null image of ai's choice
 
     SELECT CASE choosen
@@ -572,14 +572,15 @@ END SUB
 
 SUB __UI_TextChanged (id AS LONG)
     SELECT CASE id
+        CASE ELSE
     END SELECT
 END SUB
 
 SUB __UI_ValueChanged (id AS LONG)
     SELECT CASE id
+        CASE ELSE
     END SELECT
 END SUB
 
 SUB __UI_FormResized
-
 END SUB

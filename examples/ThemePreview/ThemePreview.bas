@@ -191,7 +191,7 @@ SUB __UI_ValueChanged (id AS LONG)
         CASE DropdownList1
             _FREEIMAGE Control(PictureBox1).HelperCanvas
             Control(PictureBox1).HelperCanvas = _COPYIMAGE(__UI_LoadThemeImage(GetThemeImageId(GetItem$(DropdownList1, Control(DropdownList1).Value))))
-            Control(PictureBox1).Redraw = TRUE
+            Control(PictureBox1).Redraw = True
     END SELECT
 END SUB
 
