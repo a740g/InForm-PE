@@ -4340,7 +4340,7 @@ FUNCTION IsNumber%% (n AS STRING)
 
     FOR i = 1 TO LEN(src)
         SELECT CASE ASC(src, i)
-            CASE 48 TO 57 ' 0 - 9
+            CASE __ASC_0 TO __ASC_9 ' 0 - 9
                 hasDigit = True
 
             CASE _ASC_FULLSTOP ' "."
@@ -4503,41 +4503,43 @@ END FUNCTION
 
 '---------------------------------------------------------------------------------
 FUNCTION RawText$ (id AS LONG)
-    DIM t$, c$, i AS INTEGER
-
-    IF LEN(Mask(id)) = 0 THEN
-        RawText$ = Text(id)
-    ELSE
-        FOR i = 1 TO LEN(Mask(id))
-            c$ = MID$(Text(id), i, 1)
-            SELECT CASE MID$(Mask(id), i, 1)
-                CASE "0", "9", "#"
-                    IF c$ <> "_" THEN
-                        t$ = t$ + c$
-                    ELSE
-                        t$ = t$ + " "
-                    END IF
-            END SELECT
-        NEXT
-        RawText$ = t$
+    DIM maskLen AS LONG: maskLen = LEN(Mask(id))
+    IF maskLen = 0 THEN
+        RawText = Text(id)
+        EXIT FUNCTION
     END IF
+
+    DIM textLen AS LONG: textLen = LEN(Text(id))
+    DIM result AS STRING: result = SPACE$(maskLen)
+    DIM AS LONG p, c, i
+
+    FOR i = 1 TO maskLen
+        IF i > textLen THEN EXIT FOR
+
+        SELECT CASE ASC(Mask(id), i)
+            CASE __ASC_0, __ASC_9, _ASC_HASH
+                c = ASC(Text(id), i)
+                p = p + 1
+                ASC(result, p) = _IIF(c = _ASC_UNDERSCORE, _ASC_SPACE, c)
+        END SELECT
+    NEXT
+
+    RawText = LEFT$(result, p)
 END FUNCTION
 
 '---------------------------------------------------------------------------------
 FUNCTION __UI_EmptyMask$ (id AS LONG)
-    DIM i AS LONG
-    DIM Text$
+    DIM maskLen AS LONG: maskLen = LEN(Mask(id))
+    IF maskLen = 0 THEN EXIT FUNCTION
 
-    FOR i = 1 TO LEN(Mask(id))
-        SELECT CASE MID$(Mask(id), i, 1)
-            CASE "0", "9", "#"
-                Text$ = Text$ + "_"
-            CASE ELSE
-                Text$ = Text$ + MID$(Mask(id), i, 1)
-        END SELECT
+    DIM result AS STRING: result = SPACE$(maskLen)
+    DIM AS LONG c, i
+    FOR i = 1 TO maskLen
+        c = ASC(Mask(id), i)
+        ASC(result, i) = _IIF(c = __ASC_0 _ORELSE c = __ASC_9 _ORELSE c = _ASC_HASH, _ASC_UNDERSCORE, c)
     NEXT
 
-    __UI_EmptyMask$ = Text$
+    __UI_EmptyMask = result
 END FUNCTION
 
 '---------------------------------------------------------------------------------

@@ -526,6 +526,56 @@ SUB Test_InFormUIHelpers
     TEST_CHECK __UI_TrimAt0("hello" + _CHR_NUL + "world") = "hello", "Expected 'hello'"
 
     TEST_CASE_END
+
+    TEST_CASE_BEGIN "InFormUIHelpers: RawText$ and __UI_EmptyMask$"
+
+    ' No mask: RawText$ should return Text(id)
+    Mask(0) = ""
+    Text(0) = "plaintext"
+    TEST_CHECK RawText$(0) = "plaintext", "RawText$ returns full text when no mask"
+
+    ' With mask: RawText$ now returns only the placeholder characters concatenated
+    Mask(0) = "00-00"
+    Text(0) = "12-34"
+    TEST_CHECK RawText$(0) = "1234", "RawText$ should return placeholder characters concatenated"
+
+    ' Empty mask placeholders should be returned as spaces (underscore in Text -> space in RawText$)
+    Mask(0) = "00-00"
+    Text(0) = "__-5_"
+    TEST_CHECK RawText$(0) = "  5 ", "RawText$ should convert underscores to spaces for empty placeholders"
+
+    ' __UI_EmptyMask$ should produce underscores where placeholders are and mask chars elsewhere
+    Mask(0) = "00-00"
+    TEST_CHECK __UI_EmptyMask$(0) = "__-__", "__UI_EmptyMask$ should produce placeholder underscores"
+
+    TEST_CASE_END
+
+    TEST_CASE_BEGIN "InFormUIHelpers: RawText$ additional cases"
+
+    ' Mix of placeholder types and non-digit text
+    Mask(0) = "9#0#"
+    Text(0) = "1a2b"
+    TEST_CHECK RawText$(0) = "1a2b", "RawText$ should return characters for placeholder positions (including non-digits)"
+
+    ' Text shorter than mask: missing positions become spaces
+    Mask(0) = "0000"
+    Text(0) = "12"
+    TEST_CHECK RawText$(0) = "12", "RawText$ should return only existing placeholder characters when Text is shorter than mask"
+
+    ' Long mask with literals: only placeholder positions are returned, literals become spaces in RawText$
+    Mask(0) = "(000) 000-0000"
+    Text(0) = "(123) 456-7890"
+    ' Expected: digits placed at placeholder slots, other slots are spaces
+    TEST_CHECK RawText$(0) = "1234567890", "RawText$ should extract digits into a contiguous string for phone mask"
+
+    ' __UI_EmptyMask$ edge cases
+    Mask(0) = "ABC"
+    TEST_CHECK __UI_EmptyMask$(0) = "ABC", "__UI_EmptyMask$ should return literal mask when no placeholders"
+
+    Mask(0) = ""
+    TEST_CHECK __UI_EmptyMask$(0) = "", "__UI_EmptyMask$ should return empty string when mask is empty"
+
+    TEST_CASE_END
 END SUB
 
 SUB Test_InFormUIUnicodeUtils
