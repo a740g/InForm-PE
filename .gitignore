@@ -4,15 +4,34 @@
 !*.*
 # Unignore all dirs
 !*/
+# Unignore Makefile
+!Makefile
+# Ignore all executables
+*.exe
+*.dll
+*.so
+*.dylib
+# Ignore all object files and libraries
+*.o
+*.obj
+*.a
+*.lib
+# Ignore VSCode stuff
+.vscode
+.fake
+# Ignore VS stuff
+.vs
+# Ignore macOS stuff
+*.command
+.DS_Store
+# Ignore Windows stuff
+Thumbs.db
+desktop.ini
 # Unignore wiki
 !docs/wiki
-# Ignore all exe files
-*.exe
 # Ignore all ini files
 *.ini
 # Other temp files
 *.frmbin
-#Ignore macOS stuff
-*.command
-.DS_Store
+# Unignore macOS setup script
 !setup_inform_mac.command
