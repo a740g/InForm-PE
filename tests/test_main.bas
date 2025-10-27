@@ -1,3 +1,5 @@
+' InForm-PE test suite
+
 $LET TEST_STRICT = TRUE
 '$INCLUDE:'../InForm/extensions/Catch.bi'
 $CONSOLE:ONLY
@@ -23,8 +25,6 @@ SUB __UI_BeforeInit
     Test_InFormUIUnicodeUtils
 
     TEST_END_ALL
-
-    SYSTEM
 END SUB
 
 SUB Test_Catch

@@ -36,5 +36,5 @@ ELSE
     __TestSetColor __TEST_COLOR_HEADER: __TestPrintLn "Time: " + TIME$
     __TestSetColor __TEST_COLOR_HEADER: __TestPrintLn "Executable: " + COMMAND$(0)
     __TestSetColor __TEST_COLOR_HEADER: __TestPrintLn "Working directory: " + _CWD$
-    __TestSetColor __TEST_COLOR_HEADER: __TestPrintLn "Catch error handler installed."
+    __TestSetColor __TEST_COLOR_HEADER: __TestPrintLn "Catch error handler installed"
 END IF
