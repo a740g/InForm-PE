@@ -1,5 +1,5 @@
 '-----------------------------------------------------------------------------------------------------------------------
-' A simple integer hash table library
+' A simple integer hash map library for QB64-PE with support for multiple data types and dynamic resizing
 ' Copyright (c) 2025 Samuel Gomes
 '-----------------------------------------------------------------------------------------------------------------------
 

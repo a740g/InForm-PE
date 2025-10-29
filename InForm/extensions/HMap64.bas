@@ -1,5 +1,5 @@
 '-----------------------------------------------------------------------------------------------------------------------
-' A simple hash table library
+' A simple integer hash map library for QB64-PE with support for multiple data types and dynamic resizing
 ' Copyright (c) 2025 Samuel Gomes
 '-----------------------------------------------------------------------------------------------------------------------
 
@@ -57,7 +57,7 @@ FUNCTION HMap64_GetCount~%& (map() AS HMap64)
     HMap64_GetCount = map(0).K
 END FUNCTION
 
-''' @brief Resize the hash table and rehash all user entries.
+''' @brief Resize the hash map and rehash all user entries.
 ''' @param map The dynamic HMap64 array to resize.
 SUB __HMap64_ResizeAndRehash (map() AS HMap64)
     DIM oldSize AS _UNSIGNED _OFFSET: oldSize = UBOUND(map)
@@ -102,8 +102,8 @@ SUB HMap64_Delete (map() AS HMap64, k AS _UNSIGNED _OFFSET)
     DIM ignored AS _BYTE: ignored = HMap64_Delete%%(map(), k)
 END SUB
 
-''' @brief Checks if a key exists in the table.
-''' @param table The hash table to search.
+''' @brief Checks if a key exists in the map.
+''' @param map The hash map to search.
 ''' @param k The key to check.
 ''' @return _TRUE if present, _FALSE otherwise.
 FUNCTION HMap64_Exists%% (map() AS HMap64, k AS _UNSIGNED _OFFSET)
@@ -123,7 +123,7 @@ FUNCTION HMap64_GetDataType~%% (map() AS HMap64, k AS _UNSIGNED _OFFSET)
 END FUNCTION
 
 ''' @brief Updates an existing key or inserts it if not present.
-''' @param table The hash table to update.
+''' @param map The hash map to update.
 ''' @param k The key.
 ''' @param v The value string.
 ''' @param dataType The data type constant for the value being stored.
@@ -150,7 +150,7 @@ SUB __HMap64_Set (map() AS HMap64, k AS _UNSIGNED _OFFSET, v AS STRING, dataType
 END SUB
 
 ''' @brief Retrieves the value for a given key.
-''' @param table The hash table to search.
+''' @param map The hash map to search.
 ''' @param k The key to look up.
 ''' @return The associated value string, or an empty string if not found.
 FUNCTION HMap64_GetString$ (map() AS HMap64, k AS _UNSIGNED _OFFSET)
@@ -159,7 +159,7 @@ FUNCTION HMap64_GetString$ (map() AS HMap64, k AS _UNSIGNED _OFFSET)
 END FUNCTION
 
 ''' @brief Updates an existing key or inserts it if not present.
-''' @param table The hash table to update.
+''' @param map The hash map to update.
 ''' @param k The key.
 ''' @param v The value string.
 SUB HMap64_SetString (map() AS HMap64, k AS _UNSIGNED _OFFSET, v AS STRING)
@@ -167,7 +167,7 @@ SUB HMap64_SetString (map() AS HMap64, k AS _UNSIGNED _OFFSET, v AS STRING)
 END SUB
 
 ''' @brief Retrieves the value for a given key.
-''' @param table The hash table to search.
+''' @param map The hash map to search.
 ''' @param k The key to look up.
 ''' @return The associated _BYTE value.
 FUNCTION HMap64_GetByte%% (map() AS HMap64, k AS _UNSIGNED _OFFSET)
@@ -175,7 +175,7 @@ FUNCTION HMap64_GetByte%% (map() AS HMap64, k AS _UNSIGNED _OFFSET)
 END FUNCTION
 
 ''' @brief Updates an existing key or inserts it if not present.
-''' @param table The hash table to update.
+''' @param map The hash map to update.
 ''' @param k The key.
 ''' @param v The value _BYTE.
 SUB HMap64_SetByte (map() AS HMap64, k AS _UNSIGNED _OFFSET, v AS _BYTE)
@@ -183,7 +183,7 @@ SUB HMap64_SetByte (map() AS HMap64, k AS _UNSIGNED _OFFSET, v AS _BYTE)
 END SUB
 
 ''' @brief Retrieves the value for a given key.
-''' @param table The hash table to search.
+''' @param map The hash map to search.
 ''' @param k The key to look up.
 ''' @return The associated INTEGER value.
 FUNCTION HMap64_GetInteger% (map() AS HMap64, k AS _UNSIGNED _OFFSET)
@@ -191,7 +191,7 @@ FUNCTION HMap64_GetInteger% (map() AS HMap64, k AS _UNSIGNED _OFFSET)
 END FUNCTION
 
 ''' @brief Updates an existing key or inserts it if not present.
-''' @param table The hash table to update.
+''' @param map The hash map to update.
 ''' @param k The key.
 ''' @param v The value INTEGER.
 SUB HMap64_SetInteger (map() AS HMap64, k AS _UNSIGNED _OFFSET, v AS INTEGER)
@@ -199,7 +199,7 @@ SUB HMap64_SetInteger (map() AS HMap64, k AS _UNSIGNED _OFFSET, v AS INTEGER)
 END SUB
 
 ''' @brief Retrieves the value for a given key.
-''' @param table The hash table to search.
+''' @param map The hash map to search.
 ''' @param k The key to look up.
 ''' @return The associated LONG value.
 FUNCTION HMap64_GetLong& (map() AS HMap64, k AS _UNSIGNED _OFFSET)
@@ -207,7 +207,7 @@ FUNCTION HMap64_GetLong& (map() AS HMap64, k AS _UNSIGNED _OFFSET)
 END FUNCTION
 
 ''' @brief Updates an existing key or inserts it if not present.
-''' @param table The hash table to update.
+''' @param map The hash map to update.
 ''' @param k The key.
 ''' @param v The value LONG.
 SUB HMap64_SetLong (map() AS HMap64, k AS _UNSIGNED _OFFSET, v AS LONG)
@@ -215,7 +215,7 @@ SUB HMap64_SetLong (map() AS HMap64, k AS _UNSIGNED _OFFSET, v AS LONG)
 END SUB
 
 ''' @brief Retrieves the value for a given key.
-''' @param table The hash table to search.
+''' @param map The hash map to search.
 ''' @param k The key to look up.
 ''' @return The associated _INTEGER64 value.
 FUNCTION HMap64_GetInteger64&& (map() AS HMap64, k AS _UNSIGNED _OFFSET)
@@ -223,7 +223,7 @@ FUNCTION HMap64_GetInteger64&& (map() AS HMap64, k AS _UNSIGNED _OFFSET)
 END FUNCTION
 
 ''' @brief Updates an existing key or inserts it if not present.
-''' @param table The hash table to update.
+''' @param map The hash map to update.
 ''' @param k The key.
 ''' @param v The value _INTEGER64.
 SUB HMap64_SetInteger64 (map() AS HMap64, k AS _UNSIGNED _OFFSET, v AS _INTEGER64)
@@ -231,7 +231,7 @@ SUB HMap64_SetInteger64 (map() AS HMap64, k AS _UNSIGNED _OFFSET, v AS _INTEGER6
 END SUB
 
 ''' @brief Retrieves the value for a given key.
-''' @param table The hash table to search.
+''' @param map The hash map to search.
 ''' @param k The key to look up.
 ''' @return The associated SINGLE value.
 FUNCTION HMap64_GetSingle! (map() AS HMap64, k AS _UNSIGNED _OFFSET)
@@ -239,7 +239,7 @@ FUNCTION HMap64_GetSingle! (map() AS HMap64, k AS _UNSIGNED _OFFSET)
 END FUNCTION
 
 ''' @brief Updates an existing key or inserts it if not present.
-''' @param table The hash table to update.
+''' @param map The hash map to update.
 ''' @param k The key.
 ''' @param v The value SINGLE.
 SUB HMap64_SetSingle (map() AS HMap64, k AS _UNSIGNED _OFFSET, v AS SINGLE)
@@ -247,7 +247,7 @@ SUB HMap64_SetSingle (map() AS HMap64, k AS _UNSIGNED _OFFSET, v AS SINGLE)
 END SUB
 
 ''' @brief Retrieves the value for a given key.
-''' @param table The hash table to search.
+''' @param map The hash map to search.
 ''' @param k The key to look up.
 ''' @return The associated DOUBLE value.
 FUNCTION HMap64_GetDouble# (map() AS HMap64, k AS _UNSIGNED _OFFSET)
@@ -255,7 +255,7 @@ FUNCTION HMap64_GetDouble# (map() AS HMap64, k AS _UNSIGNED _OFFSET)
 END FUNCTION
 
 ''' @brief Updates an existing key or inserts it if not present.
-''' @param table The hash table to update.
+''' @param map The hash map to update.
 ''' @param k The key.
 ''' @param v The value DOUBLE.
 SUB HMap64_SetDouble (map() AS HMap64, k AS _UNSIGNED _OFFSET, v AS DOUBLE)
