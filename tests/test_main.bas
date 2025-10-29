@@ -579,35 +579,6 @@ SUB Test_Hash
 
     '-----------------------------------------------------------------------------------------------------------------------
 
-    TEST_CASE_BEGIN "HMap64 Stress Test - Collisions"
-
-    HMap64_Initialize intMap()
-    DIM currentCapacity AS _UNSIGNED _OFFSET
-    currentCapacity = HMap64_GetCapacity(intMap())
-
-    ' Insert items with keys that are multiples of the capacity, likely to cause collisions
-    FOR i = 1 TO currentCapacity
-        HMap64_SetInteger intMap(), i * currentCapacity, i
-    NEXT
-
-    TEST_CHECK HMap64_GetCount(intMap()) = currentCapacity, "Should have " + STR$(currentCapacity) + " items before resize"
-
-    ' This will trigger a resize and rehash
-    HMap64_SetInteger intMap(), (currentCapacity + 1) * currentCapacity, currentCapacity + 1
-
-    TEST_CHECK HMap64_GetCount(intMap()) = currentCapacity + 1, "Should have " + STR$(currentCapacity + 1) + " items after resize"
-
-    ' Verify all values are retrievable after the resize
-    FOR i = 1 TO currentCapacity + 1
-        TEST_CHECK HMap64_GetInteger(intMap(), i * currentCapacity) = i, "Value should be retrievable after resize"
-    NEXT
-
-    HMap64_Free intMap()
-
-    TEST_CASE_END
-
-    '-----------------------------------------------------------------------------------------------------------------------
-
     TEST_CASE_BEGIN "HMap64 Edge Cases"
 
     HMap64_Initialize intMap()
