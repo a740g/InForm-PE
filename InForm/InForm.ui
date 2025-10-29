@@ -1354,7 +1354,7 @@ END SUB
 '---------------------------------------------------------------------------------
 SUB __UI_EventDispatcher
     $IF WIN OR MAC THEN
-    STATIC __UI_LastMouseIconSet AS _BYTE
+        STATIC __UI_LastMouseIconSet AS _BYTE
     $END IF
     STATIC __UI_LastMouseDownEvent AS SINGLE
     STATIC __UI_MouseDownTop AS INTEGER, __UI_MouseDownLeft AS INTEGER
@@ -5114,11 +5114,11 @@ END FUNCTION
 
 '---------------------------------------------------------------------------------
 FUNCTION __UI_LoadThemeImage& (id AS _UNSIGNED _BYTE)
-    SHARED __UI_ThemeImages() AS HashTableType
+    SHARED __UI_ThemeImages() AS HMap64
 
     ' If we have already loaded the image, then simply return the handle
-    IF HashTable_IsKeyPresent(__UI_ThemeImages(), id) THEN
-        __UI_LoadThemeImage = HashTable_LookupLong(__UI_ThemeImages(), id)
+    IF HMap64_Exists(__UI_ThemeImages(), id) THEN
+        __UI_LoadThemeImage = HMap64_GetLong(__UI_ThemeImages(), id)
         EXIT FUNCTION
     END IF
 
@@ -5126,7 +5126,7 @@ FUNCTION __UI_LoadThemeImage& (id AS _UNSIGNED _BYTE)
     DIM imageHandle AS LONG: imageHandle = _LOADIMAGE(__UI_ImageData(id), 32, "memory")
 
     IF imageHandle < -1 THEN
-        HashTable_InsertLong __UI_ThemeImages(), id, imageHandle
+        HMap64_SetLong __UI_ThemeImages(), id, imageHandle
         __UI_LoadThemeImage = imageHandle
     ELSE
         ERROR 51
@@ -8764,4 +8764,4 @@ $IF INFORM_BI = UNDEFINED THEN
 $END IF
 
 '$INCLUDE:'xp.uitheme'
-'$INCLUDE:'extensions/HashTable.bas'
+'$INCLUDE:'extensions/HMap64.bas'

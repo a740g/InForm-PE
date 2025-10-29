@@ -10,14 +10,23 @@ $INCLUDEONCE
 SUB TEST_BEGIN_ALL
     SHARED __TestState AS __TestState
 
-    __TestState.colorEnabled = _TRUE
-    __TestState.exitOnEnd = _TRUE
     __TestState.testsRun = 0
     __TestState.assertions = 0
     __TestState.failures = 0
-
     __TestState.filter = _TRIM$(COMMAND$)
 
+    DIM rndSeed AS _UNSIGNED _INTEGER64: rndSeed = TIMER(0.001) * 1000
+    RANDOMIZE rndSeed
+
+    __TestSetColor __TEST_COLOR_HEADER: __TestPrintLn "OS: " + _OS$
+    __TestSetColor __TEST_COLOR_HEADER: __TestPrintLn "Date: " + DATE$
+    __TestSetColor __TEST_COLOR_HEADER: __TestPrintLn "Time: " + TIME$
+    __TestSetColor __TEST_COLOR_HEADER: __TestPrintLn "Executable: " + COMMAND$(0)
+    __TestSetColor __TEST_COLOR_HEADER: __TestPrintLn "Working directory: " + _CWD$
+    __TestSetColor __TEST_COLOR_HEADER: __TestPrintLn "Random number seed:" + STR$(rndSeed)
+    __TestSetColor __TEST_COLOR_HEADER: __TestPrintLn "Runtime error handler: " + _IIF(__TestState.errorHandlerEnabled, "enabled", "disabled")
+    __TestSetColor __TEST_COLOR_HEADER: __TestPrintLn "Color output: " + _IIF(__TestState.colorDisabled, "disabled", "enabled")
+    __TestSetColor __TEST_COLOR_HEADER: __TestPrintLn "Auto exit: " + _IIF(__TestState.exitOnEndDisabled, "disabled", "enabled")
     __TestSetColor __TEST_COLOR_HEADER: __TestPrintLn "Catch test framework library for QB64-PE initialized"
     __TestSetColor __TEST_COLOR_NOTE: __TestPrintLn STRING$(__TEST_SEPARATOR_WIDTH, "-")
 
@@ -44,7 +53,7 @@ SUB TEST_END_ALL
 
     __TestResetColor
 
-    IF __TestState.exitOnEnd THEN
+    IF NOT __TestState.exitOnEndDisabled THEN
         SYSTEM __TestState.failures
     END IF
 END SUB
@@ -187,22 +196,22 @@ END FUNCTION
 
 SUB TEST_ENABLE_COLOR (enable AS _INTEGER64)
     SHARED __TestState AS __TestState
-    __TestState.colorEnabled = (enable <> _FALSE)
+    __TestState.colorDisabled = (enable = _FALSE)
 END SUB
 
 SUB TEST_ENABLE_EXIT_ON_END (enable AS _INTEGER64)
     SHARED __TestState AS __TestState
-    __TestState.exitOnEnd = (enable <> _FALSE)
+    __TestState.exitOnEndDisabled = (enable = _FALSE)
 END SUB
 
 SUB __TestSetColor (fg AS _UNSIGNED _BYTE)
     SHARED __TestState AS __TestState
-    IF __TestState.colorEnabled THEN __TestPrint _CHR_ESC + "[" + _TOSTR$(fg) + "m"
+    IF NOT __TestState.colorDisabled THEN __TestPrint _CHR_ESC + "[" + _TOSTR$(fg) + "m"
 END SUB
 
 SUB __TestResetColor
     SHARED __TestState AS __TestState
-    IF __TestState.colorEnabled THEN __TestPrint _CHR_ESC + "[0m"
+    IF NOT __TestState.colorDisabled THEN __TestPrint _CHR_ESC + "[0m"
 END SUB
 
 SUB __TestPrintTag (tag AS STRING, fg AS _UNSIGNED _BYTE)

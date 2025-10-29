@@ -4,7 +4,8 @@ $LET TEST_STRICT = TRUE
 '$INCLUDE:'../InForm/extensions/Catch.bi'
 $CONSOLE:ONLY
 
-'$INCLUDE:'../InForm/extensions/HashTable.bi'
+'$INCLUDE:'../InForm/extensions/HMap.bi'
+'$INCLUDE:'../InForm/extensions/HMap64.bi'
 '$INCLUDE:'../InForm/extensions/Pathname.bi'
 '$INCLUDE:'../InForm/extensions/StringFile.bi'
 
@@ -156,91 +157,471 @@ SUB Test_Algo
 END SUB
 
 SUB Test_Hash
-    CONST TEST_LB = 0
-    CONST TEST_UB = 9999999
+    TEST_CASE_BEGIN "HMap Initialization"
 
-    REDIM MyHashTable(0) AS HashTableType: HashTable_Initialize MyHashTable()
+    REDIM ht(0) AS HMap
 
-    DIM myarray(TEST_LB TO TEST_UB) AS LONG
-    DIM AS _UNSIGNED LONG k, i, x
+    HMap_Initialize ht()
+    TEST_CHECK HMap_GetCount(ht()) = 0, "Initial count should be 0"
+    TEST_CHECK HMap_Exists(ht(), "nonexistent") = _FALSE, "Nonexistent key should not exist"
+    TEST_CHECK HMap_GetString(ht(), "nonexistent") = "", "Getting nonexistent key should return empty string"
 
-    FOR k = 1 TO 2
-        TEST_CASE_BEGIN "HashTable: Add element to array performance"
-        FOR i = TEST_LB TO TEST_UB
-            myarray(i) = x
-            x = x + 1
-        NEXT
-        TEST_CASE_END
-
-        TEST_CASE_BEGIN "HashTable: Add element to hash table performance"
-        FOR i = TEST_LB TO TEST_UB
-            HashTable_InsertLong MyHashTable(), i, myarray(i)
-        NEXT
-        TEST_CASE_END
-
-        TEST_CASE_BEGIN "HashTable: Read element from array performance"
-        FOR i = TEST_LB TO TEST_UB
-            x = myarray(i)
-        NEXT
-        TEST_CASE_END
-
-        TEST_CASE_BEGIN "HashTable: Read element from hash table performance"
-        FOR i = TEST_LB TO TEST_UB
-            x = HashTable_LookupLong(MyHashTable(), i)
-        NEXT
-        TEST_CASE_END
-
-        TEST_CASE_BEGIN "HashTable: Remove element from hash table performance"
-        FOR i = TEST_LB TO TEST_UB
-            HashTable_Remove MyHashTable(), i
-        NEXT
-        TEST_CASE_END
-    NEXT
-
-    HashTable_Initialize MyHashTable()
-
-    FOR i = TEST_LB TO TEST_UB
-        HashTable_InsertLong MyHashTable(), i, myarray(i)
-    NEXT
-
-    TEST_CASE_BEGIN "HashTable: Lookup test"
-    DIM lookupFailed AS _BYTE
-    FOR i = TEST_LB TO TEST_UB
-        IF HashTable_LookupLong(MyHashTable(), i) <> myarray(i) THEN
-            lookupFailed = _TRUE
-            EXIT FOR
-        END IF
-    NEXT
-    TEST_REQUIRE NOT lookupFailed, "NOT lookupFailed"
     TEST_CASE_END
 
-    TEST_CASE_BEGIN "HashTable: Remove and insert test"
-    FOR i = TEST_UB TO TEST_LB STEP -1
-        HashTable_Remove MyHashTable(), i
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    TEST_CASE_BEGIN "HMap Basic Integer Operations"
+
+    HMap_SetInteger ht(), "test", 42
+    TEST_CHECK HMap_GetInteger(ht(), "test") = 42, "Integer value should be 42"
+    TEST_CHECK HMap_GetDataType(ht(), "test") = HMAP_TYPE_INTEGER, "Data type should be INT"
+    TEST_CHECK HMap_GetCount(ht()) = 1, "Count should be 1"
+    TEST_CHECK HMap_Exists(ht(), "test"), "Key should exist"
+
+    HMap_SetInteger ht(), "test", 100
+    TEST_CHECK HMap_GetInteger(ht(), "test") = 100, "Updated integer value should be 100"
+    TEST_CHECK HMap_GetCount(ht()) = 1, "Count should still be 1 after update"
+
+    TEST_CHECK HMap_Delete(ht(), "test"), "Delete should succeed"
+    TEST_CHECK_FALSE HMap_Exists(ht(), "test"), "Key should not exist after delete"
+    TEST_CHECK HMap_GetCount(ht()) = 0, "Count should be 0 after delete"
+
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    TEST_CASE_BEGIN "HMap Long Operations"
+
+    HMap_SetLong ht(), "long", _LONG_MAX
+    TEST_CHECK HMap_GetLong(ht(), "long") = _LONG_MAX, "Long value should be" + STR$(_LONG_MAX)
+    TEST_CHECK HMap_GetDataType(ht(), "long") = HMAP_TYPE_LONG, "Data type should be LONG"
+
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    TEST_CASE_BEGIN "HMap Integer64 Operations"
+
+    HMap_SetInteger64 ht(), "int64", _INTEGER64_MAX
+    TEST_CHECK HMap_GetInteger64(ht(), "int64") = _INTEGER64_MAX, "Integer64 value should be" + STR$(_INTEGER64_MAX)
+    TEST_CHECK HMap_GetDataType(ht(), "int64") = HMAP_TYPE_INTEGER64, "Data type should be INTEGER64"
+
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    TEST_CASE_BEGIN "HMap Single Operations"
+
+    HMap_SetSingle ht(), "pi", 3.14!
+    TEST_CHECK ABS(HMap_GetSingle(ht(), "pi") - 3.14!) < 0.0001, "Single value should be approximately 3.14"
+    TEST_CHECK HMap_GetDataType(ht(), "pi") = HMAP_TYPE_SINGLE, "Data type should be SINGLE"
+
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    TEST_CASE_BEGIN "HMap Double Operations"
+
+    HMap_SetDouble ht(), "e", 2.71828182845905D+00
+    TEST_CHECK ABS(HMap_GetDouble(ht(), "e") - 2.71828182845905D+00) < 0.000000001D+00, "Double value should be approximately e"
+    TEST_CHECK HMap_GetDataType(ht(), "e") = HMAP_TYPE_DOUBLE, "Data type should be DOUBLE"
+
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    TEST_CASE_BEGIN "HMap String Operations"
+
+    HMap_SetString ht(), "hello", "world"
+    TEST_CHECK HMap_GetString(ht(), "hello") = "world", "String value should be 'world'"
+    TEST_CHECK HMap_GetDataType(ht(), "hello") = HMAP_TYPE_STRING, "Data type should be STRING"
+
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    TEST_CASE_BEGIN "HMap Multiple Items"
+
+    DIM i AS LONG
+    DIM currentCount AS LONG
+    currentCount = HMap_GetCount(ht())
+    FOR i = 1 TO 100
+        HMap_SetInteger ht(), "key" + _TOSTR$(i), i
+    NEXT
+    TEST_CHECK HMap_GetCount(ht()) = currentCount + 100, "Count should be " + STR$(currentCount + 100)
+
+    FOR i = 1 TO 100
+        TEST_CHECK HMap_GetInteger(ht(), "key" + _TOSTR$(i)) = i, "Value should match key"
     NEXT
 
-    HashTable_InsertLong MyHashTable(), 42, 666
-    HashTable_InsertLong MyHashTable(), 7, 123454321
-    HashTable_InsertLong MyHashTable(), 21, 69
+    DIM capacity AS _UNSIGNED LONG: capacity = HMap_GetCapacity(ht())
 
-    TEST_CHECK HashTable_LookupLong(MyHashTable(), 42) = 666, "HashTable_LookupLong(MyHashTable(), 42) = 666"
-    TEST_CHECK HashTable_LookupLong(MyHashTable(), 7) = 123454321, "HashTable_LookupLong(MyHashTable(), 7) = 123454321"
-    TEST_CHECK HashTable_LookupLong(MyHashTable(), 21) = 69, "HashTable_LookupLong(MyHashTable(), 21) = 69"
+    HMap_Clear ht()
+    TEST_CHECK HMap_GetCount(ht()) = 0, "Count should be 0 after clear"
+    TEST_CHECK_FALSE HMap_Exists(ht(), "key1"), "No keys should exist after clear"
+    TEST_CHECK HMap_GetCapacity(ht()) = capacity, "Capacity should remain the same after clear"
 
-    TEST_CHECK HashTable_IsKeyPresent(MyHashTable(), 42), "HashTable_IsKeyPresent(MyHashTable(), 42)"
-    TEST_CHECK_FALSE HashTable_IsKeyPresent(MyHashTable(), 100), "HashTable_IsKeyPresent(MyHashTable(), 100)"
+    TEST_CASE_END
 
-    HashTable_Insert MyHashTable(), 43, "grape"
-    HashTable_Insert MyHashTable(), 8, "carrot"
-    HashTable_Insert MyHashTable(), 22, "apple"
+    '-----------------------------------------------------------------------------------------------------------------------
 
-    TEST_CHECK HashTable_Lookup(MyHashTable(), 43) = "grape", "HashTable_Lookup(MyHashTable(), 43) = grape"
-    TEST_CHECK HashTable_Lookup(MyHashTable(), 8) = "carrot", "HashTable_Lookup(MyHashTable(), 8) = carrot"
-    TEST_CHECK HashTable_Lookup(MyHashTable(), 22) = "apple", "HashTable_Lookup(MyHashTable(), 22) = apple"
-    TEST_CHECK HashTable_IsKeyPresent(MyHashTable(), 43), "HashTable_IsKeyPresent(MyHashTable(), 43)"
+    TEST_CASE_BEGIN "HMap Multiple Hash Tables"
 
-    HashTable_Remove MyHashTable(), 8
-    TEST_CHECK_FALSE HashTable_IsKeyPresent(MyHashTable(), 8), "HashTable_IsKeyPresent(MyHashTable(), 8)"
+    REDIM students(0) AS HMap ' Student ID -> Name
+    REDIM grades(0) AS HMap ' Student ID -> Grade
+    REDIM attendance(0) AS HMap ' Student ID -> Days Present
+
+    HMap_Initialize students()
+    HMap_Initialize grades()
+    HMap_Initialize attendance()
+
+    HMap_SetString students(), "101", "John Smith"
+    HMap_SetString students(), "102", "Jane Doe"
+    HMap_SetString students(), "103", "Bob Wilson"
+
+    HMap_SetInteger grades(), "101", 85
+    HMap_SetInteger grades(), "102", 92
+    HMap_SetInteger grades(), "103", 78
+
+    HMap_SetInteger attendance(), "101", 45
+    HMap_SetInteger attendance(), "102", 50
+    HMap_SetInteger attendance(), "103", 48
+
+    TEST_CHECK HMap_GetCount(students()) = 3, "Students table should have 3 entries"
+    TEST_CHECK HMap_GetCount(grades()) = 3, "Grades table should have 3 entries"
+    TEST_CHECK HMap_GetCount(attendance()) = 3, "Attendance table should have 3 entries"
+
+    TEST_CHECK HMap_GetString(students(), "102") = "Jane Doe", "Should find Jane Doe"
+    TEST_CHECK HMap_GetInteger(grades(), "102") = 92, "Jane's grade should be 92"
+    TEST_CHECK HMap_GetInteger(attendance(), "102") = 50, "Jane's attendance should be 50"
+
+    TEST_CHECK HMap_Delete(students(), "101"), "Delete should succeed"
+    TEST_CHECK HMap_GetCount(students()) = 2, "Students table should have 2 entries after delete"
+    TEST_CHECK HMap_GetCount(grades()) = 3, "Grades table should still have 3 entries"
+    TEST_CHECK HMap_GetCount(attendance()) = 3, "Attendance table should still have 3 entries"
+    TEST_CHECK HMap_GetInteger(grades(), "101") = 85, "Deleted student's grade should still exist"
+
+    HMap_Clear students()
+    HMap_Clear grades()
+    HMap_Clear attendance()
+
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    CONST PERF_TEST_KEY_COUNT = 1000000
+
+    REDIM testTable(0) AS HMap
+    DIM keyStr AS STRING
+    DIM valueStr AS STRING
+    DIM perfTestIndex AS LONG
+
+    HMap_Initialize testTable()
+
+    TEST_CASE_BEGIN "HMap Performance Test: Insert (" + _TOSTR$(PERF_TEST_KEY_COUNT) + " items)"
+
+    FOR perfTestIndex = 1 TO PERF_TEST_KEY_COUNT
+        keyStr = "key" + _TOSTR$(perfTestIndex)
+        valueStr = "value" + _TOSTR$(perfTestIndex)
+        HMap_SetString testTable(), keyStr, valueStr
+    NEXT
+
+    TEST_CASE_END
+
+    HMap_Clear testTable()
+
+    TEST_CASE_BEGIN "HMap Performance Test: Insert after Clear (" + _TOSTR$(PERF_TEST_KEY_COUNT) + " items)"
+
+    FOR perfTestIndex = 1 TO PERF_TEST_KEY_COUNT
+        keyStr = "key" + _TOSTR$(perfTestIndex)
+        valueStr = "value" + _TOSTR$(perfTestIndex)
+        HMap_SetString testTable(), keyStr, valueStr
+    NEXT
+
+    TEST_CASE_END
+
+    TEST_CASE_BEGIN "HMap Performance Test: GetCount after Insert"
+    TEST_CHECK HMap_GetCount(testTable()) = PERF_TEST_KEY_COUNT, "Should have " + _TOSTR$(PERF_TEST_KEY_COUNT) + " items"
+    TEST_CASE_END
+
+    TEST_CASE_BEGIN "HMap Performance Test: Get (" + _TOSTR$(PERF_TEST_KEY_COUNT) + " items)"
+
+    FOR perfTestIndex = 1 TO PERF_TEST_KEY_COUNT
+        keyStr = "key" + _TOSTR$(perfTestIndex)
+        valueStr = HMap_GetString(testTable(), keyStr)
+    NEXT
+
+    TEST_CASE_END
+
+    TEST_CASE_BEGIN "HMap Performance Test: Last key & value pair after Insert"
+    TEST_CHECK HMap_GetString(testTable(), keyStr) = "value" + _TOSTR$(PERF_TEST_KEY_COUNT), "The last value should be value" + _TOSTR$(PERF_TEST_KEY_COUNT)
+    TEST_CASE_END
+
+    TEST_CASE_BEGIN "HMap Performance Test: Set (" + _TOSTR$(PERF_TEST_KEY_COUNT) + " items)"
+
+    FOR perfTestIndex = 1 TO PERF_TEST_KEY_COUNT
+        keyStr = "key" + _TOSTR$(perfTestIndex)
+        valueStr = "value" + _TOSTR$(perfTestIndex + 33)
+        HMap_SetString testTable(), keyStr, valueStr
+    NEXT
+
+    TEST_CASE_END
+
+    TEST_CASE_BEGIN "HMap Performance Test: Last key & value pair after Update"
+    TEST_CHECK HMap_GetString(testTable(), keyStr) = "value" + _TOSTR$(PERF_TEST_KEY_COUNT + 33), "The last value should be value" + _TOSTR$(PERF_TEST_KEY_COUNT + 33)
+    TEST_CASE_END
+
+    TEST_CASE_BEGIN "HMap Performance Test: Mixed Insert & Delete (" + _TOSTR$(PERF_TEST_KEY_COUNT) + " items)"
+
+    FOR perfTestIndex = 1 TO PERF_TEST_KEY_COUNT
+        IF (perfTestIndex MOD 2) = 0 THEN
+            keyStr = "newkey" + _TOSTR$(perfTestIndex)
+            HMap_SetString testTable(), keyStr, "new value"
+        ELSE
+            keyStr = "key" + _TOSTR$(perfTestIndex)
+            HMap_Delete testTable(), keyStr
+        END IF
+    NEXT
+
+    TEST_CASE_END
+
+    TEST_CASE_BEGIN "HMap Performance Test: GetCount after mixed Insert & Delete"
+    TEST_CHECK HMap_GetCount(testTable()) = PERF_TEST_KEY_COUNT, "Should have " + _TOSTR$(PERF_TEST_KEY_COUNT) + " items"
+    HMap_Free testTable()
+    TEST_CHECK_FALSE HMap_IsInitialized(testTable()), "Should return _FALSE after HMap_Free"
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    TEST_CASE_BEGIN "HMap Unusual cases"
+
+    HMap_SetString ht(), _STR_EMPTY, "empty"
+    TEST_CHECK HMap_GetCount(ht()) = 1, "Count should be 1"
+    TEST_CHECK HMap_Exists(ht(), _STR_EMPTY), "Key should exist"
+
+    HMap_SetString ht(), STRING$(256, "A"), "test"
+    TEST_CHECK HMap_GetCount(ht()) = 2, "Count should be 2"
+    TEST_CHECK HMap_Exists(ht(), STRING$(256, "A")), "Key should exist"
+
+    TEST_CHECK_FALSE HMap_Exists(ht(), "nonexistent"), "Exists with nonexistent key should return false"
+
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    TEST_CASE_BEGIN "HMap Stress Test - Collisions"
+
+    HMap_Clear ht()
+
+    DIM AS STRING collisionKeys(1 TO 10)
+    collisionKeys(1) = "a": collisionKeys(2) = "b": collisionKeys(3) = "c"
+    collisionKeys(4) = "d": collisionKeys(5) = "e": collisionKeys(6) = "f"
+    collisionKeys(7) = "g": collisionKeys(8) = "h": collisionKeys(9) = "i"
+    collisionKeys(10) = "j"
+
+    FOR i = 1 TO 10
+        HMap_SetString ht(), collisionKeys(i), "value" + _TOSTR$(i)
+    NEXT
+
+    TEST_CHECK HMap_GetCount(ht()) = 10, "Should have 10 items after collision insertions"
+
+    FOR i = 1 TO 10
+        TEST_CHECK HMap_GetString(ht(), collisionKeys(i)) = "value" + _TOSTR$(i), "Collision values should be retrievable"
+    NEXT
+
+    HMap_Delete ht(), collisionKeys(3)
+    HMap_Delete ht(), collisionKeys(7)
+
+    TEST_CHECK HMap_GetCount(ht()) = 8, "Should have 8 items after deleting from collision chain"
+    TEST_CHECK_FALSE HMap_Exists(ht(), collisionKeys(3)), "Deleted collision item should not exist"
+    TEST_CHECK HMap_GetString(ht(), collisionKeys(4)) = "value4", "Remaining collision items should be intact"
+
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    TEST_CASE_BEGIN "HMap Cleanup"
+
+    HMap_Clear ht()
+    TEST_CHECK HMap_GetCount(ht()) = 0, "Count should be 0 after clear"
+
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    TEST_CASE_BEGIN "HMap64 Basic Operations"
+
+    REDIM intMap(0) AS HMap64
+
+    HMap64_Initialize intMap()
+    TEST_CHECK HMap64_GetCount(intMap()) = 0, "Initial count should be 0"
+    TEST_CHECK HMap64_Exists(intMap(), 123456) = _FALSE, "Nonexistent key should not exist"
+    TEST_CHECK HMap64_GetString(intMap(), 123456) = "", "Getting nonexistent key should return empty string"
+
+    HMap64_SetString intMap(), &HDEADBEEFCAFEBABE~&&, "test"
+    TEST_CHECK HMap64_GetString(intMap(), &HDEADBEEFCAFEBABE~&&) = "test", "String value should be test"
+    TEST_CHECK HMap64_GetDataType(intMap(), &HDEADBEEFCAFEBABE~&&) = HMAP_TYPE_STRING, "Data type should be STRING"
+
+    HMap64_SetByte intMap(), 42~&&, 123~%%
+    TEST_CHECK HMap64_GetByte(intMap(), 42~&&) = 123~%%, "Byte value should be 123"
+    TEST_CHECK HMap64_GetDataType(intMap(), 42~&&) = HMAP_TYPE_BYTE, "Data type should be BYTE"
+
+    HMap64_SetInteger intMap(), 1~&&, 12345%
+    TEST_CHECK HMap64_GetInteger(intMap(), 1~&&) = 12345%, "Integer value should be 12345"
+    TEST_CHECK HMap64_GetDataType(intMap(), 1~&&) = HMAP_TYPE_INTEGER, "Data type should be INTEGER"
+
+    HMap64_SetLong intMap(), 2~&&, 123456&
+    TEST_CHECK HMap64_GetLong(intMap(), 2~&&) = 123456&, "Long value should be 123456"
+    TEST_CHECK HMap64_GetDataType(intMap(), 2~&&) = HMAP_TYPE_LONG, "Data type should be LONG"
+
+    HMap64_SetInteger64 intMap(), 3~&&, _INTEGER64_MAX
+    TEST_CHECK HMap64_GetInteger64(intMap(), 3~&&) = _INTEGER64_MAX, "Integer64 value should be _INTEGER64_MAX"
+    TEST_CHECK HMap64_GetDataType(intMap(), 3~&&) = HMAP_TYPE_INTEGER64, "Data type should be INTEGER64"
+
+    HMap64_SetSingle intMap(), 4~&&, 3.14159!
+    TEST_CHECK ABS(HMap64_GetSingle(intMap(), 4~&&) - 3.14159!) < 0.0001, "Single value should be approximately 3.14159"
+    TEST_CHECK HMap64_GetDataType(intMap(), 4~&&) = HMAP_TYPE_SINGLE, "Data type should be SINGLE"
+
+    HMap64_SetDouble intMap(), 5~&&, 2.71828182845905D+00
+    TEST_CHECK ABS(HMap64_GetDouble(intMap(), 5~&&) - 2.71828182845905D+00) < 0.000000001D+00, "Double value should be approximately e"
+    TEST_CHECK HMap64_GetDataType(intMap(), 5~&&) = HMAP_TYPE_DOUBLE, "Data type should be DOUBLE"
+
+    TEST_CHECK HMap64_GetCount(intMap()) = 7, "Total count should be 7"
+
+    TEST_CHECK HMap64_Delete(intMap(), 42~&&), "Delete should succeed"
+    TEST_CHECK_FALSE HMap64_Exists(intMap(), 42~&&), "Key should not exist after delete"
+    TEST_CHECK HMap64_GetCount(intMap()) = 6, "Count should be 6 after delete"
+
+    HMap64_SetString intMap(), &HDEADBEEFCAFEBABE~&&, "updated"
+    TEST_CHECK HMap64_GetString(intMap(), &HDEADBEEFCAFEBABE~&&) = "updated", "String value should be updated"
+    TEST_CHECK HMap64_GetCount(intMap()) = 6, "Count should still be 6 after update"
+
+    HMap64_Clear intMap()
+    TEST_CHECK HMap64_GetCount(intMap()) = 0, "Count should be 0 after clear"
+    TEST_CHECK_FALSE HMap64_Exists(intMap(), 1~&&), "No keys should exist after clear"
+
+    HMap64_Free intMap()
+    TEST_CHECK_FALSE HMap64_IsInitialized(intMap()), "Should return _FALSE after HMap64_Free"
+
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    CONST PERF_TEST_KEY_COUNT64 = 1000000
+
+    REDIM testTable64(0) AS HMap64
+    DIM key64 AS _UNSIGNED _OFFSET
+    DIM valueStr64 AS STRING
+    DIM perfTestIndex64 AS LONG
+
+    HMap64_Initialize testTable64()
+
+    TEST_CASE_BEGIN "HMap64 Performance Test: Insert (" + _TOSTR$(PERF_TEST_KEY_COUNT64) + " items)"
+
+    FOR perfTestIndex64 = 1 TO PERF_TEST_KEY_COUNT64
+        key64 = perfTestIndex64
+        valueStr64 = "value" + _TOSTR$(perfTestIndex64)
+        HMap64_SetString testTable64(), key64, valueStr64
+    NEXT
+
+    TEST_CASE_END
+
+    TEST_CASE_BEGIN "HMap64 Performance Test: GetCount after Insert"
+    TEST_CHECK HMap64_GetCount(testTable64()) = PERF_TEST_KEY_COUNT64, "Should have " + _TOSTR$(PERF_TEST_KEY_COUNT64) + " items"
+    TEST_CASE_END
+
+    TEST_CASE_BEGIN "HMap64 Performance Test: Get (" + _TOSTR$(PERF_TEST_KEY_COUNT64) + " items)"
+
+    FOR perfTestIndex64 = 1 TO PERF_TEST_KEY_COUNT64
+        key64 = perfTestIndex64
+        valueStr64 = HMap64_GetString(testTable64(), key64)
+    NEXT
+
+    TEST_CASE_END
+
+    TEST_CASE_BEGIN "HMap64 Performance Test: Last key & value pair after Insert"
+    TEST_CHECK HMap64_GetString(testTable64(), key64) = "value" + _TOSTR$(PERF_TEST_KEY_COUNT64), "The last value should be value" + _TOSTR$(PERF_TEST_KEY_COUNT64)
+    TEST_CASE_END
+
+    TEST_CASE_BEGIN "HMap64 Performance Test: Set (" + _TOSTR$(PERF_TEST_KEY_COUNT64) + " items)"
+
+    FOR perfTestIndex64 = 1 TO PERF_TEST_KEY_COUNT64
+        key64 = perfTestIndex64
+        valueStr64 = "value" + _TOSTR$(perfTestIndex64 + 33)
+        HMap64_SetString testTable64(), key64, valueStr64
+    NEXT
+
+    TEST_CASE_END
+
+    TEST_CASE_BEGIN "HMap64 Performance Test: Last key & value pair after Update"
+    TEST_CHECK HMap64_GetString(testTable64(), key64) = "value" + _TOSTR$(PERF_TEST_KEY_COUNT64 + 33), "The last value should be value" + _TOSTR$(PERF_TEST_KEY_COUNT64 + 33)
+    TEST_CASE_END
+
+    TEST_CASE_BEGIN "HMap64 Performance Test: Mixed Insert & Delete (" + _TOSTR$(PERF_TEST_KEY_COUNT64) + " items)"
+
+    FOR perfTestIndex64 = 1 TO PERF_TEST_KEY_COUNT64
+        IF (perfTestIndex64 MOD 2) = 0 THEN
+            key64 = PERF_TEST_KEY_COUNT64 + perfTestIndex64
+            HMap64_SetString testTable64(), key64, "new value"
+        ELSE
+            key64 = perfTestIndex64
+            HMap64_Delete testTable64(), key64
+        END IF
+    NEXT
+
+    TEST_CASE_END
+
+    TEST_CASE_BEGIN "HMap64 Performance Test: GetCount after mixed Insert & Delete"
+    TEST_CHECK HMap64_GetCount(testTable64()) = PERF_TEST_KEY_COUNT64, "Should have " + _TOSTR$(PERF_TEST_KEY_COUNT64) + " items"
+    HMap64_Free testTable64()
+    TEST_CHECK_FALSE HMap64_IsInitialized(testTable64()), "Should return _FALSE after HMap64_Free"
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    TEST_CASE_BEGIN "HMap64 Stress Test - Collisions"
+
+    HMap64_Initialize intMap()
+    DIM currentCapacity AS _UNSIGNED _OFFSET
+    currentCapacity = HMap64_GetCapacity(intMap())
+
+    ' Insert items with keys that are multiples of the capacity, likely to cause collisions
+    FOR i = 1 TO currentCapacity
+        HMap64_SetInteger intMap(), i * currentCapacity, i
+    NEXT
+
+    TEST_CHECK HMap64_GetCount(intMap()) = currentCapacity, "Should have " + STR$(currentCapacity) + " items before resize"
+
+    ' This will trigger a resize and rehash
+    HMap64_SetInteger intMap(), (currentCapacity + 1) * currentCapacity, currentCapacity + 1
+
+    TEST_CHECK HMap64_GetCount(intMap()) = currentCapacity + 1, "Should have " + STR$(currentCapacity + 1) + " items after resize"
+
+    ' Verify all values are retrievable after the resize
+    FOR i = 1 TO currentCapacity + 1
+        TEST_CHECK HMap64_GetInteger(intMap(), i * currentCapacity) = i, "Value should be retrievable after resize"
+    NEXT
+
+    HMap64_Free intMap()
+
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    TEST_CASE_BEGIN "HMap64 Edge Cases"
+
+    HMap64_Initialize intMap()
+
+    HMap64_SetString intMap(), 0, "zero"
+    TEST_CHECK HMap64_GetString(intMap(), 0) = "zero", "Should handle key 0"
+    TEST_CHECK HMap64_GetCount(intMap()) = 1, "Count should be 1"
+
+    HMap64_Delete intMap(), 0
+    TEST_CHECK_FALSE HMap64_Exists(intMap(), 0), "Should be able to delete key 0"
+    TEST_CHECK HMap64_GetCount(intMap()) = 0, "Count should be 0"
+
+    HMap64_Free intMap()
+
     TEST_CASE_END
 END SUB
 
@@ -692,6 +1073,7 @@ SUB __UI_Click (id AS LONG): id = id: END SUB
 '$INCLUDE:'../InForm/InForm.ui'
 '$INCLUDE:'../InForm/extensions/StringFile.bas'
 '$INCLUDE:'../InForm/extensions/Pathname.bas'
-'$INCLUDE:'../InForm/extensions/HashTable.bas'
+'$INCLUDE:'../InForm/extensions/HMap64.bas'
+'$INCLUDE:'../InForm/extensions/HMap.bas'
 '$INCLUDE:'../InForm/extensions/Algo.bas'
 '$INCLUDE:'../InForm/extensions/Catch.bas'

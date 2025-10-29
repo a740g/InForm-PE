@@ -54,8 +54,9 @@ TYPE __TestState
     skipCurrentTest AS _BYTE
     testStart AS _UNSIGNED _INTEGER64
     filter AS STRING
-    colorEnabled AS _BYTE
-    exitOnEnd AS _BYTE
+    errorHandlerEnabled AS _BYTE
+    colorDisabled AS _BYTE
+    exitOnEndDisabled AS _BYTE
 END TYPE
 
 DIM __TestState AS __TestState

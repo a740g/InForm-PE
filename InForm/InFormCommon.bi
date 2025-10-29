@@ -14,7 +14,7 @@ $END IF
 $LET INFORMCOMMON_BI = TRUE
 
 '$INCLUDE:'InFormVersion.bi'
-'$INCLUDE:'extensions/HashTable.bi'
+'$INCLUDE:'extensions/HMap64.bi'
 
 CONST False%% = _FALSE, True%% = _TRUE
 
@@ -432,7 +432,7 @@ REDIM SHARED ToolTip(0 TO 100) AS STRING
 REDIM SHARED __UI_TempTips(0 TO 100) AS STRING
 REDIM SHARED Control(0 TO 100) AS __UI_ControlTYPE
 REDIM SHARED ControlDrawOrder(0) AS LONG
-REDIM __UI_ThemeImages(0 TO 0) AS HashTableType
+REDIM __UI_ThemeImages(0 TO 0) AS HMap64
 REDIM SHARED __UI_WordWrapHistoryTexts(0 TO 100) AS STRING
 REDIM SHARED __UI_WordWrapHistoryResults(0 TO 100) AS STRING
 REDIM SHARED __UI_WordWrapHistory(0 TO 100) AS __UI_WordWrapHistoryType

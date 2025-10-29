@@ -5,7 +5,7 @@
 
 $INCLUDEONCE
 
-'$INCLUDE:'HashTable.bi'
+'$INCLUDE:'HMap64.bi'
 '$INCLUDE:'StringFile.bi'
 
 ' This is the master animation type that holds info about a complete animation
@@ -59,7 +59,7 @@ DECLARE LIBRARY
     FUNCTION __GIF_GetTicks~&& ALIAS "GetTicks"
 END DECLARE
 
-REDIM __GIFPlayHashTable(0 TO 0) AS HashTableType ' shared hash table to keep user supplied IDs (the values here points to indexes in __GIFPlay)
+REDIM __GIFPlayHashTable(0 TO 0) AS HMap64 ' shared hash table to keep user supplied IDs (the values here points to indexes in __GIFPlay)
 REDIM __GIFPlay(0 TO 0) AS __GIFPlayType ' main GIFPlay array - each array element is for a single GIF
 REDIM __GIFPlayFrame(0 TO 0) AS __GIFPlayFrameType ' shared GIF frame array - this holds GIF frame and frame information for all loaded GIFs
 DIM __GIF_FirstFreeFrame AS LONG ' index of the lowest free frame in __GIFPlayFrame

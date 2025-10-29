@@ -7,10 +7,8 @@ $INCLUDEONCE
 
 ON ERROR GOTO __catch_error_handler
 
-DIM __catchErrorHandlerInitialized AS _BYTE
-
 __catch_error_handler:
-IF __catchErrorHandlerInitialized THEN
+IF __TestState.errorHandlerEnabled THEN
     DIM __errorLine AS LONG: __errorLine = _INCLERRORLINE
 
     DIM __errorFile AS STRING
@@ -28,13 +26,5 @@ IF __catchErrorHandlerInitialized THEN
     __TestSetColor __TEST_COLOR_FAIL: __TestPrintLn "Runtime error" + STR$(ERR) + " on line" + STR$(__errorLine) + " in " + __errorFile
     SYSTEM 1
 ELSE
-    __catchErrorHandlerInitialized = _TRUE
-    RANDOMIZE TIMER
-    __TestState.colorEnabled = _TRUE
-    __TestSetColor __TEST_COLOR_HEADER: __TestPrintLn "OS: " + _OS$
-    __TestSetColor __TEST_COLOR_HEADER: __TestPrintLn "Date: " + DATE$
-    __TestSetColor __TEST_COLOR_HEADER: __TestPrintLn "Time: " + TIME$
-    __TestSetColor __TEST_COLOR_HEADER: __TestPrintLn "Executable: " + COMMAND$(0)
-    __TestSetColor __TEST_COLOR_HEADER: __TestPrintLn "Working directory: " + _CWD$
-    __TestSetColor __TEST_COLOR_HEADER: __TestPrintLn "Catch error handler installed"
+    __TestState.errorHandlerEnabled = _TRUE
 END IF
