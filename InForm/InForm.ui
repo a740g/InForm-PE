@@ -1353,7 +1353,9 @@ END SUB
 
 '---------------------------------------------------------------------------------
 SUB __UI_EventDispatcher
+    $IF WIN OR MAC THEN
     STATIC __UI_LastMouseIconSet AS _BYTE
+    $END IF
     STATIC __UI_LastMouseDownEvent AS SINGLE
     STATIC __UI_MouseDownTop AS INTEGER, __UI_MouseDownLeft AS INTEGER
     STATIC __UI_JustOpenedMenu AS _BYTE
