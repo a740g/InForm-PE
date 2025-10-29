@@ -2,7 +2,7 @@
 ': InForm GUI engine for QB64-PE - v1.5.7
 ': Fellippe Heitor, (2016 - 2022) - @FellippeHeitor
 ': Samuel Gomes, (2023 - 2025) - @a740g
-': https://github.com/a740g/InForm-PE
+': https://github.com/QB64-Phoenix-Edition/InForm-PE
 '-----------------------------------------------------------
 SUB __UI_LoadForm
 

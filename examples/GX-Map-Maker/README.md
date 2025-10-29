@@ -10,7 +10,7 @@ The GX Map Maker was originally built in [QB64](https://github.com/QB64Team/qb64
 
 After the split in the QB64 community and subsequent development, the original [InForm](https://github.com/FellippeHeitor/InForm) application no longer builds in the [QB64-PE](https://www.qb64phoenix.com) fork. This is because [InForm](https://github.com/FellippeHeitor/InForm) relied on undocumented [QB64](https://github.com/QB64Team/qb64) features that are no longer supported. The [QB64-PE](https://www.qb64phoenix.com) runtime library has since evolved, removing the undocumented hacks that InForm depended on.
 
-As a result, this port of the GX Map Maker represents an effort to transition toward [InForm-PE](https://github.com/a740g/InForm-PE) and [QB64PE](https://www.qb64phoenix.com).
+As a result, this port of the GX Map Maker represents an effort to transition toward [InForm-PE](https://github.com/QB64-Phoenix-Edition/InForm-PE) and [QB64PE](https://www.qb64phoenix.com).
 
 The latest version of the GX Map Maker has been ported to a QBJS-only online implementation and can be accessed here:  
 👉 [https://boxgaming.github.io/gx-mapmaker](https://boxgaming.github.io/gx-mapmaker)

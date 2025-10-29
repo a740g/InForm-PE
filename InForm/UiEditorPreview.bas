@@ -1,6 +1,6 @@
 '-----------------------------------------------------------------------------------------------------------------------
 ' InForm-PE GUI engine for QB64-PE
-' Copyright (c) 2025 Samuel Gomes
+' Copyright (c) 2025 QB64 Phoenix Edition Team
 ' Copyright (c) 2023 George McGinn
 ' Copyright (c) 2022 Fellippe Heitor
 '-----------------------------------------------------------------------------------------------------------------------
@@ -68,17 +68,29 @@ DECLARE LIBRARY
 END DECLARE
 
 $IF WIN THEN
+
+
     DECLARE DYNAMIC LIBRARY "kernel32"
         FUNCTION OpenProcess& (BYVAL dwDesiredAccess AS LONG, BYVAL bInheritHandle AS LONG, BYVAL dwProcessId AS LONG)
         FUNCTION CloseHandle& (BYVAL hObject AS LONG)
         FUNCTION GetExitCodeProcess& (BYVAL hProcess AS LONG, lpExitCode AS LONG)
     END DECLARE
+
+
     CONST PathSep$ = "\"
+
+
 $ELSE
+
+
     DECLARE LIBRARY
         FUNCTION PROCESS_CLOSED& ALIAS kill (BYVAL pid AS INTEGER, BYVAL signal AS INTEGER)
     END DECLARE
+
+
     CONST PathSep$ = "/"
+
+
 $END IF
 
 CONST EDITOR_IMAGE_CONTEXTMENU = 1

@@ -1,6 +1,6 @@
 '-----------------------------------------------------------------------------------------------------------------------
 ' InForm SemVer (Major.Minor.Patch). This is included by the common header file
-' Copyright (c) 2025 Samuel Gomes
+' Copyright (c) 2025 QB64 Phoenix Edition Team
 ' Copyright (c) 2022 Fellippe Heitor
 '-----------------------------------------------------------------------------------------------------------------------
 

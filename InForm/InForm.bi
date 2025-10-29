@@ -1,12 +1,13 @@
 '-----------------------------------------------------------------------------------------------------------------------
 ' InForm-PE GUI engine for QB64-PE
-' Copyright (c) 2025 Samuel Gomes
+' Copyright (c) 2025 QB64 Phoenix Edition Team
 ' Copyright (c) 2023 George McGinn
 ' Copyright (c) 2022 Fellippe Heitor
 '-----------------------------------------------------------------------------------------------------------------------
 
 $INCLUDEONCE
 
+' This allows extensions and other parts of InForm to detect if it is opened standalone
 $LET INFORM_BI = TRUE
 
 $SCREENHIDE

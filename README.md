@@ -2,7 +2,7 @@
 
 ![InForm logo](InForm/resources/Application-icon-128.png)
 
-[InForm-PE](https://github.com/a740g/InForm-PE) is a GUI engine and WYSIWYG interface designer for [QB64-PE](https://www.qb64phoenix.com/). It is a fork of [InForm](https://github.com/FellippeHeitor/InForm), authored by [Fellippe Heitor](https://github.com/FellippeHeitor).
+[InForm-PE](https://github.com/QB64-Phoenix-Edition/InForm-PE) is a GUI engine and WYSIWYG interface designer for [QB64-PE](https://www.qb64phoenix.com/). It is a fork of [InForm](https://github.com/FellippeHeitor/InForm), authored by [Fellippe Heitor](https://github.com/FellippeHeitor).
 
 InForm-PE's main goal is to generate *event-driven* QB64-PE applications. This means that you design a graphical user interface with interactive controls and then write the code to respond to such controls once they are manipulated.
 
@@ -15,8 +15,8 @@ InForm-PE's main goal is to generate *event-driven* QB64-PE applications. This m
 
 ## DOCUMENTATION
 
-- [Wiki](https://github.com/a740g/InForm-PE/wiki)
-- [Tutorial](https://raw.githack.com/a740g/InForm-PE/refs/heads/master/docs/tutorial/index.html)
+- [Wiki](https://github.com/QB64-Phoenix-Edition/InForm-PE/wiki)
+- [Tutorial](https://raw.githack.com/QB64-Phoenix-Edition/InForm-PE/refs/heads/master/docs/tutorial/index.html)
 - [INI-Manager](docs/INI-Manager.md)
 - [GIFPlay](docs/GIFPlay.md)
 

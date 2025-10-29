@@ -1,6 +1,6 @@
 '-----------------------------------------------------------------------------------------------------------------------
-' Common InForm header. This is included by the main InForm header file
-' Copyright (c) 2025 Samuel Gomes
+' Common InForm-PE header
+' Copyright (c) 2025 QB64 Phoenix Edition Team
 ' Copyright (c) 2022 Fellippe Heitor
 '-----------------------------------------------------------------------------------------------------------------------
 
@@ -10,8 +10,6 @@ $INCLUDEONCE
 $IF VERSION < 4.2.0 THEN
     $ERROR 'This requires the latest version of QB64-PE from https://github.com/QB64-Phoenix-Edition/QB64pe/releases/latest'
 $END IF
-
-$LET INFORMCOMMON_BI = TRUE
 
 '$INCLUDE:'InFormVersion.bi'
 '$INCLUDE:'extensions/HMap64.bi'

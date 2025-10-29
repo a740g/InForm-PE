@@ -46,7 +46,7 @@ SUB __UI_Click (id AS LONG)
         CASE DoneProgressBar
 
         CASE AboutButton
-            MessageBox "GIFPlay library + InForm-PE demo.\n\nGet it from https://github.com/a740g/InForm-PE", "About " + Caption(GIFPlaySample), MsgBox_OkOnly + MsgBox_Information
+            MessageBox "GIFPlay library + InForm-PE demo.\n\nGet it from https://github.com/QB64-Phoenix-Edition/InForm-PE", "About " + Caption(GIFPlaySample), MsgBox_OkOnly + MsgBox_Information
 
         CASE GIFPlaySample
 
