@@ -5116,6 +5116,10 @@ END FUNCTION
 FUNCTION __UI_LoadThemeImage& (id AS _UNSIGNED _BYTE)
     SHARED __UI_ThemeImages() AS HMap64
 
+    IF NOT HMap64_IsInitialized(__UI_ThemeImages()) THEN
+        HMap64_Initialize __UI_ThemeImages()
+    END IF
+
     ' If we have already loaded the image, then simply return the handle
     IF HMap64_Exists(__UI_ThemeImages(), id) THEN
         __UI_LoadThemeImage = HMap64_GetLong(__UI_ThemeImages(), id)

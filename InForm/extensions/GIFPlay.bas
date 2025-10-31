@@ -438,7 +438,7 @@ FUNCTION GIF_IsLoaded%% (Id AS LONG)
     SHARED __GIFPlayHashTable() AS HMap64
     SHARED __GIFPlay() AS __GIFPlayType
 
-    IF HMap64_Exists(__GIFPlayHashTable(), Id) THEN
+    IF HMap64_IsInitialized(__GIFPlayHashTable()) _ANDALSO HMap64_Exists(__GIFPlayHashTable(), Id) THEN
         GIF_IsLoaded = __GIFPlay(HMap64_GetLong(__GIFPlayHashTable(), Id)).isReady
     END IF
     $CHECKING:ON
@@ -641,6 +641,10 @@ FUNCTION __GIF_Load%% (Id AS LONG, sf AS StringFileType)
     SHARED __GIFPlay() AS __GIFPlayType
     SHARED __GIFPlayFrame() AS __GIFPlayFrameType
     SHARED __GIF_FirstFreeFrame AS LONG
+
+    IF NOT HMap64_IsInitialized(__GIFPlayHashTable()) THEN
+        HMap64_Initialize __GIFPlayHashTable()
+    END IF
 
     ' Check if Id already exists and if so free it
     IF GIF_IsLoaded(Id) THEN GIF_Free Id

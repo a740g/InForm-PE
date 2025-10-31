@@ -1,114 +1,100 @@
 ' GX - A BASIC Game Engine for QB64
 ' 2021 boxgaming - https://github.com/boxgaming/gx
 '
-$If GXFS = UNDEFINED Then
-    '$Include: 'gx_str.bm'
-    '$Include: 'include/pipecom.bm'
 
+$INCLUDEONCE
 
-    ' File System Utility Methods
-    ' -------------------------------------------------------------------------
-    Function GXFS_GetFilename$ (filepath As String)
-        Dim s As String, i As Integer
-        s = filepath
-        s = GXSTR_Replace(s, "\", "/")
-        i = _InStrRev(s, "/")
-        s = Mid$(s, i + 1)
-        GXFS_GetFilename = s
-    End Function
+'$INCLUDE: 'gx_str.bm'
 
-    Function GXFS_GetParentPath$ (filepath As String)
-        Dim s As String, i As Integer
-        s = filepath
-        s = GXSTR_Replace(s, "\", "/")
-        i = _InStrRev(s, "/")
-        s = Mid$(s, 1, i - 1)
-        s = GXSTR_Replace(s, "/", GXFS_PathSeparator)
-        'IF GXFS_IsDriveLetter(s) THEN s = s + __GXFS_PathSeparator
-        If s = "" Then s = GXFS_PathSeparator
-        GXFS_GetParentPath = s
-    End Function
+' File System Utility Methods
+' -------------------------------------------------------------------------
+FUNCTION GXFS_GetFilename$ (filepath AS STRING)
+    DIM s AS STRING, i AS INTEGER
+    s = filepath
+    s = GXSTR_Replace(s, "\", "/")
+    i = _INSTRREV(s, "/")
+    s = MID$(s, i + 1)
+    GXFS_GetFilename = s
+END FUNCTION
 
-    Function GXFS_GetFileExtension$ (filename As String)
-        Dim i As Integer
-        'i = __GX_StrLastIndexOf(filename, ".")
-        i = _InStrRev(filename, ".")
-        GXFS_GetFileExtension = Mid$(filename, i + 1)
-    End Function
+FUNCTION GXFS_GetParentPath$ (filepath AS STRING)
+    DIM s AS STRING, i AS INTEGER
+    s = filepath
+    s = GXSTR_Replace(s, "\", "/")
+    i = _INSTRREV(s, "/")
+    s = MID$(s, 1, i - 1)
+    s = GXSTR_Replace(s, "/", GXFS_PathSeparator)
+    'IF GXFS_IsDriveLetter(s) THEN s = s + __GXFS_PathSeparator
+    IF s = "" THEN s = GXFS_PathSeparator
+    GXFS_GetParentPath = s
+END FUNCTION
 
-    Function GXFS_RemoveFileExtension$ (filename As String)
-        Dim i As Integer
-        i = _InStrRev(filename, ".")
-        GXFS_RemoveFileExtension = Mid$(filename, 1, i - 1)
-    End Function
+FUNCTION GXFS_GetFileExtension$ (filename AS STRING)
+    DIM i AS INTEGER
+    'i = __GX_StrLastIndexOf(filename, ".")
+    i = _INSTRREV(filename, ".")
+    GXFS_GetFileExtension = MID$(filename, i + 1)
+END FUNCTION
 
-    Function GXFS_IsDriveLetter (path As String)
-        If Len(path) = 2 And Right$(path, 1) = ":" Then
-            GXFS_IsDriveLetter = -1 'GX_TRUE
-        Else
-            GXFS_IsDriveLetter = 0 'GX_FALSE
-        End If
-    End Function
+FUNCTION GXFS_RemoveFileExtension$ (filename AS STRING)
+    DIM i AS INTEGER
+    i = _INSTRREV(filename, ".")
+    GXFS_RemoveFileExtension = MID$(filename, 1, i - 1)
+END FUNCTION
 
-    Function GXFS_PathSeparator$ ()
-        $If WINDOWS Then
-            GXFS_PathSeparator = "\"
-        $Else
+FUNCTION GXFS_IsDriveLetter (path AS STRING)
+    IF LEN(path) = 2 AND RIGHT$(path, 1) = ":" THEN
+        GXFS_IsDriveLetter = -1 'GX_TRUE
+    ELSE
+        GXFS_IsDriveLetter = 0 'GX_FALSE
+    END IF
+END FUNCTION
+
+FUNCTION GXFS_PathSeparator$ ()
+    $IF WINDOWS THEN
+        GXFS_PathSeparator = "\"
+    $ELSE
             GXFS_PathSeparator = "/"
-        $End If
-    End Function
+    $END IF
+END FUNCTION
 
-    Function GXFS_DirList (path As String, dirmode As Integer, filenames() As String)
-        Dim cmd As String
+FUNCTION GXFS_DirList& (path AS STRING, dirmode AS INTEGER, filenames() AS STRING)
+    DIM count AS LONG
+    DIM entryName AS STRING
 
-        ' Determine the OS-specific directory command
-        $If WINDOWS Then
-            If dirmode Then
-                cmd = "dir /b /ad " + Chr$(34) + path + Chr$(34)
-            Else
-                cmd = "dir /b /a-d " + Chr$(34) + path + Chr$(34)
-            End If
-        $Else
-            IF dirmode THEN
-            cmd = "find " + CHR$(34) + path + CHR$(34) + " -maxdepth 1 -type d | sed '1d' | sed 's/.*\///g'"
-            ELSE
-            cmd = "ls -p " + CHR$(34) + path + CHR$(34) + " | grep -v / "
+    entryName = _FILES$(path)
+    DO WHILE LEN(entryName)
+        DIM lastChar AS STRING: lastChar = RIGHT$(entryName, 1)
+        DIM isDir AS _BYTE: isDir = (lastChar = "\" OR lastChar = "/")
+
+        IF (dirmode _ANDALSO isDir) _ORELSE (NOT dirmode _ANDALSO NOT isDir) THEN
+            count = count + 1
+            REDIM _PRESERVE filenames(0 TO count) AS STRING
+            filenames(count) = entryName
+        END IF
+
+        entryName = _FILES$
+    LOOP
+
+    GXFS_DirList = count
+END FUNCTION
+
+FUNCTION GXFS_DriveList& (drives() AS STRING)
+    $IF WINDOWS THEN
+        DIM AS LONG count, driveCode
+        DIM driveLetter AS STRING
+
+        FOR driveCode = 65 TO 90 ' A-Z
+            driveLetter = CHR$(driveCode) + ":"
+            IF _DIREXISTS(driveLetter + "\") THEN
+                count = count + 1
+                REDIM _PRESERVE drives(0 TO count) AS STRING
+                drives(count) = driveLetter
             END IF
-        $End If
+        NEXT
 
-        Dim fcount As Integer
-        If cmd <> "" Then
-            Dim cmdResult As Integer, stdout As String, stderr As String
-            cmdResult = pipecom(cmd, stdout, stderr)
-
-            fcount = GXSTR_Split(stdout, GX_LF, filenames())
-            fcount = fcount - 1 'Last line is blank
-        End If
-
-        ' Return the number of items in the result array
-        GXFS_DirList = fcount
-    End Function
-
-    Function GXFS_DriveList (drives() As String)
-        $If WINDOWS Then
-            Dim cmdResult As Integer
-            Dim stderr As String
-            Dim text As String
-            Dim count As Integer
-            count = 0
-
-            ' Get the drive list
-            cmdResult = pipecom("cmd /c " + Chr$(34) + "fsutil fsinfo drives" + Chr$(34), text, stderr)
-            text = GXSTR_Replace(text, "Drives: ", "")
-            text = GXSTR_Replace(text, GX_LF, "")
-            text = GXSTR_Replace(text, "\", "")
-            count = GXSTR_Split(text, " ", drives())
-
-            GXFS_DriveList = count
-        $Else
-            GXFS_DriveList = 0
-        $End If
-    End Function
-
-    $Let GXFS = 1
-$End If
+        GXFS_DriveList = count
+    $ELSE
+        GXFS_DriveList = 0
+    $END IF
+END FUNCTION
