@@ -263,27 +263,19 @@ CONST EDITOR_IMAGE_DISK~%% = 2~%%
 'ON TIMER(CheckPreviewTimer, .003) CheckPreview
 
 $IF WIN THEN
-
-
     DECLARE DYNAMIC LIBRARY "kernel32"
         FUNCTION OpenProcess& (BYVAL dwDesiredAccess AS LONG, BYVAL bInheritHandle AS LONG, BYVAL dwProcessId AS LONG)
         FUNCTION CloseHandle& (BYVAL hObject AS LONG)
         FUNCTION GetExitCodeProcess& (BYVAL hProcess AS LONG, lpExitCode AS LONG)
     END DECLARE
 
-
     DECLARE DYNAMIC LIBRARY "user32"
         FUNCTION SetForegroundWindow& (BYVAL hWnd AS LONG)
     END DECLARE
-
-
 $ELSE
-
     DECLARE LIBRARY
         FUNCTION PROCESS_CLOSED& ALIAS kill (BYVAL pid AS INTEGER, BYVAL signal AS INTEGER)
     END DECLARE
-
-
 $END IF
 
 ON ERROR GOTO __UI_ErrorHandler

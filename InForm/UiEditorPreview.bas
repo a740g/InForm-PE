@@ -68,29 +68,15 @@ DECLARE LIBRARY
 END DECLARE
 
 $IF WIN THEN
-
-
     DECLARE DYNAMIC LIBRARY "kernel32"
         FUNCTION OpenProcess& (BYVAL dwDesiredAccess AS LONG, BYVAL bInheritHandle AS LONG, BYVAL dwProcessId AS LONG)
         FUNCTION CloseHandle& (BYVAL hObject AS LONG)
         FUNCTION GetExitCodeProcess& (BYVAL hProcess AS LONG, lpExitCode AS LONG)
     END DECLARE
-
-
-    CONST PathSep$ = "\"
-
-
 $ELSE
-
-
     DECLARE LIBRARY
         FUNCTION PROCESS_CLOSED& ALIAS kill (BYVAL pid AS INTEGER, BYVAL signal AS INTEGER)
     END DECLARE
-
-
-    CONST PathSep$ = "/"
-
-
 $END IF
 
 CONST EDITOR_IMAGE_CONTEXTMENU = 1
@@ -101,6 +87,7 @@ ON ERROR GOTO __UI_ErrorHandler
 ContextMenuIcon = LoadEditorImage(EDITOR_IMAGE_CONTEXTMENU)
 __UI_ClearColor ContextMenuIcon, 0, 0
 
+'$INCLUDE:'extensions/Pathname.bi'
 '$INCLUDE:'extensions/GIFPlay.bi'
 '$INCLUDE:'InForm.bi'
 
@@ -407,7 +394,7 @@ SUB __UI_BeforeUpdateDisplay
 
             PreviewLoadImage Control(TempValue), _DROPPEDFILE(i)
 
-            b$ = MID$(_DROPPEDFILE(i), _INSTRREV(_DROPPEDFILE(i), PathSep$) + 1)
+            b$ = MID$(_DROPPEDFILE(i), _INSTRREV(_DROPPEDFILE(i), PATHNAME_DIR_SEPARATOR) + 1)
             SWAP i, TempValue
             GOSUB AutoName
             SWAP i, TempValue
