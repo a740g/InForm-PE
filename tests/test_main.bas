@@ -510,7 +510,7 @@ SUB Test_Hash
     CONST PERF_TEST_KEY_COUNT64 = 1000000
 
     REDIM testTable64(0) AS HMap64
-    DIM key64 AS _UNSIGNED _OFFSET
+    DIM key64 AS _UNSIGNED _INTEGER64
     DIM valueStr64 AS STRING
     DIM perfTestIndex64 AS LONG
 
@@ -599,8 +599,13 @@ END SUB
 SUB Test_Pathname
     TEST_CASE_BEGIN "Pathname"
 
-    TEST_CHECK Pathname_IsAbsolute("C:/Windows"), "Pathname_IsAbsolute('C:/Windows')"
-    TEST_CHECK Pathname_IsAbsolute("/Windows"), "Pathname_IsAbsolute('/Windows')"
+    $IF WINDOWS THEN
+        TEST_CHECK Pathname_IsAbsolute("C:/Windows"), "Pathname_IsAbsolute('C:/Windows')"
+        TEST_CHECK Pathname_IsAbsolute("/Windows"), "Pathname_IsAbsolute('/Windows')"
+    $ELSE
+        TEST_CHECK Pathname_IsAbsolute("/Windows"), "Pathname_IsAbsolute('/Windows')"
+    $END IF
+
     TEST_CHECK_FALSE Pathname_IsAbsolute("Windows"), "Pathname_IsAbsolute('Windows')"
     TEST_CHECK_FALSE Pathname_IsAbsolute(""), "Pathname_IsAbsolute('')"
 
@@ -627,7 +632,13 @@ SUB Test_Pathname
     TEST_CHECK Pathname_GetFileName("") = "", "Pathname_GetFileName('')"
 
     TEST_CHECK Pathname_GetPath("C:\\foo/bar.ext") = "C:\\foo/", "Pathname_GetPath('C:\\foo/bar.ext')"
-    TEST_CHECK Pathname_GetPath("\\bar.ext") = "\\", "Pathname_GetPath('\\bar.ext')"
+
+    $IF WINDOWS THEN
+        TEST_CHECK Pathname_GetPath("\\bar.ext") = "\\", "Pathname_GetPath('\\bar.ext')"
+    $ELSE
+        TEST_CHECK Pathname_GetPath("//bar.ext") = "//", "Pathname_GetPath('//bar.ext')"
+    $END IF
+
     TEST_CHECK Pathname_GetPath("") = "", "Pathname_GetPath('')"
 
     TEST_CHECK Pathname_HasFileExtension("C:\\foo/bar.ext"), "Pathname_HasFileExtension('C:\\foo/bar.ext')"

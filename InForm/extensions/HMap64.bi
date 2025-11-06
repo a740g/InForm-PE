@@ -15,7 +15,7 @@ $INCLUDEONCE
 '''     - V: unused
 '''     - T: set to HMAP_TYPE_RESERVED
 TYPE HMap64
-    K AS _UNSIGNED _OFFSET ' key or metadata (count)
+    K AS _UNSIGNED _INTEGER64 ' key or metadata (count)
     V AS STRING ' value or metadata (unused)
     T AS _UNSIGNED _BYTE ' data type of the value (0 = unused) or metadata (HMAP_TYPE_RESERVED)
 END TYPE
