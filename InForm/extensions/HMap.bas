@@ -27,7 +27,7 @@ END FUNCTION
 ''' @param map The dynamic HMap array to check.
 ''' @return _TRUE if initialized, otherwise _FALSE.
 FUNCTION HMap_IsInitialized%% (map() AS HMap)
-    HMap_IsInitialized = LBOUND(map) = 0 _ANDALSO UBOUND(map) > 0 _ANDALSO map(0).T = HMAP_TYPE_RESERVED _ANDALSO LEN(map(0).V) = _SIZE_OF_OFFSET
+    HMap_IsInitialized = LBOUND(map) = 0 _ANDALSO UBOUND(map) > 0 _ANDALSO map(0).T = QBDS_TYPE_RESERVED _ANDALSO LEN(map(0).V) = _SIZE_OF_OFFSET
 END FUNCTION
 
 ''' @brief Initialize a hash map (allocate initial table and reset metadata).
@@ -35,19 +35,17 @@ END FUNCTION
 ''' user entries start at index 1.
 ''' @param map The dynamic HMap array to initialize.
 SUB HMap_Initialize (map() AS HMap)
-    REDIM map(0 TO 16) AS HMap ' power of 2 initial size
-
+    REDIM map(0 TO __QBDS_ITEMS_MIN) AS HMap ' power of 2 initial size
     map(0).V = _MK$(_UNSIGNED _OFFSET, 0) ' reset count to zero
-    map(0).T = HMAP_TYPE_RESERVED ' set to reserved
+    map(0).T = QBDS_TYPE_RESERVED ' set to reserved
 END SUB
 
 ''' @brief Clear the hash map, but do not change the capacity.
 ''' @param map The hash map to clear.
 SUB HMap_Clear (map() AS HMap)
     REDIM map(0 TO UBOUND(map)) AS HMap
-
     map(0).V = _MK$(_UNSIGNED _OFFSET, 0) ' reset count to zero
-    map(0).T = HMAP_TYPE_RESERVED ' set to reserved
+    map(0).T = QBDS_TYPE_RESERVED ' set to reserved
 END SUB
 
 ''' @brief Delete the hash map and free all associated memory.
@@ -85,7 +83,7 @@ SUB __HMap_ResizeAndRehash (map() AS HMap)
         i = i + 1
     WEND
 
-    DIM newSize AS _UNSIGNED _OFFSET: newSize = _SHL(oldSize, 1) ' grow by power of 2
+    DIM newSize AS _UNSIGNED _OFFSET: newSize = _MAX(__QBDS_ITEMS_MIN, _SHL(oldSize, 1)) ' grow by power of 2
     DIM newMask AS _UNSIGNED _OFFSET: newMask = newSize - 1
     REDIM map(0 TO newSize) AS HMap
 
@@ -97,14 +95,14 @@ SUB __HMap_ResizeAndRehash (map() AS HMap)
 
     i = 1
     WHILE i <= oldSize
-        IF tempMap(i).T > HMAP_TYPE_DELETED THEN
+        IF tempMap(i).T > QBDS_TYPE_DELETED THEN
             hash = __HMap_Hash(tempMap(i).K) AND newMask
 
             j = 0
             WHILE j < newSize
                 probeIndex = 1 + (hash + j) AND newMask
 
-                IF map(probeIndex).T = HMAP_TYPE_NONE THEN
+                IF map(probeIndex).T = QBDS_TYPE_NONE THEN
                     map(probeIndex).T = tempMap(i).T
                     map(probeIndex).K = tempMap(i).K
                     map(probeIndex).V = tempMap(i).V
@@ -141,10 +139,10 @@ SUB __HMap_Set (map() AS HMap, k AS STRING, v AS STRING, dataType AS _UNSIGNED _
         probeIndex = 1 + (hash + i) AND mask ' + 1 for metadata
         DIM currentType AS _UNSIGNED _BYTE: currentType = map(probeIndex).T
 
-        IF currentType = HMAP_TYPE_NONE THEN
+        IF currentType = QBDS_TYPE_NONE THEN
             IF insertSlot = 0 THEN insertSlot = probeIndex
             EXIT WHILE ' End of probe chain
-        ELSEIF currentType = HMAP_TYPE_DELETED THEN
+        ELSEIF currentType = QBDS_TYPE_DELETED THEN
             IF insertSlot = 0 THEN insertSlot = probeIndex
         ELSE ' Slot is active
             IF map(probeIndex).K = k THEN
@@ -195,9 +193,9 @@ FUNCTION __HMap_Find~%& (map() AS HMap, k AS STRING)
 
         DIM currentType AS _UNSIGNED _BYTE: currentType = map(probeIndex).T
 
-        IF currentType = HMAP_TYPE_NONE THEN
+        IF currentType = QBDS_TYPE_NONE THEN
             EXIT WHILE ' end of probe chain, key not found
-        ELSEIF currentType <> HMAP_TYPE_DELETED _ANDALSO map(probeIndex).K = k THEN
+        ELSEIF currentType <> QBDS_TYPE_DELETED _ANDALSO map(probeIndex).K = k THEN
             __HMap_Find = probeIndex
             EXIT WHILE ' key found
         END IF
@@ -214,7 +212,7 @@ FUNCTION HMap_Delete%% (map() AS HMap, k AS STRING)
     DIM probeIndex AS _UNSIGNED _OFFSET: probeIndex = __HMap_Find(map(), k)
     IF probeIndex THEN
         ' Mark the slot as deleted (tombstone)
-        map(probeIndex).T = HMAP_TYPE_DELETED
+        map(probeIndex).T = QBDS_TYPE_DELETED
         map(probeIndex).K = _STR_EMPTY
         map(probeIndex).V = _STR_EMPTY
 
@@ -243,7 +241,7 @@ END FUNCTION
 ''' @brief Return the stored data type for a key.
 ''' @param map The hash map to search.
 ''' @param k The key string to look up.
-''' @return The associated data type constant (HMAP_TYPE_*), or 0 if not found.
+''' @return The associated data type constant (QBDS_TYPE_*), or 0 if not found.
 FUNCTION HMap_GetDataType~%% (map() AS HMap, k AS STRING)
     DIM probeIndex AS _UNSIGNED _OFFSET: probeIndex = __HMap_Find(map(), k)
     IF probeIndex THEN HMap_GetDataType = map(probeIndex).T
@@ -263,7 +261,7 @@ END FUNCTION
 ''' @param k The key string.
 ''' @param v The value string.
 SUB HMap_SetString (map() AS HMap, k AS STRING, v AS STRING)
-    __HMap_Set map(), k, v, HMAP_TYPE_STRING
+    __HMap_Set map(), k, v, QBDS_TYPE_STRING
 END SUB
 
 ''' @brief Retrieves the value for a given key.
@@ -279,7 +277,7 @@ END FUNCTION
 ''' @param k The key string.
 ''' @param v The value _BYTE.
 SUB HMap_SetByte (map() AS HMap, k AS STRING, v AS _BYTE)
-    __HMap_Set map(), k, _MK$(_BYTE, v), HMAP_TYPE_BYTE
+    __HMap_Set map(), k, _MK$(_BYTE, v), QBDS_TYPE_BYTE
 END SUB
 
 ''' @brief Retrieves the value for a given key.
@@ -295,7 +293,7 @@ END FUNCTION
 ''' @param k The key string.
 ''' @param v The value INTEGER.
 SUB HMap_SetInteger (map() AS HMap, k AS STRING, v AS INTEGER)
-    __HMap_Set map(), k, MKI$(v), HMAP_TYPE_INTEGER
+    __HMap_Set map(), k, MKI$(v), QBDS_TYPE_INTEGER
 END SUB
 
 ''' @brief Retrieves the value for a given key.
@@ -311,7 +309,7 @@ END FUNCTION
 ''' @param k The key string.
 ''' @param v The value LONG.
 SUB HMap_SetLong (map() AS HMap, k AS STRING, v AS LONG)
-    __HMap_Set map(), k, MKL$(v), HMAP_TYPE_LONG
+    __HMap_Set map(), k, MKL$(v), QBDS_TYPE_LONG
 END SUB
 
 ''' @brief Retrieves the value for a given key.
@@ -327,7 +325,7 @@ END FUNCTION
 ''' @param k The key string.
 ''' @param v The value _INTEGER64.
 SUB HMap_SetInteger64 (map() AS HMap, k AS STRING, v AS _INTEGER64)
-    __HMap_Set map(), k, _MK$(_INTEGER64, v), HMAP_TYPE_INTEGER64
+    __HMap_Set map(), k, _MK$(_INTEGER64, v), QBDS_TYPE_INTEGER64
 END SUB
 
 ''' @brief Retrieves the value for a given key.
@@ -343,7 +341,7 @@ END FUNCTION
 ''' @param k The key string.
 ''' @param v The value SINGLE.
 SUB HMap_SetSingle (map() AS HMap, k AS STRING, v AS SINGLE)
-    __HMap_Set map(), k, MKS$(v), HMAP_TYPE_SINGLE
+    __HMap_Set map(), k, MKS$(v), QBDS_TYPE_SINGLE
 END SUB
 
 ''' @brief Retrieves the value for a given key.
@@ -359,5 +357,5 @@ END FUNCTION
 ''' @param k The key string.
 ''' @param v The value DOUBLE.
 SUB HMap_SetDouble (map() AS HMap, k AS STRING, v AS DOUBLE)
-    __HMap_Set map(), k, MKD$(v), HMAP_TYPE_DOUBLE
+    __HMap_Set map(), k, MKD$(v), QBDS_TYPE_DOUBLE
 END SUB

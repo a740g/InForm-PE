@@ -6,6 +6,8 @@ $CONSOLE:ONLY
 
 '$INCLUDE:'../InForm/extensions/HMap.bi'
 '$INCLUDE:'../InForm/extensions/HMap64.bi'
+'$INCLUDE:'../InForm/extensions/LList.bi'
+'$INCLUDE:'../InForm/extensions/Stack.bi'
 '$INCLUDE:'../InForm/extensions/Pathname.bi'
 '$INCLUDE:'../InForm/extensions/StringFile.bi'
 
@@ -19,6 +21,8 @@ SUB __UI_BeforeInit
     Test_Catch
     Test_Algo
     Test_Hash
+    Test_List
+    Test_Stack
     Test_Pathname
     Test_StringFile
     Test_InFormUIUtils
@@ -157,31 +161,31 @@ SUB Test_Algo
 END SUB
 
 SUB Test_Hash
-    TEST_CASE_BEGIN "HMap Initialization"
+    TEST_CASE_BEGIN "HMap: Initialization"
 
     REDIM ht(0) AS HMap
 
     HMap_Initialize ht()
     TEST_CHECK HMap_GetCount(ht()) = 0, "Initial count should be 0"
-    TEST_CHECK HMap_Exists(ht(), "nonexistent") = _FALSE, "Nonexistent key should not exist"
+    TEST_CHECK_FALSE HMap_Exists(ht(), "nonexistent"), "Nonexistent key should not exist"
     TEST_CHECK HMap_GetString(ht(), "nonexistent") = "", "Getting nonexistent key should return empty string"
 
     TEST_CASE_END
 
     '-----------------------------------------------------------------------------------------------------------------------
 
-    TEST_CASE_BEGIN "HMap Basic Integer Operations"
+    TEST_CASE_BEGIN "HMap: Basic Integer Operations"
 
     HMap_SetInteger ht(), "test", 42
     TEST_CHECK HMap_GetInteger(ht(), "test") = 42, "Integer value should be 42"
-    TEST_CHECK HMap_GetDataType(ht(), "test") = HMAP_TYPE_INTEGER, "Data type should be INT"
+    TEST_CHECK HMap_GetDataType(ht(), "test") = QBDS_TYPE_INTEGER, "Data type should be INT"
     TEST_CHECK HMap_GetCount(ht()) = 1, "Count should be 1"
     TEST_CHECK HMap_Exists(ht(), "test"), "Key should exist"
 
     HMap_SetInteger ht(), "test", 100
     TEST_CHECK HMap_GetInteger(ht(), "test") = 100, "Updated integer value should be 100"
     TEST_CHECK HMap_GetCount(ht()) = 1, "Count should still be 1 after update"
-
+        
     TEST_CHECK HMap_Delete(ht(), "test"), "Delete should succeed"
     TEST_CHECK_FALSE HMap_Exists(ht(), "test"), "Key should not exist after delete"
     TEST_CHECK HMap_GetCount(ht()) = 0, "Count should be 0 after delete"
@@ -190,61 +194,60 @@ SUB Test_Hash
 
     '-----------------------------------------------------------------------------------------------------------------------
 
-    TEST_CASE_BEGIN "HMap Long Operations"
+    TEST_CASE_BEGIN "HMap: Long Operations"
 
     HMap_SetLong ht(), "long", _LONG_MAX
     TEST_CHECK HMap_GetLong(ht(), "long") = _LONG_MAX, "Long value should be" + STR$(_LONG_MAX)
-    TEST_CHECK HMap_GetDataType(ht(), "long") = HMAP_TYPE_LONG, "Data type should be LONG"
+    TEST_CHECK HMap_GetDataType(ht(), "long") = QBDS_TYPE_LONG, "Data type should be LONG"
 
     TEST_CASE_END
 
     '-----------------------------------------------------------------------------------------------------------------------
 
-    TEST_CASE_BEGIN "HMap Integer64 Operations"
+    TEST_CASE_BEGIN "HMap: Integer64 Operations"
 
     HMap_SetInteger64 ht(), "int64", _INTEGER64_MAX
     TEST_CHECK HMap_GetInteger64(ht(), "int64") = _INTEGER64_MAX, "Integer64 value should be" + STR$(_INTEGER64_MAX)
-    TEST_CHECK HMap_GetDataType(ht(), "int64") = HMAP_TYPE_INTEGER64, "Data type should be INTEGER64"
+    TEST_CHECK HMap_GetDataType(ht(), "int64") = QBDS_TYPE_INTEGER64, "Data type should be INTEGER64"
 
     TEST_CASE_END
 
     '-----------------------------------------------------------------------------------------------------------------------
 
-    TEST_CASE_BEGIN "HMap Single Operations"
+    TEST_CASE_BEGIN "HMap: Single Operations"
 
     HMap_SetSingle ht(), "pi", 3.14!
     TEST_CHECK ABS(HMap_GetSingle(ht(), "pi") - 3.14!) < 0.0001, "Single value should be approximately 3.14"
-    TEST_CHECK HMap_GetDataType(ht(), "pi") = HMAP_TYPE_SINGLE, "Data type should be SINGLE"
+    TEST_CHECK HMap_GetDataType(ht(), "pi") = QBDS_TYPE_SINGLE, "Data type should be SINGLE"
 
     TEST_CASE_END
 
     '-----------------------------------------------------------------------------------------------------------------------
 
-    TEST_CASE_BEGIN "HMap Double Operations"
+    TEST_CASE_BEGIN "HMap: Double Operations"
 
     HMap_SetDouble ht(), "e", 2.71828182845905D+00
     TEST_CHECK ABS(HMap_GetDouble(ht(), "e") - 2.71828182845905D+00) < 0.000000001D+00, "Double value should be approximately e"
-    TEST_CHECK HMap_GetDataType(ht(), "e") = HMAP_TYPE_DOUBLE, "Data type should be DOUBLE"
+    TEST_CHECK HMap_GetDataType(ht(), "e") = QBDS_TYPE_DOUBLE, "Data type should be DOUBLE"
 
     TEST_CASE_END
 
     '-----------------------------------------------------------------------------------------------------------------------
 
-    TEST_CASE_BEGIN "HMap String Operations"
+    TEST_CASE_BEGIN "HMap: String Operations"
 
     HMap_SetString ht(), "hello", "world"
     TEST_CHECK HMap_GetString(ht(), "hello") = "world", "String value should be 'world'"
-    TEST_CHECK HMap_GetDataType(ht(), "hello") = HMAP_TYPE_STRING, "Data type should be STRING"
+    TEST_CHECK HMap_GetDataType(ht(), "hello") = QBDS_TYPE_STRING, "Data type should be STRING"
 
     TEST_CASE_END
 
     '-----------------------------------------------------------------------------------------------------------------------
 
-    TEST_CASE_BEGIN "HMap Multiple Items"
+    TEST_CASE_BEGIN "HMap: Multiple Items"
 
-    DIM i AS LONG
-    DIM currentCount AS LONG
-    currentCount = HMap_GetCount(ht())
+    DIM i AS _UNSIGNED LONG
+    DIM currentCount AS LONG: currentCount = HMap_GetCount(ht())
     FOR i = 1 TO 100
         HMap_SetInteger ht(), "key" + _TOSTR$(i), i
     NEXT
@@ -265,7 +268,7 @@ SUB Test_Hash
 
     '-----------------------------------------------------------------------------------------------------------------------
 
-    TEST_CASE_BEGIN "HMap Multiple Hash Tables"
+    TEST_CASE_BEGIN "HMap: Multiple Hash Maps"
 
     REDIM students(0) AS HMap ' Student ID -> Name
     REDIM grades(0) AS HMap ' Student ID -> Grade
@@ -318,7 +321,7 @@ SUB Test_Hash
 
     HMap_Initialize testTable()
 
-    TEST_CASE_BEGIN "HMap Performance Test: Insert (" + _TOSTR$(PERF_TEST_KEY_COUNT) + " items)"
+    TEST_CASE_BEGIN "HMap: Performance Test: Insert (" + _TOSTR$(PERF_TEST_KEY_COUNT) + " items)"
 
     FOR perfTestIndex = 1 TO PERF_TEST_KEY_COUNT
         keyStr = "key" + _TOSTR$(perfTestIndex)
@@ -330,7 +333,7 @@ SUB Test_Hash
 
     HMap_Clear testTable()
 
-    TEST_CASE_BEGIN "HMap Performance Test: Insert after Clear (" + _TOSTR$(PERF_TEST_KEY_COUNT) + " items)"
+    TEST_CASE_BEGIN "HMap: Performance Test: Insert after Clear (" + _TOSTR$(PERF_TEST_KEY_COUNT) + " items)"
 
     FOR perfTestIndex = 1 TO PERF_TEST_KEY_COUNT
         keyStr = "key" + _TOSTR$(perfTestIndex)
@@ -340,11 +343,11 @@ SUB Test_Hash
 
     TEST_CASE_END
 
-    TEST_CASE_BEGIN "HMap Performance Test: GetCount after Insert"
+    TEST_CASE_BEGIN "HMap: Performance Test: GetCount after Insert"
     TEST_CHECK HMap_GetCount(testTable()) = PERF_TEST_KEY_COUNT, "Should have " + _TOSTR$(PERF_TEST_KEY_COUNT) + " items"
     TEST_CASE_END
 
-    TEST_CASE_BEGIN "HMap Performance Test: Get (" + _TOSTR$(PERF_TEST_KEY_COUNT) + " items)"
+    TEST_CASE_BEGIN "HMap: Performance Test: Get (" + _TOSTR$(PERF_TEST_KEY_COUNT) + " items)"
 
     FOR perfTestIndex = 1 TO PERF_TEST_KEY_COUNT
         keyStr = "key" + _TOSTR$(perfTestIndex)
@@ -353,11 +356,11 @@ SUB Test_Hash
 
     TEST_CASE_END
 
-    TEST_CASE_BEGIN "HMap Performance Test: Last key & value pair after Insert"
+    TEST_CASE_BEGIN "HMap: Performance Test: Last key & value pair after Insert"
     TEST_CHECK HMap_GetString(testTable(), keyStr) = "value" + _TOSTR$(PERF_TEST_KEY_COUNT), "The last value should be value" + _TOSTR$(PERF_TEST_KEY_COUNT)
     TEST_CASE_END
 
-    TEST_CASE_BEGIN "HMap Performance Test: Set (" + _TOSTR$(PERF_TEST_KEY_COUNT) + " items)"
+    TEST_CASE_BEGIN "HMap: Performance Test: Set (" + _TOSTR$(PERF_TEST_KEY_COUNT) + " items)"
 
     FOR perfTestIndex = 1 TO PERF_TEST_KEY_COUNT
         keyStr = "key" + _TOSTR$(perfTestIndex)
@@ -367,11 +370,11 @@ SUB Test_Hash
 
     TEST_CASE_END
 
-    TEST_CASE_BEGIN "HMap Performance Test: Last key & value pair after Update"
+    TEST_CASE_BEGIN "HMap: Performance Test: Last key & value pair after Update"
     TEST_CHECK HMap_GetString(testTable(), keyStr) = "value" + _TOSTR$(PERF_TEST_KEY_COUNT + 33), "The last value should be value" + _TOSTR$(PERF_TEST_KEY_COUNT + 33)
     TEST_CASE_END
 
-    TEST_CASE_BEGIN "HMap Performance Test: Mixed Insert & Delete (" + _TOSTR$(PERF_TEST_KEY_COUNT) + " items)"
+    TEST_CASE_BEGIN "HMap: Performance Test: Mixed Insert & Delete (" + _TOSTR$(PERF_TEST_KEY_COUNT) + " items)"
 
     FOR perfTestIndex = 1 TO PERF_TEST_KEY_COUNT
         IF (perfTestIndex MOD 2) = 0 THEN
@@ -385,7 +388,7 @@ SUB Test_Hash
 
     TEST_CASE_END
 
-    TEST_CASE_BEGIN "HMap Performance Test: GetCount after mixed Insert & Delete"
+    TEST_CASE_BEGIN "HMap: Performance Test: GetCount after mixed Insert & Delete"
     TEST_CHECK HMap_GetCount(testTable()) = PERF_TEST_KEY_COUNT, "Should have " + _TOSTR$(PERF_TEST_KEY_COUNT) + " items"
     HMap_Free testTable()
     TEST_CHECK_FALSE HMap_IsInitialized(testTable()), "Should return _FALSE after HMap_Free"
@@ -393,7 +396,7 @@ SUB Test_Hash
 
     '-----------------------------------------------------------------------------------------------------------------------
 
-    TEST_CASE_BEGIN "HMap Unusual cases"
+    TEST_CASE_BEGIN "HMap: Edge Cases"
 
     HMap_SetString ht(), _STR_EMPTY, "empty"
     TEST_CHECK HMap_GetCount(ht()) = 1, "Count should be 1"
@@ -409,15 +412,16 @@ SUB Test_Hash
 
     '-----------------------------------------------------------------------------------------------------------------------
 
-    TEST_CASE_BEGIN "HMap Stress Test - Collisions"
+    TEST_CASE_BEGIN "HMap: Collisions"
 
     HMap_Clear ht()
 
     DIM AS STRING collisionKeys(1 TO 10)
-    collisionKeys(1) = "a": collisionKeys(2) = "b": collisionKeys(3) = "c"
-    collisionKeys(4) = "d": collisionKeys(5) = "e": collisionKeys(6) = "f"
-    collisionKeys(7) = "g": collisionKeys(8) = "h": collisionKeys(9) = "i"
-    collisionKeys(10) = "j"
+    collisionKeys(1) = "8yn0iYCKYHlIj4-BwPqk": collisionKeys(2) = "GReLUrM4wMqfg9yzV3KQ"
+    collisionKeys(3) = "gMPflVXtwGDXbIhP73TX": collisionKeys(4) = "LtHf1prlU1bCeYZEdqWf"
+    collisionKeys(5) = "pFuM83THhM-Qw8FI5FKo": collisionKeys(6) = ".jPx7rOtTDteKAwvfOEo"
+    collisionKeys(7) = "7mohtcOFVz": collisionKeys(8) = "c1E51sSEyx"
+    collisionKeys(9) = "6a5x-VbtXk": collisionKeys(10) = "f_2k7GG-4v"
 
     FOR i = 1 TO 10
         HMap_SetString ht(), collisionKeys(i), "value" + _TOSTR$(i)
@@ -440,7 +444,7 @@ SUB Test_Hash
 
     '-----------------------------------------------------------------------------------------------------------------------
 
-    TEST_CASE_BEGIN "HMap Cleanup"
+    TEST_CASE_BEGIN "HMap: Cleanup"
 
     HMap_Clear ht()
     TEST_CHECK HMap_GetCount(ht()) = 0, "Count should be 0 after clear"
@@ -449,42 +453,51 @@ SUB Test_Hash
 
     '-----------------------------------------------------------------------------------------------------------------------
 
-    TEST_CASE_BEGIN "HMap64 Basic Operations"
+    TEST_CASE_BEGIN "HMap: Free"
+
+    HMap_Free ht()
+    TEST_CHECK_FALSE HMap_IsInitialized(ht()), "Should return _FALSE after HMap_Free"
+
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    TEST_CASE_BEGIN "HMap64: Basic Operations"
 
     REDIM intMap(0) AS HMap64
 
     HMap64_Initialize intMap()
     TEST_CHECK HMap64_GetCount(intMap()) = 0, "Initial count should be 0"
-    TEST_CHECK HMap64_Exists(intMap(), 123456) = _FALSE, "Nonexistent key should not exist"
+    TEST_CHECK_FALSE HMap64_Exists(intMap(), 123456), "Nonexistent key should not exist"
     TEST_CHECK HMap64_GetString(intMap(), 123456) = "", "Getting nonexistent key should return empty string"
 
     HMap64_SetString intMap(), &HDEADBEEFCAFEBABE~&&, "test"
     TEST_CHECK HMap64_GetString(intMap(), &HDEADBEEFCAFEBABE~&&) = "test", "String value should be test"
-    TEST_CHECK HMap64_GetDataType(intMap(), &HDEADBEEFCAFEBABE~&&) = HMAP_TYPE_STRING, "Data type should be STRING"
+    TEST_CHECK HMap64_GetDataType(intMap(), &HDEADBEEFCAFEBABE~&&) = QBDS_TYPE_STRING, "Data type should be STRING"
 
     HMap64_SetByte intMap(), 42~&&, 123~%%
     TEST_CHECK HMap64_GetByte(intMap(), 42~&&) = 123~%%, "Byte value should be 123"
-    TEST_CHECK HMap64_GetDataType(intMap(), 42~&&) = HMAP_TYPE_BYTE, "Data type should be BYTE"
+    TEST_CHECK HMap64_GetDataType(intMap(), 42~&&) = QBDS_TYPE_BYTE, "Data type should be BYTE"
 
     HMap64_SetInteger intMap(), 1~&&, 12345%
     TEST_CHECK HMap64_GetInteger(intMap(), 1~&&) = 12345%, "Integer value should be 12345"
-    TEST_CHECK HMap64_GetDataType(intMap(), 1~&&) = HMAP_TYPE_INTEGER, "Data type should be INTEGER"
+    TEST_CHECK HMap64_GetDataType(intMap(), 1~&&) = QBDS_TYPE_INTEGER, "Data type should be INTEGER"
 
     HMap64_SetLong intMap(), 2~&&, 123456&
     TEST_CHECK HMap64_GetLong(intMap(), 2~&&) = 123456&, "Long value should be 123456"
-    TEST_CHECK HMap64_GetDataType(intMap(), 2~&&) = HMAP_TYPE_LONG, "Data type should be LONG"
+    TEST_CHECK HMap64_GetDataType(intMap(), 2~&&) = QBDS_TYPE_LONG, "Data type should be LONG"
 
     HMap64_SetInteger64 intMap(), 3~&&, _INTEGER64_MAX
     TEST_CHECK HMap64_GetInteger64(intMap(), 3~&&) = _INTEGER64_MAX, "Integer64 value should be _INTEGER64_MAX"
-    TEST_CHECK HMap64_GetDataType(intMap(), 3~&&) = HMAP_TYPE_INTEGER64, "Data type should be INTEGER64"
+    TEST_CHECK HMap64_GetDataType(intMap(), 3~&&) = QBDS_TYPE_INTEGER64, "Data type should be INTEGER64"
 
     HMap64_SetSingle intMap(), 4~&&, 3.14159!
     TEST_CHECK ABS(HMap64_GetSingle(intMap(), 4~&&) - 3.14159!) < 0.0001, "Single value should be approximately 3.14159"
-    TEST_CHECK HMap64_GetDataType(intMap(), 4~&&) = HMAP_TYPE_SINGLE, "Data type should be SINGLE"
+    TEST_CHECK HMap64_GetDataType(intMap(), 4~&&) = QBDS_TYPE_SINGLE, "Data type should be SINGLE"
 
     HMap64_SetDouble intMap(), 5~&&, 2.71828182845905D+00
     TEST_CHECK ABS(HMap64_GetDouble(intMap(), 5~&&) - 2.71828182845905D+00) < 0.000000001D+00, "Double value should be approximately e"
-    TEST_CHECK HMap64_GetDataType(intMap(), 5~&&) = HMAP_TYPE_DOUBLE, "Data type should be DOUBLE"
+    TEST_CHECK HMap64_GetDataType(intMap(), 5~&&) = QBDS_TYPE_DOUBLE, "Data type should be DOUBLE"
 
     TEST_CHECK HMap64_GetCount(intMap()) = 7, "Total count should be 7"
 
@@ -516,7 +529,7 @@ SUB Test_Hash
 
     HMap64_Initialize testTable64()
 
-    TEST_CASE_BEGIN "HMap64 Performance Test: Insert (" + _TOSTR$(PERF_TEST_KEY_COUNT64) + " items)"
+    TEST_CASE_BEGIN "HMap64: Performance Test: Insert (" + _TOSTR$(PERF_TEST_KEY_COUNT64) + " items)"
 
     FOR perfTestIndex64 = 1 TO PERF_TEST_KEY_COUNT64
         key64 = perfTestIndex64
@@ -526,11 +539,11 @@ SUB Test_Hash
 
     TEST_CASE_END
 
-    TEST_CASE_BEGIN "HMap64 Performance Test: GetCount after Insert"
+    TEST_CASE_BEGIN "HMap64: Performance Test: GetCount after Insert"
     TEST_CHECK HMap64_GetCount(testTable64()) = PERF_TEST_KEY_COUNT64, "Should have " + _TOSTR$(PERF_TEST_KEY_COUNT64) + " items"
     TEST_CASE_END
 
-    TEST_CASE_BEGIN "HMap64 Performance Test: Get (" + _TOSTR$(PERF_TEST_KEY_COUNT64) + " items)"
+    TEST_CASE_BEGIN "HMap64: Performance Test: Get (" + _TOSTR$(PERF_TEST_KEY_COUNT64) + " items)"
 
     FOR perfTestIndex64 = 1 TO PERF_TEST_KEY_COUNT64
         key64 = perfTestIndex64
@@ -539,11 +552,11 @@ SUB Test_Hash
 
     TEST_CASE_END
 
-    TEST_CASE_BEGIN "HMap64 Performance Test: Last key & value pair after Insert"
+    TEST_CASE_BEGIN "HMap64: Performance Test: Last key & value pair after Insert"
     TEST_CHECK HMap64_GetString(testTable64(), key64) = "value" + _TOSTR$(PERF_TEST_KEY_COUNT64), "The last value should be value" + _TOSTR$(PERF_TEST_KEY_COUNT64)
     TEST_CASE_END
 
-    TEST_CASE_BEGIN "HMap64 Performance Test: Set (" + _TOSTR$(PERF_TEST_KEY_COUNT64) + " items)"
+    TEST_CASE_BEGIN "HMap64: Performance Test: Set (" + _TOSTR$(PERF_TEST_KEY_COUNT64) + " items)"
 
     FOR perfTestIndex64 = 1 TO PERF_TEST_KEY_COUNT64
         key64 = perfTestIndex64
@@ -553,11 +566,11 @@ SUB Test_Hash
 
     TEST_CASE_END
 
-    TEST_CASE_BEGIN "HMap64 Performance Test: Last key & value pair after Update"
+    TEST_CASE_BEGIN "HMap64: Performance Test: Last key & value pair after Update"
     TEST_CHECK HMap64_GetString(testTable64(), key64) = "value" + _TOSTR$(PERF_TEST_KEY_COUNT64 + 33), "The last value should be value" + _TOSTR$(PERF_TEST_KEY_COUNT64 + 33)
     TEST_CASE_END
 
-    TEST_CASE_BEGIN "HMap64 Performance Test: Mixed Insert & Delete (" + _TOSTR$(PERF_TEST_KEY_COUNT64) + " items)"
+    TEST_CASE_BEGIN "HMap64: Performance Test: Mixed Insert & Delete (" + _TOSTR$(PERF_TEST_KEY_COUNT64) + " items)"
 
     FOR perfTestIndex64 = 1 TO PERF_TEST_KEY_COUNT64
         IF (perfTestIndex64 MOD 2) = 0 THEN
@@ -571,7 +584,7 @@ SUB Test_Hash
 
     TEST_CASE_END
 
-    TEST_CASE_BEGIN "HMap64 Performance Test: GetCount after mixed Insert & Delete"
+    TEST_CASE_BEGIN "HMap64: Performance Test: GetCount after mixed Insert & Delete"
     TEST_CHECK HMap64_GetCount(testTable64()) = PERF_TEST_KEY_COUNT64, "Should have " + _TOSTR$(PERF_TEST_KEY_COUNT64) + " items"
     HMap64_Free testTable64()
     TEST_CHECK_FALSE HMap64_IsInitialized(testTable64()), "Should return _FALSE after HMap64_Free"
@@ -579,7 +592,7 @@ SUB Test_Hash
 
     '-----------------------------------------------------------------------------------------------------------------------
 
-    TEST_CASE_BEGIN "HMap64 Edge Cases"
+    TEST_CASE_BEGIN "HMap64: Edge Cases"
 
     HMap64_Initialize intMap()
 
@@ -593,6 +606,336 @@ SUB Test_Hash
 
     HMap64_Free intMap()
 
+    TEST_CASE_END
+END SUB
+
+SUB Test_List
+    TEST_CASE_BEGIN "LList: Initialization"
+
+    REDIM l(0) AS LList
+
+    LList_Initialize l()
+    TEST_CHECK LList_GetCount(l()) = 0, "Initial count should be 0"
+    TEST_CHECK LList_GetCapacity(l()) > 1, "Capacity should be more than 1"
+
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    TEST_CASE_BEGIN "LList: Basic String Operations"
+
+    LList_PushBackString l(), "Hello"
+    TEST_CHECK LList_GetCount(l()) = 1, "Count should be 1"
+    TEST_CHECK LList_GetString(l(), LList_GetBackNode(l())) = "Hello", "String value should be Hello"
+
+    LList_PushFrontString l(), "World"
+    TEST_CHECK LList_GetCount(l()) = 2, "Count should be 2"
+    TEST_CHECK LList_GetString(l(), LList_GetFrontNode(l())) = "World", "String value should be World"
+
+    TEST_CHECK LList_PopBackString(l()) = "Hello", "Popped value should be Hello"
+    TEST_CHECK LList_GetCount(l()) = 1, "Count should be 1"
+
+    TEST_CHECK LList_PopFrontString(l()) = "World", "Popped value should be World"
+    TEST_CHECK LList_GetCount(l()) = 0, "Count should be 0"
+
+    LList_Clear l()
+    TEST_CHECK LList_GetCount(l()) = 0, "Count should be 0 after clear"
+
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    TEST_CASE_BEGIN "LList: Insert and Delete"
+
+    LList_Clear l()
+
+    LList_PushBackString l(), "A"
+    LList_PushBackString l(), "B"
+    LList_PushBackString l(), "C"
+
+    TEST_CHECK LList_GetCount(l()) = 3, "Count should be 3"
+    TEST_CHECK LList_GetString(l(), LList_GetFrontNode(l())) = "A", "Value at front should be A"
+    TEST_CHECK LList_GetString(l(), LList_GetNextNode(l(), LList_GetFrontNode(l()))) = "B", "Value after front should be B"
+    TEST_CHECK LList_GetString(l(), LList_GetPreviousNode(l(), LList_GetBackNode(l()))) = "B", "Value before back should be B"
+    TEST_CHECK LList_GetString(l(), LList_GetBackNode(l())) = "C", "Value at back should be C"
+
+    LList_Delete l(), LList_GetNextNode(l(), LList_GetFrontNode(l()))
+    TEST_CHECK LList_GetCount(l()) = 2, "Count should be 2"
+    TEST_CHECK LList_GetString(l(), LList_GetFrontNode(l())) = "A", "Value at front should be A"
+    TEST_CHECK LList_GetString(l(), LList_GetBackNode(l())) = "C", "Value at back should be C"
+
+    LList_Delete l(), LList_GetFrontNode(l())
+    TEST_CHECK LList_GetCount(l()) = 1, "Count should be 1"
+    TEST_CHECK LList_GetString(l(), LList_GetFrontNode(l())) = "C", "Value at front should be C"
+    TEST_CHECK LList_GetString(l(), LList_GetBackNode(l())) = "C", "Value at back should be C"
+
+    LList_Delete l(), LList_GetBackNode(l())
+    TEST_CHECK LList_GetCount(l()) = 0, "Count should be 0"
+
+    LList_Clear l()
+
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    TEST_CASE_BEGIN "LList: Circular List"
+
+    LList_Clear l()
+
+    LList_PushBackString l(), "A"
+    LList_PushBackString l(), "B"
+    LList_PushBackString l(), "C"
+
+    LList_MakeCircular l(), _TRUE
+
+    TEST_CHECK LList_IsCircular(l()), "List should be circular"
+
+    DIM head AS _UNSIGNED _OFFSET: head = LList_GetFrontNode(l())
+    DIM tail AS _UNSIGNED _OFFSET: tail = LList_GetBackNode(l())
+
+    TEST_CHECK LList_GetNextNode(l(), tail) = head, "Tail should point to head"
+    TEST_CHECK LList_GetPreviousNode(l(), head) = tail, "Head should point to tail"
+
+    LList_MakeCircular l(), _FALSE
+
+    TEST_CHECK_FALSE LList_IsCircular(l()), "List should not be circular"
+
+    TEST_CHECK LList_GetNextNode(l(), tail) = 0, "Tail should point to null"
+    TEST_CHECK LList_GetPreviousNode(l(), head) = 0, "Head should point to null"
+
+    LList_Clear l()
+
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    TEST_CASE_BEGIN "LList: All Data Types"
+
+    LList_Clear l()
+
+    LList_PushBackByte l(), 127
+    TEST_CHECK LList_GetByte(l(), LList_GetBackNode(l())) = 127, "Byte value should be 127"
+    TEST_CHECK LList_PopFrontByte(l()) = 127, "Popped byte value should be 127"
+
+    LList_PushBackInteger l(), 32767
+    TEST_CHECK LList_GetInteger(l(), LList_GetBackNode(l())) = 32767, "Integer value should be 32767"
+    TEST_CHECK LList_PopFrontInteger(l()) = 32767, "Popped integer value should be 32767"
+
+    LList_PushBackLong l(), 2147483647
+    TEST_CHECK LList_GetLong(l(), LList_GetBackNode(l())) = 2147483647, "Long value should be 2147483647"
+    TEST_CHECK LList_PopFrontLong(l()) = 2147483647, "Popped long value should be 2147483647"
+
+    LList_PushBackInteger64 l(), 9223372036854775807~&&
+    TEST_CHECK LList_GetInteger64(l(), LList_GetBackNode(l())) = 9223372036854775807~&&, "Integer64 value should be max"
+    TEST_CHECK LList_PopFrontInteger64(l()) = 9223372036854775807~&&, "Popped integer64 value should be max"
+
+    LList_PushBackSingle l(), 1.2345!
+    TEST_CHECK ABS(LList_GetSingle(l(), LList_GetBackNode(l())) - 1.2345!) < 0.0001, "Single value should be approx 1.2345"
+    TEST_CHECK ABS(LList_PopFrontSingle(l()) - 1.2345!) < 0.0001, "Popped single value should be approx 1.2345"
+
+    LList_PushBackDouble l(), 1.23456789#
+    TEST_CHECK ABS(LList_GetDouble(l(), LList_GetBackNode(l())) - 1.23456789#) < 0.00000001, "Double value should be approx 1.23456789"
+    TEST_CHECK ABS(LList_PopFrontDouble(l()) - 1.23456789#) < 0.00000001, "Popped double value should be approx 1.23456789"
+
+    TEST_CHECK LList_GetCount(l()) = 0, "Count should be 0 after all pops"
+
+    LList_Clear l()
+
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    TEST_CASE_BEGIN "LList: Edge Cases"
+
+    LList_Clear l()
+
+    LList_Clear l()
+    TEST_CHECK LList_GetCount(l()) = 0, "Count should be 0 after clearing an empty list"
+
+    LList_Free l()
+    TEST_CHECK_FALSE LList_IsInitialized(l()), "List should not be initialized after free"
+
+    LList_Initialize l()
+
+    LList_PushBackString l(), "first"
+    LList_InsertAfterString l(), LList_GetFrontNode(l()), "second"
+    TEST_CHECK LList_GetCount(l()) = 2, "Count should be 2 after insert"
+    TEST_CHECK LList_GetString(l(), LList_GetBackNode(l())) = "second", "Second element should be 'second'"
+    TEST_CHECK LList_GetString(l(), LList_GetFrontNode(l())) = "first", "First element should still be 'first'"
+
+    LList_Clear l()
+
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    CONST LL_PERF_COUNT = 100000
+
+    DIM i AS LONG
+
+    LList_Clear l()
+
+    TEST_CASE_BEGIN "LList: Performance Test - PushBack (" + _TOSTR$(LL_PERF_COUNT) + " items)"
+    FOR i = 1 TO LL_PERF_COUNT
+        LList_PushBackInteger64 l(), i
+    NEXT
+    TEST_CHECK LList_GetCount(l()) = LL_PERF_COUNT, "Count should be " + _TOSTR$(LL_PERF_COUNT)
+    TEST_CASE_END
+
+    TEST_CASE_BEGIN "LList: Performance Test - Forward Iteration"
+    DIM currentNode AS _UNSIGNED _OFFSET: currentNode = LList_GetFrontNode(l())
+    DIM currentVal AS _UNSIGNED LONG: currentVal = 1
+    WHILE currentNode <> 0
+        TEST_CHECK LList_GetInteger64(l(), currentNode) = currentVal, "Value should be " + _TOSTR$(currentVal)
+        currentNode = LList_GetNextNode(l(), currentNode)
+        currentVal = currentVal + 1
+    WEND
+    TEST_CASE_END
+
+    DIM v AS _UNSIGNED LONG
+
+    TEST_CASE_BEGIN "LList: Performance Test - PopFront (" + _TOSTR$(LL_PERF_COUNT) + " items)"
+    FOR i = 1 TO LL_PERF_COUNT
+        v = LList_PopFrontInteger64(l())
+    NEXT
+    TEST_CHECK LList_GetCount(l()) = 0, "Count should be 0 after popping all items"
+    TEST_CASE_END
+
+    TEST_CASE_BEGIN "LList: Performance Test - PushFront (" + _TOSTR$(LL_PERF_COUNT) + " items)"
+    LList_Clear l()
+    FOR i = 1 TO LL_PERF_COUNT
+        LList_PushFrontInteger64 l(), i
+    NEXT
+    TEST_CHECK LList_GetCount(l()) = LL_PERF_COUNT, "Count should be " + _TOSTR$(LL_PERF_COUNT)
+    TEST_CASE_END
+
+    TEST_CASE_BEGIN "LList: Performance Test - Backward Iteration"
+    currentNode = LList_GetBackNode(l())
+    currentVal = 1
+    WHILE currentNode <> 0
+        TEST_CHECK LList_GetInteger64(l(), currentNode) = currentVal, "Value should be " + _TOSTR$(currentVal)
+        currentNode = LList_GetPreviousNode(l(), currentNode)
+        currentVal = currentVal + 1
+    WEND
+    TEST_CASE_END
+
+    TEST_CASE_BEGIN "LList: Performance Test - PopBack (" + _TOSTR$(LL_PERF_COUNT) + " items)"
+    FOR i = 1 TO LL_PERF_COUNT
+        v = LList_PopBackInteger64(l())
+    NEXT
+    TEST_CHECK LList_GetCount(l()) = 0, "Count should be 0 after popping all items"
+    TEST_CASE_END
+
+    LList_Free l()
+END SUB
+
+SUB Test_Stack
+    TEST_CASE_BEGIN "Stack: Initialization"
+
+    REDIM s(0) AS Stack
+
+    Stack_Initialize s()
+    TEST_CHECK Stack_GetCount(s()) = 0, "Initial count should be 0"
+    TEST_CHECK Stack_PeekString(s()) = "", "Peeking nonexistent key should return empty string"
+
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    TEST_CASE_BEGIN "Stack: Basic Integer Operations"
+
+    Stack_PushInteger s(), 42
+    TEST_CHECK Stack_PeekInteger(s()) = 42, "Integer value should be 42"
+    TEST_CHECK Stack_PeekDataType(s()) = QBDS_TYPE_INTEGER, "Data type should be INT"
+    TEST_CHECK Stack_GetCount(s()) = 1, "Count should be 1"
+
+    Stack_PushInteger s(), 100
+    TEST_CHECK Stack_PeekInteger(s()) = 100, "Pushed integer value should be 100"
+    TEST_CHECK Stack_GetCount(s()) = 2, "Count should be 2 after update"
+
+    TEST_CHECK Stack_PopInteger(s()) = 100, "Popped integer should be 100"
+    TEST_CHECK Stack_GetCount(s()) = 1, "Count should be 1 after pop"
+
+    TEST_CHECK Stack_PopInteger(s()) = 42, "Popped integer should be 42"
+    TEST_CHECK Stack_GetCount(s()) = 0, "Count should be 0 after pop"
+
+    Stack_Clear s()
+    TEST_CHECK Stack_GetCount(s()) = 0, "Count should be 0 after clear"
+
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    TEST_CASE_BEGIN "Stack: All Data Types"
+
+    Stack_Clear s()
+
+    Stack_PushString s(), "hello"
+    TEST_CHECK Stack_PeekString(s()) = "hello", "String value should be 'hello'"
+    TEST_CHECK Stack_PopString(s()) = "hello", "Popped string value should be 'hello'"
+
+    Stack_PushByte s(), 127
+    TEST_CHECK Stack_PeekByte(s()) = 127, "Byte value should be 127"
+    TEST_CHECK Stack_PopByte(s()) = 127, "Popped byte value should be 127"
+
+    Stack_PushLong s(), -2147483648
+    TEST_CHECK Stack_PeekLong(s()) = -2147483648, "Long value should be min"
+    TEST_CHECK Stack_PopLong(s()) = -2147483648, "Popped long value should be min"
+
+    Stack_PushInteger64 s(), -9223372036854775808~&&
+    TEST_CHECK Stack_PeekInteger64(s()) = -9223372036854775808~&&, "Integer64 value should be min"
+    TEST_CHECK Stack_PopInteger64(s()) = -9223372036854775808~&&, "Popped integer64 value should be min"
+
+    Stack_PushSingle s(), -1.2345!
+    TEST_CHECK ABS(Stack_PeekSingle(s()) - -1.2345!) < 0.0001, "Single value should be approx -1.2345"
+    TEST_CHECK ABS(Stack_PopSingle(s()) - -1.2345!) < 0.0001, "Popped single value should be approx -1.2345"
+
+    Stack_PushDouble s(), -1.23456789#
+    TEST_CHECK ABS(Stack_PeekDouble(s()) - -1.23456789#) < 0.00000001, "Double value should be approx -1.23456789"
+    TEST_CHECK ABS(Stack_PopDouble(s()) - -1.23456789#) < 0.00000001, "Popped double value should be approx -1.23456789"
+
+    TEST_CHECK Stack_GetCount(s()) = 0, "Count should be 0 after all pops"
+
+    Stack_Clear s()
+
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    TEST_CASE_BEGIN "Stack: Edge Cases"
+
+    Stack_Clear s()
+    TEST_CHECK Stack_GetCount(s()) = 0, "Count should be 0 after clearing an empty stack"
+
+    Stack_Free s()
+    TEST_CHECK_FALSE Stack_IsInitialized(s()), "Stack should not be initialized after free"
+
+    Stack_Initialize s()
+    TEST_CHECK Stack_IsInitialized(s()), "Stack should be initialized"
+
+    TEST_CASE_END
+
+    '-----------------------------------------------------------------------------------------------------------------------
+
+    CONST STACK_PERF_COUNT = 1000000
+
+    DIM i AS LONG
+
+    Stack_Clear s()
+
+    TEST_CASE_BEGIN "Stack: Performance Test - Push (" + _TOSTR$(STACK_PERF_COUNT) + " items)"
+    FOR i = 1 TO STACK_PERF_COUNT
+        Stack_PushInteger64 s(), i
+    NEXT
+    TEST_CHECK Stack_GetCount(s()) = STACK_PERF_COUNT, "Count should be " + _TOSTR$(STACK_PERF_COUNT)
+    TEST_CASE_END
+
+    TEST_CASE_BEGIN "Stack: Performance Test - Pop (" + _TOSTR$(STACK_PERF_COUNT) + " items)"
+    FOR i = STACK_PERF_COUNT TO 1 STEP -1
+        TEST_CHECK Stack_PopInteger64(s()) = i, "Popped value should be " + _TOSTR$(i)
+    NEXT
+    TEST_CHECK Stack_GetCount(s()) = 0, "Count should be 0 after popping all items"
+    Stack_Free s()
     TEST_CASE_END
 END SUB
 
@@ -1055,6 +1398,8 @@ SUB __UI_Click (id AS LONG): id = id: END SUB
 '$INCLUDE:'../InForm/InForm.ui'
 '$INCLUDE:'../InForm/extensions/StringFile.bas'
 '$INCLUDE:'../InForm/extensions/Pathname.bas'
+'$INCLUDE:'../InForm/extensions/Stack.bas'
+'$INCLUDE:'../InForm/extensions/LList.bas'
 '$INCLUDE:'../InForm/extensions/HMap64.bas'
 '$INCLUDE:'../InForm/extensions/HMap.bas'
 '$INCLUDE:'../InForm/extensions/Algo.bas'

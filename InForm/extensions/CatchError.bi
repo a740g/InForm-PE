@@ -23,7 +23,14 @@ IF __TestState.errorHandlerEnabled THEN
     END IF
 
     __TestSetColor __TEST_COLOR_FAIL: __TestPrintLn "Runtime error" + STR$(ERR) + " (" + LCASE$(_ERRORMESSAGE$) + ") on line" + STR$(__errorLine) + " in " + __errorFile
-    SYSTEM 1
+
+    __TestResetColor
+
+    IF __TestState.exitOnEndDisabled THEN
+        END _MAX(__TestState.failures + 1, 1)
+    ELSE
+        SYSTEM _MAX(__TestState.failures + 1, 1)
+    END IF
 ELSE
     __TestState.errorHandlerEnabled = _TRUE
 END IF

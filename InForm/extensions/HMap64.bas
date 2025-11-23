@@ -11,7 +11,7 @@ $INCLUDEONCE
 ''' @param k The integer to hash.
 ''' @param tableSize The hash map size (must be a power of 2).
 ''' @return The computed hash index in the range 1 to tableSize.
-FUNCTION __HMap64_Hash~& (k AS _UNSIGNED _INTEGER64, tableSize AS _UNSIGNED _OFFSET)
+FUNCTION __HMap64_Hash~%& (k AS _UNSIGNED _INTEGER64, tableSize AS _UNSIGNED _OFFSET)
     __HMap64_Hash = 1 + (k AND (tableSize - 1))
 END FUNCTION
 
@@ -19,21 +19,21 @@ END FUNCTION
 ''' @param map The dynamic HMap64 array to check.
 ''' @return _TRUE if initialized, otherwise _FALSE.
 FUNCTION HMap64_IsInitialized%% (map() AS HMap64)
-    HMap64_IsInitialized = LBOUND(map) = 0 _ANDALSO UBOUND(map) > 0 _ANDALSO map(0).T = HMAP_TYPE_RESERVED
+    HMap64_IsInitialized = LBOUND(map) = 0 _ANDALSO UBOUND(map) > 0 _ANDALSO map(0).T = QBDS_TYPE_RESERVED
 END FUNCTION
 
 ''' @brief Initialize a hash map (allocate initial table and reset metadata).
 ''' @param map The dynamic HMap64 array to initialize.
 SUB HMap64_Initialize (map() AS HMap64)
-    REDIM map(0 TO 16) AS HMap64 ' power of 2 initial size
-    map(0).T = HMAP_TYPE_RESERVED ' mark as initialized
+    REDIM map(0 TO __QBDS_ITEMS_MIN) AS HMap64 ' power of 2 initial size
+    map(0).T = QBDS_TYPE_RESERVED ' mark as initialized
 END SUB
 
 ''' @brief Clear the hash map, but do not change the capacity.
 ''' @param map The hash map to clear.
 SUB HMap64_Clear (map() AS HMap64)
     REDIM map(0 TO UBOUND(map)) AS HMap64
-    map(0).T = HMAP_TYPE_RESERVED ' set to reserved
+    map(0).T = QBDS_TYPE_RESERVED ' set to reserved
 END SUB
 
 ''' @brief Delete the hash map and free all associated memory.
@@ -62,13 +62,13 @@ SUB __HMap64_ResizeAndRehash (map() AS HMap64)
     DIM oldSize AS _UNSIGNED _OFFSET: oldSize = UBOUND(map)
 
     ' Resize the array to double its size while preserving contents
-    DIM newSize AS _UNSIGNED _OFFSET: newSize = _SHL(oldSize, 1) ' grow by power of 2
+    DIM newSize AS _UNSIGNED _OFFSET: newSize = _MAX(__QBDS_ITEMS_MIN, _SHL(oldSize, 1)) ' grow by power of 2
     REDIM _PRESERVE map(0 TO newSize) AS HMap64
 
     ' Rehash and swap all the elements
     DIM i AS _UNSIGNED _OFFSET: i = 1
     WHILE i <= oldSize
-        IF map(i).T > HMAP_TYPE_DELETED THEN
+        IF map(i).T > QBDS_TYPE_DELETED THEN
             DIM idx AS _UNSIGNED _OFFSET: idx = __HMap64_Hash(map(i).K, newSize)
             SWAP map(i).T, map(idx).T
             SWAP map(i).V, map(idx).V
@@ -87,9 +87,12 @@ FUNCTION HMap64_Delete%% (map() AS HMap64, k AS _UNSIGNED _INTEGER64)
     DIM arraySize AS _UNSIGNED _OFFSET: arraySize = UBOUND(map)
     DIM idx AS _UNSIGNED _OFFSET: idx = __HMap64_Hash(k, arraySize)
 
-    IF idx <= arraySize _ANDALSO map(idx).T > HMAP_TYPE_DELETED _ANDALSO map(idx).K = k THEN
-        map(idx).T = HMAP_TYPE_DELETED
+    IF idx <= arraySize _ANDALSO map(idx).T > QBDS_TYPE_DELETED _ANDALSO map(idx).K = k THEN
+        map(idx).T = QBDS_TYPE_DELETED
+        map(idx).V = _STR_EMPTY
+
         map(0).K = map(0).K - 1
+
         HMap64_Delete = _TRUE
     END IF
 END FUNCTION
@@ -99,7 +102,7 @@ END FUNCTION
 ''' @param k The key to remove.
 ''' @return _TRUE if removed, _FALSE if not found.
 SUB HMap64_Delete (map() AS HMap64, k AS _UNSIGNED _INTEGER64)
-    DIM ignored AS _BYTE: ignored = HMap64_Delete%%(map(), k)
+    DIM ignored AS _BYTE: ignored = HMap64_Delete(map(), k)
 END SUB
 
 ''' @brief Checks if a key exists in the map.
@@ -109,17 +112,17 @@ END SUB
 FUNCTION HMap64_Exists%% (map() AS HMap64, k AS _UNSIGNED _INTEGER64)
     DIM arraySize AS _UNSIGNED _OFFSET: arraySize = UBOUND(map)
     DIM idx AS _UNSIGNED _OFFSET: idx = __HMap64_Hash(k, arraySize)
-    HMap64_Exists = idx <= arraySize _ANDALSO map(idx).T > HMAP_TYPE_DELETED _ANDALSO map(idx).K = k
+    HMap64_Exists = idx <= arraySize _ANDALSO map(idx).T > QBDS_TYPE_DELETED _ANDALSO map(idx).K = k
 END FUNCTION
 
 ''' @brief Return the stored data type for a key.
 ''' @param map The hash map to search.
 ''' @param k The key string to look up.
-''' @return The associated data type constant (HMAP_TYPE_*), or 0 if not found.
+''' @return The associated data type constant (QBDS_TYPE_*), or 0 if not found.
 FUNCTION HMap64_GetDataType~%% (map() AS HMap64, k AS _UNSIGNED _INTEGER64)
     DIM arraySize AS _UNSIGNED _OFFSET: arraySize = UBOUND(map)
     DIM idx AS _UNSIGNED _OFFSET: idx = __HMap64_Hash(k, arraySize)
-    IF idx <= arraySize _ANDALSO map(idx).T > HMAP_TYPE_DELETED _ANDALSO map(idx).K = k THEN
+    IF idx <= arraySize _ANDALSO map(idx).T > QBDS_TYPE_DELETED _ANDALSO map(idx).K = k THEN
         HMap64_GetDataType = map(idx).T
     END IF
 END FUNCTION
@@ -141,7 +144,7 @@ SUB __HMap64_Set (map() AS HMap64, k AS _UNSIGNED _INTEGER64, v AS STRING, dataT
         END IF
         __HMap64_Set map(), k, v, dataType
     ELSE
-        IF map(idx).T > HMAP_TYPE_DELETED THEN
+        IF map(idx).T > QBDS_TYPE_DELETED THEN
             IF map(idx).K = k THEN
                 map(idx).V = v
                 map(idx).T = dataType
@@ -165,7 +168,7 @@ END SUB
 FUNCTION HMap64_GetString$ (map() AS HMap64, k AS _UNSIGNED _INTEGER64)
     DIM arraySize AS _UNSIGNED _OFFSET: arraySize = UBOUND(map)
     DIM idx AS _UNSIGNED _OFFSET: idx = __HMap64_Hash(k, arraySize)
-    IF idx <= arraySize _ANDALSO map(idx).T > HMAP_TYPE_DELETED _ANDALSO map(idx).K = k THEN HMap64_GetString = map(idx).V
+    IF idx <= arraySize _ANDALSO map(idx).T > QBDS_TYPE_DELETED _ANDALSO map(idx).K = k THEN HMap64_GetString = map(idx).V
 END FUNCTION
 
 ''' @brief Updates an existing key or inserts it if not present.
@@ -173,7 +176,7 @@ END FUNCTION
 ''' @param k The key.
 ''' @param v The value string.
 SUB HMap64_SetString (map() AS HMap64, k AS _UNSIGNED _INTEGER64, v AS STRING)
-    __HMap64_Set map(), k, v, HMAP_TYPE_STRING
+    __HMap64_Set map(), k, v, QBDS_TYPE_STRING
 END SUB
 
 ''' @brief Retrieves the value for a given key.
@@ -189,7 +192,7 @@ END FUNCTION
 ''' @param k The key.
 ''' @param v The value _BYTE.
 SUB HMap64_SetByte (map() AS HMap64, k AS _UNSIGNED _INTEGER64, v AS _BYTE)
-    __HMap64_Set map(), k, _MK$(_BYTE, v), HMAP_TYPE_BYTE
+    __HMap64_Set map(), k, _MK$(_BYTE, v), QBDS_TYPE_BYTE
 END SUB
 
 ''' @brief Retrieves the value for a given key.
@@ -205,7 +208,7 @@ END FUNCTION
 ''' @param k The key.
 ''' @param v The value INTEGER.
 SUB HMap64_SetInteger (map() AS HMap64, k AS _UNSIGNED _INTEGER64, v AS INTEGER)
-    __HMap64_Set map(), k, MKI$(v), HMAP_TYPE_INTEGER
+    __HMap64_Set map(), k, MKI$(v), QBDS_TYPE_INTEGER
 END SUB
 
 ''' @brief Retrieves the value for a given key.
@@ -221,7 +224,7 @@ END FUNCTION
 ''' @param k The key.
 ''' @param v The value LONG.
 SUB HMap64_SetLong (map() AS HMap64, k AS _UNSIGNED _INTEGER64, v AS LONG)
-    __HMap64_Set map(), k, MKL$(v), HMAP_TYPE_LONG
+    __HMap64_Set map(), k, MKL$(v), QBDS_TYPE_LONG
 END SUB
 
 ''' @brief Retrieves the value for a given key.
@@ -237,7 +240,7 @@ END FUNCTION
 ''' @param k The key.
 ''' @param v The value _INTEGER64.
 SUB HMap64_SetInteger64 (map() AS HMap64, k AS _UNSIGNED _INTEGER64, v AS _INTEGER64)
-    __HMap64_Set map(), k, _MK$(_INTEGER64, v), HMAP_TYPE_INTEGER64
+    __HMap64_Set map(), k, _MK$(_INTEGER64, v), QBDS_TYPE_INTEGER64
 END SUB
 
 ''' @brief Retrieves the value for a given key.
@@ -253,7 +256,7 @@ END FUNCTION
 ''' @param k The key.
 ''' @param v The value SINGLE.
 SUB HMap64_SetSingle (map() AS HMap64, k AS _UNSIGNED _INTEGER64, v AS SINGLE)
-    __HMap64_Set map(), k, MKS$(v), HMAP_TYPE_SINGLE
+    __HMap64_Set map(), k, MKS$(v), QBDS_TYPE_SINGLE
 END SUB
 
 ''' @brief Retrieves the value for a given key.
@@ -269,5 +272,5 @@ END FUNCTION
 ''' @param k The key.
 ''' @param v The value DOUBLE.
 SUB HMap64_SetDouble (map() AS HMap64, k AS _UNSIGNED _INTEGER64, v AS DOUBLE)
-    __HMap64_Set map(), k, MKD$(v), HMAP_TYPE_DOUBLE
+    __HMap64_Set map(), k, MKD$(v), QBDS_TYPE_DOUBLE
 END SUB
