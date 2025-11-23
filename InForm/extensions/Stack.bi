@@ -1,5 +1,5 @@
 '-----------------------------------------------------------------------------------------------------------------------
-' A simple integer hash map library for QB64-PE with support for multiple data types and dynamic resizing
+' Generic stack library for QB64-PE with support for multiple data types and dynamic resizing
 ' Copyright (c) 2025 Samuel Gomes
 '-----------------------------------------------------------------------------------------------------------------------
 
@@ -7,15 +7,13 @@ $INCLUDEONCE
 
 '$INCLUDE:'QBDS.bi'
 
-''' @brief Primary data structure used by the HMap64 library.
-''' The user declares a dynamic array of this type and passes it to the HMap64_* functions.
+''' @brief Primary data structure used by the Stack library.
+''' The user declares a dynamic array of this type and passes it to the Stack_* functions.
 ''' The library stores internal metadata at array index 0; user entries begin at index 1.
 ''' Metadata (stored in element 0):
-'''     - K: count of items
-'''     - V: unused
+'''     - V: count of items (_MK$(_UNSIGNED _OFFSET, count))
 '''     - T: set to QBDS_TYPE_RESERVED
-TYPE HMap64
-    K AS _UNSIGNED _INTEGER64 ' key or metadata (count)
-    V AS STRING ' value or metadata (unused)
+TYPE Stack
+    V AS STRING ' value or metadata (count)
     T AS _UNSIGNED _BYTE ' data type of the value (0 = unused) or metadata (QBDS_TYPE_RESERVED)
 END TYPE
