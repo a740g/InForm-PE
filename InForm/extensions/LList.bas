@@ -197,6 +197,25 @@ FUNCTION LList_Exists%% (lst() AS LList, node AS _UNSIGNED _OFFSET)
     LList_Exists = node > 0 _ANDALSO node <= UBOUND(lst) _ANDALSO lst(node).T > QBDS_TYPE_DELETED
 END FUNCTION
 
+''' @brief Swaps the values of two nodes in the list.
+''' @param lst The list to update.
+''' @param nodeA The first node to swap.
+''' @param nodeB The second node to swap.
+SUB LList_Swap (lst() AS LList, nodeA AS _UNSIGNED _OFFSET, nodeB AS _UNSIGNED _OFFSET)
+    IF nodeA > 0 _ANDALSO nodeA <= UBOUND(lst) _ANDALSO lst(nodeA).T > QBDS_TYPE_DELETED _ANDALSO nodeB > 0 _ANDALSO nodeB <= UBOUND(lst) _ANDALSO lst(nodeB).T > QBDS_TYPE_DELETED THEN
+        DIM tempV AS STRING: tempV = lst(nodeA).V
+        DIM tempT AS _UNSIGNED _BYTE: tempT = lst(nodeA).T
+
+        lst(nodeA).V = lst(nodeB).V
+        lst(nodeA).T = lst(nodeB).T
+
+        lst(nodeB).V = tempV
+        lst(nodeB).T = tempT
+    ELSE
+        ERROR _ERR_SUBSCRIPT_OUT_OF_RANGE
+    END IF
+END SUB
+
 ''' @brief Allocates a new node and returns its index.
 ''' @param lst The list to update.
 ''' @return The index of the new node.
@@ -581,6 +600,22 @@ SUB LList_PushBackDouble (lst() AS LList, v AS DOUBLE)
     __LList_PushBack lst(), MKD$(v), QBDS_TYPE_DOUBLE
 END SUB
 
+''' @brief Sets the value for a given node.
+''' @param lst The list to update.
+''' @param node The node to set the value for.
+''' @param v The raw value string to set.
+''' @param t The data type constant for the value being set.
+SUB __LList_Set (lst() AS LList, node AS _UNSIGNED _OFFSET, v AS STRING, t AS _UNSIGNED _OFFSET)
+    IF node < 1 _ORELSE node > UBOUND(lst) _ORELSE lst(node).T <= QBDS_TYPE_DELETED THEN
+        ' Throw an error if the node is not valid
+        ERROR _ERR_SUBSCRIPT_OUT_OF_RANGE
+        EXIT SUB
+    END IF
+
+    lst(node).V = v
+    lst(node).T = t
+END SUB
+
 ''' @brief Retrieves the value for a given node.
 ''' @param lst The list to search.
 ''' @param node The node to get the value for.
@@ -600,14 +635,7 @@ END FUNCTION
 ''' @param node The node to set the value for.
 ''' @param v The string value to set.
 SUB LList_SetString (lst() AS LList, node AS _UNSIGNED _OFFSET, v AS STRING)
-    IF node < 1 _ORELSE node > UBOUND(lst) _ORELSE lst(node).T <= QBDS_TYPE_DELETED THEN
-        ' Throw an error if the node is not valid
-        ERROR _ERR_SUBSCRIPT_OUT_OF_RANGE
-        EXIT SUB
-    END IF
-
-    lst(node).V = v
-    lst(node).T = QBDS_TYPE_STRING
+    __LList_Set lst(), node, v, QBDS_TYPE_STRING
 END SUB
 
 ''' @brief Retrieves the value for a given node.
@@ -629,14 +657,7 @@ END FUNCTION
 ''' @param node The node to set the value for.
 ''' @param v The byte value to set.
 SUB LList_SetByte (lst() AS LList, node AS _UNSIGNED _OFFSET, v AS _BYTE)
-    IF node < 1 _ORELSE node > UBOUND(lst) _ORELSE lst(node).T <= QBDS_TYPE_DELETED THEN
-        ' Throw an error if the node is not valid
-        ERROR _ERR_SUBSCRIPT_OUT_OF_RANGE
-        EXIT SUB
-    END IF
-
-    lst(node).V = _MK$(_BYTE, v)
-    lst(node).T = QBDS_TYPE_BYTE
+    __LList_Set lst(), node, _MK$(_BYTE, v), QBDS_TYPE_BYTE
 END SUB
 
 ''' @brief Retrieves the value for a given node.
@@ -658,14 +679,7 @@ END FUNCTION
 ''' @param node The node to set the value for.
 ''' @param v The integer value to set.
 SUB LList_SetInteger (lst() AS LList, node AS _UNSIGNED _OFFSET, v AS INTEGER)
-    IF node < 1 _ORELSE node > UBOUND(lst) _ORELSE lst(node).T <= QBDS_TYPE_DELETED THEN
-        ' Throw an error if the node is not valid
-        ERROR _ERR_SUBSCRIPT_OUT_OF_RANGE
-        EXIT SUB
-    END IF
-
-    lst(node).V = MKI$(v)
-    lst(node).T = QBDS_TYPE_INTEGER
+    __LList_Set lst(), node, MKI$(v), QBDS_TYPE_INTEGER
 END SUB
 
 ''' @brief Retrieves the value for a given node.
@@ -687,14 +701,7 @@ END FUNCTION
 ''' @param node The node to set the value for.
 ''' @param v The long value to set.
 SUB LList_SetLong (lst() AS LList, node AS _UNSIGNED _OFFSET, v AS LONG)
-    IF node < 1 _ORELSE node > UBOUND(lst) _ORELSE lst(node).T <= QBDS_TYPE_DELETED THEN
-        ' Throw an error if the node is not valid
-        ERROR _ERR_SUBSCRIPT_OUT_OF_RANGE
-        EXIT SUB
-    END IF
-
-    lst(node).V = MKL$(v)
-    lst(node).T = QBDS_TYPE_LONG
+    __LList_Set lst(), node, MKL$(v), QBDS_TYPE_LONG
 END SUB
 
 ''' @brief Retrieves the value for a given node.
@@ -716,14 +723,7 @@ END FUNCTION
 ''' @param node The node to set the value for.
 ''' @param v The integer64 value to set.
 SUB LList_SetInteger64 (lst() AS LList, node AS _UNSIGNED _OFFSET, v AS _INTEGER64)
-    IF node < 1 _ORELSE node > UBOUND(lst) _ORELSE lst(node).T <= QBDS_TYPE_DELETED THEN
-        ' Throw an error if the node is not valid
-        ERROR _ERR_SUBSCRIPT_OUT_OF_RANGE
-        EXIT SUB
-    END IF
-
-    lst(node).V = _MK$(_INTEGER64, v)
-    lst(node).T = QBDS_TYPE_INTEGER64
+    __LList_Set lst(), node, _MK$(_INTEGER64, v), QBDS_TYPE_INTEGER64
 END SUB
 
 ''' @brief Retrieves the value for a given node.
@@ -745,14 +745,7 @@ END FUNCTION
 ''' @param node The node to set the value for.
 ''' @param v The single value to set.
 SUB LList_SetSingle (lst() AS LList, node AS _UNSIGNED _OFFSET, v AS SINGLE)
-    IF node < 1 _ORELSE node > UBOUND(lst) _ORELSE lst(node).T <= QBDS_TYPE_DELETED THEN
-        ' Throw an error if the node is not valid
-        ERROR _ERR_SUBSCRIPT_OUT_OF_RANGE
-        EXIT SUB
-    END IF
-
-    lst(node).V = MKS$(v)
-    lst(node).T = QBDS_TYPE_SINGLE
+    __LList_Set lst(), node, MKS$(v), QBDS_TYPE_SINGLE
 END SUB
 
 ''' @brief Retrieves the value for a given node.
@@ -774,14 +767,7 @@ END FUNCTION
 ''' @param node The node to set the value for.
 ''' @param v The double value to set.
 SUB LList_SetDouble (lst() AS LList, node AS _UNSIGNED _OFFSET, v AS DOUBLE)
-    IF node < 1 _ORELSE node > UBOUND(lst) _ORELSE lst(node).T <= QBDS_TYPE_DELETED THEN
-        ' Throw an error if the node is not valid
-        ERROR _ERR_SUBSCRIPT_OUT_OF_RANGE
-        EXIT SUB
-    END IF
-
-    lst(node).V = MKD$(v)
-    lst(node).T = QBDS_TYPE_DOUBLE
+    __LList_Set lst(), node, MKD$(v), QBDS_TYPE_DOUBLE
 END SUB
 
 ''' @brief Retrieves the value from the front of the list and removes it.
