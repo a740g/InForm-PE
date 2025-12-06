@@ -17,8 +17,7 @@ InForm-PE's main goal is to generate *event-driven* QB64-PE applications. This m
 
 - [Wiki](https://github.com/QB64-Phoenix-Edition/InForm-PE/wiki)
 - [Tutorial](https://raw.githack.com/QB64-Phoenix-Edition/InForm-PE/refs/heads/master/docs/tutorial/index.html)
-- [INI-Manager](docs/INI-Manager.md)
-- [GIFPlay](docs/GIFPlay.md)
+- [Extensions](docs/Extensions.md)
 
 ## USAGE
 
@@ -27,15 +26,11 @@ Install InForm-PE and QB64-PE side-by-side in their own directories. There is no
 > The following directory setup is recommended
 
 ```text
-<some-drive-or-directory>
-    |
-    |-------<InForm-PE>
-    |           |
-    |           |-------<UiEditor[.exe]>
-    |
-    |-------<QB64pe>
-                |
-                |-------<qb64pe[.exe]>
+<some-drive-or-directory/>
+        ├────<InForm-PE/>
+        │       └───<UiEditor[.exe]>
+        └────<QB64pe/>
+                └───<qb64pe[.exe]>
 ```
 
 Assuming your setup is like the above, do the following:

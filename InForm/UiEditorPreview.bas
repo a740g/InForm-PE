@@ -63,10 +63,6 @@ CONST ToEditor = 3
 CONST ToUndoBuffer = 4
 CONST FromEditor = 5
 
-DECLARE LIBRARY
-    FUNCTION Numeric& ALIAS isdigit (BYVAL ch AS LONG)
-END DECLARE
-
 $IF WIN THEN
     DECLARE DYNAMIC LIBRARY "kernel32"
         FUNCTION OpenProcess& (BYVAL dwDesiredAccess AS LONG, BYVAL bInheritHandle AS LONG, BYVAL dwProcessId AS LONG)
@@ -96,7 +92,7 @@ RESUME NEXT
 
 '$INCLUDE:'UiEditorPreview.frm'
 '$INCLUDE:'InForm.ui'
-'$INCLUDE:'extensions/GIFPlay.bas'
+'$INCLUDE:'extensions/GIFPlay.bm'
 
 'Event procedures: ---------------------------------------------------------------
 SUB __UI_Click (id AS LONG)
@@ -1769,7 +1765,7 @@ SUB __UI_OnLoad
 
     IF UiEditorPID = 0 THEN GOTO ForceQuit
 
-    b$ = "PREVIEWPID>" + MKL$(__UI_GetPID) + "<END>"
+    b$ = "PREVIEWPID>" + MKL$(System_GetProcessID) + "<END>"
     PUT #Host, , b$
 
     _ACCEPTFILEDROP
@@ -3634,19 +3630,11 @@ SUB SendSignal (Value AS INTEGER)
 END SUB
 
 FUNCTION Alpha%% (ch AS _UNSIGNED _BYTE)
-    DECLARE LIBRARY
-        FUNCTION __Alpha& ALIAS isalpha (BYVAL ch AS LONG)
-    END DECLARE
-
-    Alpha = __Alpha(ch) <> 0 OR ch = 95
+    Alpha = ch = _ASC_UNDERSCORE _ORELSE Asc_IsAlphabetic(ch)
 END FUNCTION
 
-FUNCTION AlphaNumeric%% (ch AS _UNSIGNED _BYTE)
-    DECLARE LIBRARY
-        FUNCTION __AlphaNumeric& ALIAS isalnum (BYVAL ch AS LONG)
-    END DECLARE
-
-    AlphaNumeric = __AlphaNumeric(ch) <> 0 OR ch = 95
+FUNCTION Alphanumeric%% (ch AS _UNSIGNED _BYTE)
+    Alphanumeric = ch = _ASC_UNDERSCORE _ORELSE Asc_IsAlphanumeric(ch)
 END FUNCTION
 
 FUNCTION AdaptName$ (tName$, TargetID AS LONG)
@@ -3671,7 +3659,7 @@ FUNCTION AdaptName$ (tName$, TargetID AS LONG)
 
         'Other valid characters must be alphanumeric:
         FOR i = 1 TO LEN(Name$)
-            IF AlphaNumeric(ASC(Name$, i)) THEN
+            IF Alphanumeric(ASC(Name$, i)) THEN
                 IF NextIsCapital THEN
                     NewName$ = NewName$ + UCASE$(MID$(Name$, i, 1))
                     IF ASC(RIGHT$(NewName$, 1)) >= 65 AND ASC(RIGHT$(NewName$, 1)) <= 90 THEN NextIsCapital = False
@@ -3827,9 +3815,7 @@ SUB READ_KEYWORDS
     DATA _GLUPERSPECTIVE,_HARDWARE,_HARDWARE1,_KEEPBACKGROUND,_NONE,_OFF,_ONLY,_ONLYBACKGROUND
     DATA _ONTOP,_SEAMLESS,_SMOOTH,_SMOOTHSHRUNK,_SMOOTHSTRETCHED,_SOFTWARE,_SQUAREPIXELS
     DATA _STRETCH
-    DATA uprint_extra,uprint,uprintwidth,uheight&,uheight,falcon_uspacing&
-    DATA falcon_uspacing,uascension&,uascension,GetSystemMetrics&
-    DATA GetSystemMetrics,uspacing&,uspacing,SetFrameRate,SetFocus
+    DATA uspacing&,uspacing,SetFrameRate,SetFocus
     DATA AutoSizeLabel,Darken~&,Darken,IsNumber%%,IsNumber,RawText$,RawText
     DATA SetFont&,SetFont,SetCaption,BeginDraw,EndDraw,LoadImage
     DATA SetRadioButtonValue,Replace$,Replace,AddItem,RemoveItem,ResetList
@@ -3898,7 +3884,7 @@ FUNCTION LoadEditorImage& (id AS _UNSIGNED _BYTE)
                 "j2maiN/rvwnPYIyhiEvmoaT1e9bvfe8XFyfYbkg72OnQn/y8/8Zz2kz90J/873nef57nX/tfGg0ZeNTfwU+s9VNc/Zal+6cyojcgA3/P/fn/c393" + _
                 "v/v7/wd5BeeEEdg="
 
-            LoadEditorImage = _LOADIMAGE(Base64_LoadResourceString(DATA_CONTEXTMENU_BMP_1146, SIZE_CONTEXTMENU_BMP_1146, COMP_CONTEXTMENU_BMP_1146), 32, "memory")
+            LoadEditorImage = _LOADIMAGE(Resource_LoadBase64String(DATA_CONTEXTMENU_BMP_1146, SIZE_CONTEXTMENU_BMP_1146, COMP_CONTEXTMENU_BMP_1146), 32, "memory")
 
         CASE ELSE
             ERROR 51

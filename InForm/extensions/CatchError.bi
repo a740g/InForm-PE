@@ -1,7 +1,7 @@
-' ==============================================================================
+'-----------------------------------------------------------------------------------------------------------------------
 ' Minimalistic test framework library for QB64-PE
-' Copyright (c) 2025, Samuel Gomes
-' ==============================================================================
+' Copyright (c) 2025 Samuel Gomes
+'-----------------------------------------------------------------------------------------------------------------------
 
 $INCLUDEONCE
 
@@ -19,7 +19,7 @@ IF __TestState.errorHandlerEnabled THEN
         IF __errorLine = 0 THEN __errorLine = ERL
 
         __errorFile = _INCLERRORFILE$
-        IF NOT LEN(__errorFile) THEN __errorFile = "main module"
+        IF LEN(__errorFile) = 0 THEN __errorFile = "main module"
     END IF
 
     __TestSetColor __TEST_COLOR_FAIL: __TestPrintLn "Runtime error" + STR$(ERR) + " (" + LCASE$(_ERRORMESSAGE$) + ") on line" + STR$(__errorLine) + " in " + __errorFile

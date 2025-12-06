@@ -290,9 +290,9 @@ RESUME NEXT
 
 '$INCLUDE:'UiEditor.frm'
 '$INCLUDE:'InForm.ui'
-'$INCLUDE:'extensions/Pathname.bas'
-'$INCLUDE:'extensions/Ini.bas'
-'$INCLUDE:'extensions/FontMgr.bas'
+'$INCLUDE:'extensions/Pathname.bm'
+'$INCLUDE:'extensions/Ini.bm'
+'$INCLUDE:'extensions/FontMgr.bm'
 
 'Event procedures: ---------------------------------------------------------------
 SUB __UI_Click (id AS LONG)
@@ -2491,11 +2491,8 @@ SUB SaveSettings
     IF ShowFontList THEN value$ = "True" ELSE value$ = "False"
     Ini_WriteSetting "InForm/InForm.ini", "InForm Settings", "Show font list", value$
 
-    $IF WIN THEN
-    $ELSE
-        IF __UI_MouseButtonsSwap THEN value$ = "True" ELSE value$ = "False"
-        Ini_WriteSetting "InForm/InForm.ini", "InForm Settings", "Swap mouse buttons", value$
-    $END IF
+    IF __UI_MouseButtonsSwap THEN value$ = "True" ELSE value$ = "False"
+    Ini_WriteSetting "InForm/InForm.ini", "InForm Settings", "Swap mouse buttons", value$
 END SUB
 
 SUB __UI_BeforeInit
@@ -2513,7 +2510,7 @@ SUB Handshake
 
     Stream$ = "" 'clear buffer
 
-    b$ = "EDITORPID>" + MKL$(__UI_GetPID) + "<END>"
+    b$ = "EDITORPID>" + MKL$(System_GetProcessID) + "<END>"
     Send Client, b$
 
     $IF WIN THEN
@@ -2671,12 +2668,9 @@ SUB __UI_OnLoad
         ShowFontList = True
     END IF
 
-    $IF WIN THEN
-    $ELSE
-        value$ = Ini_ReadSetting("InForm/InForm.ini", "InForm Settings", "Swap mouse buttons")
-        __UI_MouseButtonsSwap = (value$ = "True")
-        Control(OptionsMenuSwapButtons).Value = __UI_MouseButtonsSwap
-    $END IF
+    value$ = Ini_ReadSetting("InForm/InForm.ini", "InForm Settings", "Swap mouse buttons")
+    __UI_MouseButtonsSwap = (value$ = "True")
+    Control(OptionsMenuSwapButtons).Value = __UI_MouseButtonsSwap
 
     Control(ViewMenuPreviewDetach).Value = PreviewAttached
     Control(OptionsMenuAutoName).Value = AutoNameControls
@@ -3217,7 +3211,7 @@ FUNCTION LoadEditorImage& (id AS _UNSIGNED _BYTE)
                 "e8/4tl23CFd8MLaA70TANcDGc/Vz+x/kL6sT33IC84Pri1yBjU++J6H5YV1Zxxafsn9+YA7iY4sfEJfn8pmzjX+Yb30wdnO/wegJR2URjvQ8+7gt" + _
                 "Eph5v491MWht/8o3QC157Ph2qNnzeiL30/gfg472/w=="
 
-            LoadEditorImage = _LOADIMAGE(Base64_LoadResourceString(DATA_COMMONCONTROLS_BMP_11386, SIZE_COMMONCONTROLS_BMP_11386, COMP_COMMONCONTROLS_BMP_11386), 32, "memory")
+            LoadEditorImage = _LOADIMAGE(Resource_LoadBase64String(DATA_COMMONCONTROLS_BMP_11386, SIZE_COMMONCONTROLS_BMP_11386, COMP_COMMONCONTROLS_BMP_11386), 32, "memory")
 
         CASE EDITOR_IMAGE_DISK
             CONST SIZE_DISK_BMP_1146~& = 1146~&
@@ -3234,7 +3228,7 @@ FUNCTION LoadEditorImage& (id AS _UNSIGNED _BYTE)
                 "d27dgtfjQU04jHAoiGAggMaGeuzavh2K6GhMHDMS40YNA6fX64iP+rqAgAABV0dHL193d+2e9nbj9atWGbc31RpXFOcZ1xYXGzeUlhrVVhQbJ8fF" + _
                 "GXq5uOgG+/v4hgb5h3t6evIBAK70LyE="
 
-            LoadEditorImage = _LOADIMAGE(Base64_LoadResourceString(DATA_DISK_BMP_1146, SIZE_DISK_BMP_1146, COMP_DISK_BMP_1146), 32, "memory")
+            LoadEditorImage = _LOADIMAGE(Resource_LoadBase64String(DATA_DISK_BMP_1146, SIZE_DISK_BMP_1146, COMP_DISK_BMP_1146), 32, "memory")
 
         CASE ELSE
             ERROR 51
