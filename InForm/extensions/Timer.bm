@@ -1,0 +1,82 @@
+'-----------------------------------------------------------------------------------------------------------------------
+' User configurable timer library
+' Copyright (c) 2025 Samuel Gomes
+'-----------------------------------------------------------------------------------------------------------------------
+
+$INCLUDEONCE
+
+'$INCLUDE:'Timer.bi'
+
+'OPTION _EXPLICIT
+
+'DIM timer1 AS LONG, timer2 AS LONG
+
+'Timer_Initialize
+
+'timer1 = Timer_Create(100)
+'timer2 = Timer_Create(750)
+
+'DIM x1 AS LONG, x2 AS LONG
+
+'DO
+'    DIM mul1 AS DOUBLE, mul2 AS DOUBLE
+
+'    CLS
+
+'    IF Timer_Poll(timer1, mul1) THEN
+'        x1 = x1 + 1
+'    END IF
+
+'    IF Timer_Poll(timer2, mul2) THEN
+'        x2 = x2 + 1
+'    END IF
+
+'    PRINT "Timer 1:"; x1; mul1
+'    PRINT "Timer 2:"; x2; mul2
+
+'    _DISPLAY
+
+'    _LIMIT 60
+'LOOP UNTIL _KEYHIT = _KEY_ESC
+
+SUB Timer_Initialize
+    SHARED __timer() AS __Timer
+    REDIM __timer(0) AS __Timer
+END SUB
+
+SUB Timer_Reset (id AS _UNSIGNED _OFFSET)
+    SHARED __timer() AS __Timer
+    __timer(id).lastTick = Time_GetTicks
+END SUB
+
+SUB Timer_SetInterval (id AS _UNSIGNED _OFFSET, intervalMs AS _UNSIGNED _INTEGER64)
+    SHARED __timer() AS __Timer
+    __timer(id).intervalTicks = intervalMs
+END SUB
+
+FUNCTION Timer_Create~%& (intervalMs AS _UNSIGNED _INTEGER64)
+    SHARED __timer() AS __Timer
+
+    DIM id AS _UNSIGNED _OFFSET: id = UBOUND(__timer) + 1
+    REDIM _PRESERVE __timer(1 TO id) AS __Timer
+
+    Timer_SetInterval id, intervalMs
+    Timer_Reset id
+
+    Timer_Create = id
+END FUNCTION
+
+FUNCTION Timer_Poll%% (id AS _UNSIGNED _OFFSET, outMultiplier AS DOUBLE)
+    SHARED __timer() AS __Timer
+
+    DIM nowTick AS _UNSIGNED _INTEGER64: nowTick = Time_GetTicks
+    DIM elapsed AS _UNSIGNED _INTEGER64: elapsed = nowTick - __timer(id).lastTick
+
+    IF elapsed >= __timer(id).intervalTicks THEN
+        outMultiplier = elapsed / __timer(id).intervalTicks
+        __timer(id).lastTick = nowTick
+        Timer_Poll = _TRUE
+    END IF
+END FUNCTION
+
+'$INCLUDE:'Time.bm'

@@ -1,14 +1,16 @@
 '-----------------------------------------------------------------------------------------------------------------------
-' Time related routines
+' User configurable timer library
 ' Copyright (c) 2025 Samuel Gomes
 '-----------------------------------------------------------------------------------------------------------------------
 
 $INCLUDEONCE
 
-CONST TIME_TICKS_PER_SECOND~&& = 1000
+'$INCLUDE:'Time.bi'
 
-DECLARE LIBRARY
-    ''' @brief Retrieves the number of ticks since the application started.
-    ''' @return Number of ticks (1000 ticks = 1 second) as a 64-bit integer.
-    FUNCTION Time_GetTicks~&& ALIAS "GetTicks"
-END DECLARE
+' Timer type and storage
+TYPE __Timer
+    intervalTicks AS _UNSIGNED _INTEGER64 ' interval length, in ticks
+    lastTick AS _UNSIGNED _INTEGER64 ' last time we advanced this timer
+END TYPE
+
+REDIM __timer(0) AS __Timer
