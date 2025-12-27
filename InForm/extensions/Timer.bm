@@ -7,6 +7,9 @@ $INCLUDEONCE
 
 '$INCLUDE:'Timer.bi'
 
+'-----------------------------------------------------------------------------------------------------------------------
+' Test code for debugging the library
+'-----------------------------------------------------------------------------------------------------------------------
 'OPTION _EXPLICIT
 
 'DIM timer1 AS LONG, timer2 AS LONG
@@ -16,66 +19,121 @@ $INCLUDEONCE
 'timer1 = Timer_Create(100)
 'timer2 = Timer_Create(750)
 
-'DIM x1 AS LONG, x2 AS LONG
+'DIM AS LONG x1, x2, el1, el2
 
 'DO
-'    DIM mul1 AS DOUBLE, mul2 AS DOUBLE
-
 '    CLS
 
-'    IF Timer_Poll(timer1, mul1) THEN
+'    el1 = Timer_Poll(timer1)
+'    IF el1 >= 0 THEN
 '        x1 = x1 + 1
 '    END IF
 
-'    IF Timer_Poll(timer2, mul2) THEN
+'    el2 = Timer_Poll(timer2)
+'    IF el2 >= 0 THEN
 '        x2 = x2 + 1
 '    END IF
 
-'    PRINT "Timer 1:"; x1; mul1
-'    PRINT "Timer 2:"; x2; mul2
+'    PRINT "Timer 1:"; x1; el1
+'    PRINT "Timer 2:"; x2; el2
 
 '    _DISPLAY
 
-'    _LIMIT 60
+'    _LIMIT 120
 'LOOP UNTIL _KEYHIT = _KEY_ESC
 
+'END
+'-----------------------------------------------------------------------------------------------------------------------
+
+''' @brief Initializes the timer library.
 SUB Timer_Initialize
     SHARED __timer() AS __Timer
+    SHARED __timerLastFree AS _UNSIGNED _OFFSET
     REDIM __timer(0) AS __Timer
+    __timerLastFree = 0
 END SUB
 
+''' @brief Resets the timer to the current time.
+''' @param id Timer ID.
 SUB Timer_Reset (id AS _UNSIGNED _OFFSET)
     SHARED __timer() AS __Timer
     __timer(id).lastTick = Time_GetTicks
 END SUB
 
+''' @brief Gets the timer interval in milliseconds.
+''' @param id Timer ID.
+''' @return Interval in milliseconds.
+FUNCTION Timer_GetInterval~&& (id AS _UNSIGNED _OFFSET)
+    SHARED __timer() AS __Timer
+    Timer_GetInterval = __timer(id).intervalTicks
+END FUNCTION
+
+''' @brief Sets the timer interval in milliseconds.
+''' @param id Timer ID.
+''' @param intervalMs Interval in milliseconds.
 SUB Timer_SetInterval (id AS _UNSIGNED _OFFSET, intervalMs AS _UNSIGNED _INTEGER64)
     SHARED __timer() AS __Timer
     __timer(id).intervalTicks = intervalMs
 END SUB
 
+''' @brief Creates a new timer.
+''' @param intervalMs Interval in milliseconds.
+''' @return Timer ID.
 FUNCTION Timer_Create~%& (intervalMs AS _UNSIGNED _INTEGER64)
     SHARED __timer() AS __Timer
+    SHARED __timerLastFree AS _UNSIGNED _OFFSET
 
-    DIM id AS _UNSIGNED _OFFSET: id = UBOUND(__timer) + 1
-    REDIM _PRESERVE __timer(1 TO id) AS __Timer
+    DIM timersUB AS _UNSIGNED _OFFSET: timersUB = UBOUND(__timer)
 
-    Timer_SetInterval id, intervalMs
-    Timer_Reset id
+    ' Find a free slot
+    WHILE __timerLastFree <= timersUB _ANDALSO __timer(__timerLastFree).active
+        __timerLastFree = __timerLastFree + 1
+    WEND
 
-    Timer_Create = id
+    ' If no free slot, create a new one
+    IF __timerLastFree > timersUB THEN
+        REDIM _PRESERVE __timer(0 TO __timerLastFree) AS __Timer
+    END IF
+
+    __timer(__timerLastFree).active = _TRUE ' Mark as active
+    Timer_SetInterval __timerLastFree, intervalMs
+    Timer_Reset __timerLastFree
+
+    Timer_Create = __timerLastFree
 END FUNCTION
 
-FUNCTION Timer_Poll%% (id AS _UNSIGNED _OFFSET, outMultiplier AS DOUBLE)
+''' @brief Deletes a timer.
+''' @param id Timer ID.
+SUB Timer_Delete (id AS _UNSIGNED _OFFSET)
+    SHARED __timer() AS __Timer
+    SHARED __timerLastFree AS _UNSIGNED _OFFSET
+
+    __timer(id).active = _FALSE
+    IF id < __timerLastFree THEN __timerLastFree = id
+END SUB
+
+''' @brief Checks if a timer exists.
+''' @param id Timer ID.
+''' @return _TRUE if the timer exists, _FALSE otherwise.
+FUNCTION Timer_Exists%% (id AS _UNSIGNED _OFFSET)
+    SHARED __timer() AS __Timer
+    Timer_Exists = id <= UBOUND(__timer) _ANDALSO __timer(id).active
+END FUNCTION
+
+''' @brief Polls the timer to check if the interval has elapsed.
+''' @param id Timer ID.
+''' @return Elapsed time in milliseconds if the interval has elapsed, -1 otherwise.
+FUNCTION Timer_Poll&& (id AS _UNSIGNED _OFFSET)
     SHARED __timer() AS __Timer
 
     DIM nowTick AS _UNSIGNED _INTEGER64: nowTick = Time_GetTicks
     DIM elapsed AS _UNSIGNED _INTEGER64: elapsed = nowTick - __timer(id).lastTick
 
     IF elapsed >= __timer(id).intervalTicks THEN
-        outMultiplier = elapsed / __timer(id).intervalTicks
         __timer(id).lastTick = nowTick
-        Timer_Poll = _TRUE
+        Timer_Poll = elapsed
+    ELSE
+        Timer_Poll = -1
     END IF
 END FUNCTION
 
