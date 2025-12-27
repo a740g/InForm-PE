@@ -49,6 +49,7 @@ $INCLUDEONCE
 SUB Timer_Initialize
     SHARED __timer() AS __Timer
     SHARED __timerLastFree AS _UNSIGNED _OFFSET
+
     REDIM __timer(0) AS __Timer
     __timerLastFree = 0
 END SUB
@@ -57,7 +58,9 @@ END SUB
 ''' @param id Timer ID.
 SUB Timer_Reset (id AS _UNSIGNED _OFFSET)
     SHARED __timer() AS __Timer
+
     __timer(id).lastTick = Time_GetTicks
+    __timer(id).paused = _FALSE
 END SUB
 
 ''' @brief Gets the timer interval in milliseconds.
@@ -65,6 +68,7 @@ END SUB
 ''' @return Interval in milliseconds.
 FUNCTION Timer_GetInterval~&& (id AS _UNSIGNED _OFFSET)
     SHARED __timer() AS __Timer
+
     Timer_GetInterval = __timer(id).intervalTicks
 END FUNCTION
 
@@ -73,6 +77,7 @@ END FUNCTION
 ''' @param intervalMs Interval in milliseconds.
 SUB Timer_SetInterval (id AS _UNSIGNED _OFFSET, intervalMs AS _UNSIGNED _INTEGER64)
     SHARED __timer() AS __Timer
+
     __timer(id).intervalTicks = intervalMs
 END SUB
 
@@ -117,6 +122,7 @@ END SUB
 ''' @return _TRUE if the timer exists, _FALSE otherwise.
 FUNCTION Timer_Exists%% (id AS _UNSIGNED _OFFSET)
     SHARED __timer() AS __Timer
+
     Timer_Exists = id <= UBOUND(__timer) _ANDALSO __timer(id).active
 END FUNCTION
 
@@ -126,15 +132,49 @@ END FUNCTION
 FUNCTION Timer_Poll&& (id AS _UNSIGNED _OFFSET)
     SHARED __timer() AS __Timer
 
-    DIM nowTick AS _UNSIGNED _INTEGER64: nowTick = Time_GetTicks
-    DIM elapsed AS _UNSIGNED _INTEGER64: elapsed = nowTick - __timer(id).lastTick
-
-    IF elapsed >= __timer(id).intervalTicks THEN
-        __timer(id).lastTick = nowTick
-        Timer_Poll = elapsed
-    ELSE
+    IF __timer(id).paused THEN
         Timer_Poll = -1
+    ELSE
+        DIM nowTick AS _UNSIGNED _INTEGER64: nowTick = Time_GetTicks
+        DIM elapsed AS _UNSIGNED _INTEGER64: elapsed = nowTick - __timer(id).lastTick
+        IF elapsed >= __timer(id).intervalTicks THEN
+            __timer(id).lastTick = __timer(id).lastTick + __timer(id).intervalTicks
+            Timer_Poll = elapsed
+        ELSE
+            Timer_Poll = -1
+        END IF
     END IF
+END FUNCTION
+
+''' @brief Pauses a timer.
+''' @param id Timer ID.
+SUB Timer_Pause (id AS _UNSIGNED _OFFSET)
+    SHARED __timer() AS __Timer
+
+    IF NOT __timer(id).paused THEN
+        __timer(id).paused = _TRUE
+        __timer(id).pausedTick = Time_GetTicks
+    END IF
+END SUB
+
+''' @brief Resumes a timer.
+''' @param id Timer ID.
+SUB Timer_Resume (id AS _UNSIGNED _OFFSET)
+    SHARED __timer() AS __Timer
+
+    IF __timer(id).paused THEN
+        __timer(id).paused = _FALSE
+        __timer(id).lastTick = __timer(id).lastTick + (Time_GetTicks - __timer(id).pausedTick)
+    END IF
+END SUB
+
+''' @brief Checks if a timer is paused.
+''' @param id Timer ID.
+''' @return _TRUE if the timer is paused, _FALSE otherwise.
+FUNCTION Timer_IsPaused%% (id AS _UNSIGNED _OFFSET)
+    SHARED __timer() AS __Timer
+
+    Timer_IsPaused = __timer(id).paused
 END FUNCTION
 
 '$INCLUDE:'Time.bm'
