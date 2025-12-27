@@ -19,23 +19,21 @@ $INCLUDEONCE
 'timer1 = Timer_Create(100)
 'timer2 = Timer_Create(750)
 
-'DIM AS LONG x1, x2, el1, el2
+'DIM AS LONG x1, x2
 
 'DO
 '    CLS
 
-'    el1 = Timer_Poll(timer1)
-'    IF el1 >= 0 THEN
+'    IF Timer_Poll(timer1) THEN
 '        x1 = x1 + 1
 '    END IF
 
-'    el2 = Timer_Poll(timer2)
-'    IF el2 >= 0 THEN
+'    IF Timer_Poll(timer2) THEN
 '        x2 = x2 + 1
 '    END IF
 
-'    PRINT "Timer 1:"; x1; el1
-'    PRINT "Timer 2:"; x2; el2
+'    PRINT "Timer 1:"; x1
+'    PRINT "Timer 2:"; x2
 
 '    _DISPLAY
 
@@ -128,20 +126,14 @@ END FUNCTION
 
 ''' @brief Polls the timer to check if the interval has elapsed.
 ''' @param id Timer ID.
-''' @return Elapsed time in milliseconds if the interval has elapsed, -1 otherwise.
-FUNCTION Timer_Poll&& (id AS _UNSIGNED _OFFSET)
+''' @return _TRUE if the interval has elapsed, _FALSE otherwise.
+FUNCTION Timer_Poll%% (id AS _UNSIGNED _OFFSET)
     SHARED __timer() AS __Timer
 
-    IF __timer(id).paused THEN
-        Timer_Poll = -1
-    ELSE
-        DIM nowTick AS _UNSIGNED _INTEGER64: nowTick = Time_GetTicks
-        DIM elapsed AS _UNSIGNED _INTEGER64: elapsed = nowTick - __timer(id).lastTick
-        IF elapsed >= __timer(id).intervalTicks THEN
+    IF NOT __timer(id).paused THEN
+        IF Time_GetTicks - __timer(id).lastTick >= __timer(id).intervalTicks THEN
             __timer(id).lastTick = __timer(id).lastTick + __timer(id).intervalTicks
-            Timer_Poll = elapsed
-        ELSE
-            Timer_Poll = -1
+            Timer_Poll = _TRUE
         END IF
     END IF
 END FUNCTION
